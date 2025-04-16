@@ -28,17 +28,13 @@
 # define WORD 10
 # define EXEV 11 
 
-
 typedef struct s_token
 {
-    char *token;
+    char *value;
     int type;
     struct s_token *next;
 } t_token;
 
-
-// echo hello world
-// echo 
 typedef struct s_shell
 {
     char **args;
@@ -56,10 +52,17 @@ typedef struct s_cmd
     struct s_cmd *next;
 }t_cmd;
 
+// tokenized 
+int check_type(char *token);
+void get_the_token(t_shell *shell, char *token);
+void ft_tokenized(t_shell *shell);
+
 // utils_1.c 
 void	free_split(char **lst);
 void init_shell(t_shell *shell);
 void free_token(t_token *token);
 void free_all(t_shell *shell);
+t_token	*new_node(char *value);
+
 
 #endif

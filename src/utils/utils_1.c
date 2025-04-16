@@ -47,3 +47,15 @@ void free_all(t_shell *shell)
     if(shell->args)
         free_split(shell->args);
 }
+
+t_token	*new_node(char *value)
+{
+	t_token	*new;
+
+	new = malloc(sizeof(*new));
+	if (!new)
+		return (NULL);
+    new->value = value;
+	new->next = NULL;
+	return (new);
+}
