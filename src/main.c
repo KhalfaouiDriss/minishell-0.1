@@ -3,8 +3,6 @@
 nt main(int ac, char **av, char **env)
 {
     t_shell shell;
-
-    shell.env = NULL;
     
     init_env(&shell, env);
     
