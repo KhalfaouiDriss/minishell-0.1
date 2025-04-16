@@ -1,9 +1,27 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <signal.h>
-#include "../lib/libft/libft.h"
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <sys/types.h>
+#ifndef MINISHELL_H
+# define MINISHELL_H
+
+# include <stdio.h>
+# include <readline/readline.h>
+# include <readline/history.h>
+# include <termios.h>
+# include <sys/stat.h>
+# include <dirent.h>
+# include <stdlib.h>
+# include <fcntl.h>
+# include <unistd.h>
+# include <limits.h>
+# include <signal.h>
+# include <sys/wait.h>
+# include <errno.h>
+
+# define CMD 1
+# define PIPE 2
+# define AND 3
+# define OR 4
+# define REDIR 5
+# define ACCOL 6
+# define APPEND 7
+# define HERE_DOC 8
+# define OPTION 9
+#endif
