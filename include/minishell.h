@@ -31,7 +31,6 @@ typedef struct s_token {
     int type;
     struct s_token *next;
 } t_token;
-//hhhhhhhhhhhhhhhhhhhhh
 
 typedef struct s_shell
 {
@@ -40,8 +39,8 @@ typedef struct s_shell
     char *input;
     int i;
     t_token *token;
+    char *hhh;
 } t_shell;
 
 
-// kjhkhkhhk
 #endif
