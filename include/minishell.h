@@ -24,14 +24,20 @@
 # define APPEND 7
 # define HERE_DOC 8
 # define OPTION 9
+# define WORD 10
+# define EXEV 11 
 
 
-typedef struct s_token {
+typedef struct s_token
+{
     char *token;
     int type;
     struct s_token *next;
 } t_token;
 
+
+// echo hello world
+// echo 
 typedef struct s_shell
 {
     char **args;
@@ -40,5 +46,13 @@ typedef struct s_shell
     t_token *token;
 } t_shell;
 
+typedef struct s_cmd
+{
+    char **args;
+    char *infile;
+    char *outfile;
+    int append;
+    struct s_cmd *next;
+}t_cmd;
 
 #endif

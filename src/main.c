@@ -24,8 +24,8 @@ int main(int ac, char **av, char **env)
             printf("exit\n");
             exit(1);
         }
-        add_history(shell.input);
-        // shell.args = simple_cmd(&shell, env);
+       add_history(shell.input);
+        //shell.args = simple_cmd(&shell, env);
     }
     return 0;
 }
