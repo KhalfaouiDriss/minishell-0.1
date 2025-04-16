@@ -24,4 +24,13 @@
 # define APPEND 7
 # define HERE_DOC 8
 # define OPTION 9
+
+
+typedef struct s_token {
+    char *token;
+    int type;
+    struct s_token *next;
+} t_token;
+
+
 #endif
