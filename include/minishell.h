@@ -2,6 +2,7 @@
 # define MINISHELL_H
 
 # include <stdio.h>
+# include "../lib/libft/libft.h"
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <termios.h>
@@ -40,5 +41,11 @@ typedef struct s_shell
     t_token *token;
 } t_shell;
 
+
+// utils_1.c 
+void	free_split(char **lst);
+void init_shell(t_shell *shell);
+void free_token(t_token *token);
+void free_all(t_shell *shell);
 
 #endif
