@@ -32,5 +32,13 @@ typedef struct s_token {
     struct s_token *next;
 } t_token;
 
+typedef struct s_shell
+{
+    char **args;
+    int arg_count;
+    char *input;
+    t_token *token;
+} t_shell;
+
 
 #endif
