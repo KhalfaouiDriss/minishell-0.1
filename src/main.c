@@ -1,24 +1,31 @@
-#include "minishell.h"
+#include "../include/minishell.h"
 
-nt main(int ac, char **av, char **env)
+
+void init_shell(t_shell *shell)
+{
+    shell->arg_count = 0;
+    shell->args = NULL;
+    shell->input = NULL;
+    shell->token = NULL;
+}
+
+int main(int ac, char **av, char **env)
 {
     t_shell shell;
     
-    init_env(&shell, env);
+    init_shell(&shell);
     
-    signal(SIGINT, get_sig);
-    signal(SIGQUIT, SIG_IGN);
     while (1)
     {
         shell.input = readline("minishell$ ");
         if (shell.input == NULL)
         {
-            free_all(&shell);
+            // free_all(&shell);
             printf("exit\n");
             exit(1);
         }
         add_history(shell.input);
-        shell.args = simple_cmd(&shell, env);
+        // shell.args = simple_cmd(&shell, env);
     }
     return 0;
 }

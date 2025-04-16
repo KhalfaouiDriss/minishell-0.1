@@ -37,9 +37,7 @@ typedef struct s_shell
     char **args;
     int arg_count;
     char *input;
-    int i;
     t_token *token;
-    char *hhh;
 } t_shell;
 
 
