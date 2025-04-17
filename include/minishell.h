@@ -34,7 +34,7 @@
 typedef struct s_error
 {
     char *invalaid_token;
-    int error_type
+    int error_type;
 } t_error;
 
 typedef struct s_token
@@ -77,6 +77,18 @@ void init_shell(t_shell *shell);
 void free_token(t_token *token);
 void free_all(t_shell *shell);
 t_token	*new_node(char *value);
+
+// parse_tokens.
+t_cmd *parse_tokens(t_token *token);
+int count_args(t_token *token);
+char *safe_strdup(const char *s);
+t_cmd *parse_tokens(t_token *token);
+
+
+//utils_2.c
+void error_exit(const char *msg);
+void redirect_input(const char *file);
+void redirect_output(const char *file, int append);
 
 
 #endif
