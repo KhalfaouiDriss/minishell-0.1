@@ -1,88 +1,119 @@
 #include "../../include/minishell.h"
 
-int check_type(t_shell *shell, char *token)
-{
-    if (ft_strncmp(token, "|", 1) == 0)
-        return PIPE;
+// ------------------- Utils -------------------
 
-    if (token[0] == '"' && token[ft_strlen(token) - 1] == '"')
-        return WORD;
-
-    if (token[0] == '\'' && token[ft_strlen(token) - 1] == '\'')
-    {
-        shell->arg_count++;
-        return WORD;
-    }
-    return WORD;
+int is_special(char c) {
+    return (c == '|' || c == '>' || c == '<');
 }
 
-void get_the_token(t_shell *shell, char *token)
-{
-    t_token *new = new_node(token);
-    t_token *tmp;
+char *substr(const char *src, int start, int end) {
+    char *str = malloc(end - start + 1);
+    if (!str) return NULL;
+    memcpy(str, &src[start], end - start);
+    str[end - start] = '\0';
+    return str;
+}
 
-    new->type = check_type(shell, token);
+t_token *new_token(char *val, int type) {
+    t_token *t = malloc(sizeof(t_token));
+    if (!t) return NULL;
+    t->value = strdup(val);
+    t->type = type;
+    t->next = NULL;
+    t->error = NULL;
+    return t;
+}
 
-    if (!shell->token)
-        shell->token = new;
-    else
-    {
-        tmp = shell->token;
+void add_token(t_token **head, t_token *new) {
+    if (!*head)
+        *head = new;
+    else {
+        t_token *tmp = *head;
         while (tmp->next)
             tmp = tmp->next;
         tmp->next = new;
     }
 }
 
-void fint_the_soc_cott(char *input,char c, int *i)
-{
-    while (input[*i])
-    {
-        if(input[*i] == c)
-            return;
-        i++;
-    }
-    *i = 999999;
-}
+// ------------------- Main Lexer Function -------------------
 
-void set_error(t_shell *shell)
-{
-    int i;
-
-    i = 0;
-    while (shell->input[i] != ' ')
-    {
-        i++;
-    }
-    ft_strlcpy(shell->token->error->invalaid_token, shell->input, i);
-}
-
-char **ft_input_split(t_shell *shell)
-{
-    int i;
-
-    i = 0;
-    while (shell->input[i])
-    {
-        if(shell->input[i] == '"' || shell->input[i] == '\'')
-            fint_the_soc_cott(shell->input, shell->input[i], &i); // for find the 2 cott
-        if(i == 999999)
-        {
-            set_error(shell);
-            shell->token->error->error_type = NOT_FOUND;
-            return NULL;
-        }
-    }
-}
-
-void ft_tokenized(t_shell *shell)
-{
+t_token *lexer_split_to_tokens(const char *input) {
+    t_token *head = NULL;
     int i = 0;
 
-    shell->args = ft_input_split(shell);
-    while (shell->args[i])
-    {
-        get_the_token(shell, shell->args[i]);
-        i++;
+    while (input[i]) {
+        while (isspace(input[i]))
+            i++;
+
+        if (!input[i])
+            break;
+
+        // Handle quoted strings or complex words
+        if (input[i] == '\'' || input[i] == '"') {
+            char quote = input[i++];
+            int start = i;
+            while (input[i] && input[i] != quote)
+                i++;
+            char *val = substr(input, start, i);
+            add_token(&head, new_token(val, WORD));
+            free(val);
+            if (input[i]) i++;
+        }
+        // Handle redirection operators (>, >>, <, <<)
+        else if (is_special(input[i])) {
+            int start = i;
+            if ((input[i] == '<' || input[i] == '>') && input[i] == input[i+1])
+                i += 2;
+            else
+                i += 1;
+
+            char *val = substr(input, start, i);
+            int type = (strcmp(val, "|") == 0) ? PIPE :
+                       (strcmp(val, "<") == 0) ? REDIR_IN :
+                       (strcmp(val, ">") == 0) ? REDIR_OUT :
+                       (strcmp(val, ">>") == 0) ? REDIR_APPEND :
+                       (strcmp(val, "<<") == 0) ? REDIR_HEREDOC : ERROR;
+            add_token(&head, new_token(val, type));
+            free(val);
+        }
+        // Handle normal words (commands, options)
+        else {
+            int start = i;
+            int in_quote = 0;
+            char quote = 0;
+
+            while (input[i]) {
+                if (!in_quote && (input[i] == '\'' || input[i] == '"')) {
+                    in_quote = 1;
+                    quote = input[i++];
+                    while (input[i] && input[i] != quote)
+                        i++;
+                    if (input[i]) i++; // skip closing quote
+                    in_quote = 0;
+                } else if (!in_quote && (isspace(input[i]) || is_special(input[i]))) {
+                    break;
+                } else {
+                    i++;
+                }
+            }
+
+            char *val = substr(input, start, i);
+            int type = WORD;
+            if (val[0] == '-' && strlen(val) > 1)
+                type = OPTION;
+            add_token(&head, new_token(val, type));
+            free(val);
+        }
+    }
+
+    return head;
+}
+
+// ------------------- Debug -------------------
+
+void print_tokens(t_token *head) {
+    while (head) {
+        printf("Token: %-15s | Type: %d\n", head->value, head->type);
+        head = head->next;
     }
 }
