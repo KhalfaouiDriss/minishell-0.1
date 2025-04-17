@@ -31,6 +31,12 @@
 # define NOT_FOUND     11
 # define INVALID_DIR   12
 
+typedef struct s_error
+{
+    char *invalaid_token;
+    int error_type
+} t_error;
+
 typedef struct s_token
 {
     char *value;
@@ -48,11 +54,7 @@ typedef struct s_cmd {
     struct s_cmd *next; // next in pipeline
 } t_cmd;
 
-typedef struct s_error
-{
-    char *invalaid_token;
-    int error_type
-} t_error;
+
 
 
 typedef struct s_shell

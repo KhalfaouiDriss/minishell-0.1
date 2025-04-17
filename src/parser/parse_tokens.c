@@ -1,6 +1,7 @@
-#include "minishell.h"
+#include "../../include/minishell.h"
 
-int count_args(t_token *token) {
+int count_args(t_token *token)
+{
     int count = 0;
     while (token && token->type != PIPE) {
         if (token->type == WORD)
@@ -12,20 +13,25 @@ int count_args(t_token *token) {
     return count;
 }
 
+char *safe_strdup(const char *s) {
+    if (!s) return NULL;
+    return ft_strdup(s);
+}
+
+
 t_cmd *parse_tokens(t_token *token) {
     t_cmd *head = NULL;
     t_cmd *last = NULL;
 
     while (token) {
-        t_cmd *cmd = calloc(1, sizeof(t_cmd));
+        t_cmd *cmd = ft_calloc(1, sizeof(t_cmd));
         int argc = count_args(token);
-        cmd->args = calloc(argc + 1, sizeof(char*));
+        cmd->args = ft_calloc(argc + 1, sizeof(char*));
 
         int i = 0;
         while (token && token->type != PIPE) {
-            if (token->type == WORD) {
+            if (token->type == WORD)
                 cmd->args[i++] = safe_strdup(token->value);
-            }
             else if (token->type == REDIR_IN && token->next) {
                 cmd->infile = safe_strdup(token->next->value);
                 cmd->heredoc = 0;
