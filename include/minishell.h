@@ -27,21 +27,16 @@
 # define OPTION 9
 # define WORD 10
 # define EXEV 11 
+# define NOT_FOUND 12 
+# define INVALAID_DIR 13 
 
 typedef struct s_token
 {
     char *value;
     int type;
     struct s_token *next;
+    t_error *error;
 } t_token;
-
-typedef struct s_shell
-{
-    char **args;
-    int arg_count;
-    char *input;
-    t_token *token;
-} t_shell;
 
 typedef struct s_cmd
 {
@@ -51,6 +46,22 @@ typedef struct s_cmd
     int append;
     struct s_cmd *next;
 }t_cmd;
+
+typedef struct s_error
+{
+    char *invalaid_token;
+    int error_type
+} t_error;
+
+
+typedef struct s_shell
+{
+    char **args;
+    int arg_count;
+    char *input;
+    t_token *token;
+} t_shell;
+
 
 // tokenized 
 int check_type(char *token);
