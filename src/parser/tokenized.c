@@ -34,15 +34,55 @@ void get_the_token(t_shell *shell, char *token)
     }
 }
 
+void fint_the_soc_cott(char *input,char c, int *i)
+{
+    while (input[*i])
+    {
+        if(input[*i] == c)
+            return;
+        i++;
+    }
+    *i = 999999;
+}
+
+void set_error(t_shell *shell)
+{
+    int i;
+
+    i = 0;
+    while (shell->input[i] != ' ')
+    {
+        i++;
+    }
+    ft_strlcpy(shell->token->error->invalaid_token, shell->input, i);
+}
+
+char **ft_input_split(t_shell *shell)
+{
+    int i;
+
+    i = 0;
+    while (shell->input[i])
+    {
+        if(shell->input[i] == '"' || shell->input[i] == '\'')
+            fint_the_soc_cott(shell->input, shell->input[i], &i); // for find the 2 cott
+        if(i == 999999)
+        {
+            set_error(shell);
+            shell->token->error->error_type = NOT_FOUND;
+            return NULL;
+        }
+    }
+}
+
 void ft_tokenized(t_shell *shell)
 {
     int i = 0;
 
-    shell->args = ft_split(shell->input, ' ');
+    shell->args = ft_input_split(shell);
     while (shell->args[i])
     {
         get_the_token(shell, shell->args[i]);
-
         i++;
     }
 }

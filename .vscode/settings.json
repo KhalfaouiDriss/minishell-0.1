@@ -3,5 +3,6 @@
         "types.h": "c",
         "readline.h": "c",
         "minishell.h": "c"
-    }
+    },
+    "makefile.configureOnOpen": true
 }
