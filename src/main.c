@@ -14,7 +14,8 @@ int main(int ac, char **av, char **env)
             printf("exit\n");
             exit(1);
         }
-        ft_tokenized(&shell);
+        shell.token = lexer_split_to_tokens(shell.input);
+        print_tokens(shell.token);
         add_history(shell.input);
     }
     return 0;
