@@ -132,14 +132,27 @@ void	handle_word_token(const char *input, int *i, t_token **head)
 {
 	int		start;
 	char	*val;
+	int type;
 
 	start = *i;
-	while (input[*i] && input[*i] != ' ' && !is_special(input[*i]))
+	type = WORD;
+	if(input[*i] == '-')
+	{
+		if (!handle_option_token(input, &i, &head))
+			return ;
+	}
+		
+	while (input[*i] && input[*i] != ' ' && !is_special(input[*i])
+		&& input[*i] != '"' && input[*i] != '\'') // نوقف عند quotes
 		(*i)++;
-	val = ft_substr(input, start, *i - start);
-	add_token(head, new_token(val, WORD, 0));
-	free(val);
+	if (*i > start)
+	{
+		val = ft_substr(input, start, *i - start);
+		add_token(head, new_token(val, WORD, 0));
+		free(val);
+	}
 }
+
 
 // --- Main Lexer Split Function ---
 t_token	*lexer_split_to_tokens(const char *input)
