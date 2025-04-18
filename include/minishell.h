@@ -30,6 +30,7 @@
 # define EXEC          10
 # define NOT_FOUND     11
 # define INVALID_DIR   12
+# define QUETS_INVA    13
 
 typedef struct s_error
 {
@@ -42,7 +43,7 @@ typedef struct s_token
     char *value;
     int type;
     struct s_token *next;
-    t_error *error;
+    int error;
 } t_token;
 
 typedef struct s_cmd {
@@ -67,11 +68,16 @@ typedef struct s_shell
 
 
 // tokenized 
-int check_type(char *token);
-void get_the_token(t_shell *shell, char *token);
-void ft_tokenized(t_shell *shell);
+t_token *lexer_split_to_tokens(const char *input);
 
-// utils_1.c 
+// tokenized Utils
+void add_token(t_token **head, t_token *new);
+void print_tokens(t_token *head);
+t_token *new_token(char *val, int type, int error_type);
+int is_special(char c);
+void add_token(t_token **head, t_token *new);
+
+// utils_1.c
 void	free_split(char **lst);
 void init_shell(t_shell *shell);
 void free_token(t_token *token);
@@ -89,6 +95,5 @@ t_cmd *parse_tokens(t_token *token);
 void error_exit(const char *msg);
 void redirect_input(const char *file);
 void redirect_output(const char *file, int append);
-
 
 #endif
