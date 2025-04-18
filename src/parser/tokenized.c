@@ -7,9 +7,12 @@ int	handle_quoted_token(const char *input, int *i, t_token **head)
 	int		start;
 	int		end_quote;
 	char	*core;
+	int		type = WORD;
 
 	quote = input[(*i)++];
 	start = *i;
+
+	// أبحث عن نهاية الـ quote
 	while (input[*i] && input[*i] != quote)
 		(*i)++;
 	if (!input[*i])
@@ -20,15 +23,32 @@ int	handle_quoted_token(const char *input, int *i, t_token **head)
 		return (0);
 	}
 	end_quote = *i;
-	(*i)++; // skip the closing quote
+	(*i)++; // skip closing quote
 
 	core = ft_substr(input, start, end_quote - start);
 
-	// ✅ add token even if it's empty "" → used in echo
-	add_token(head, new_token(core, WORD, 0));
-	free(core);
+	// 🧠 تحليل ما بعد الـ quotes
+	if (input[*i] && input[*i] != ' ' && !is_special(input[*i]) && input[*i] != '"' && input[*i] != '\'')
+	{
+		int tmp = *i;
+		while (input[tmp] && !is_special(input[tmp]) && input[tmp] != ' ' && input[tmp] != '"' && input[tmp] != '\'')
+			tmp++;
 
-	// ⚠️ Do NOT consume next word (like "") here
+		char *suffix = ft_substr(input, *i, tmp - *i);
+		char *joined = ft_strjoin(core, suffix);
+		free(core);
+		core = joined;
+		*i = tmp;
+	}
+
+	// 🏷️ تحديد نوع الـ token
+	if (core[0] == '-' && ft_strlen(core) > 1 && core[1] != '-')
+		add_token(head, new_token(core, OPTION, 0));
+	else if(core[0] == '$')
+		handle_variable_token(core, i, head);
+	else
+		add_token(head, new_token(core, WORD, 0));
+	free(core);
 	return (1);
 }
 
@@ -41,7 +61,6 @@ void	handle_special_token(const char *input, int *i, t_token **head)
 	char	*val;
 
 	start = *i;
-
 	// Detect double redirections (<< or >>)
 	if ((input[*i] == '<' || input[*i] == '>') && input[*i + 1] == input[*i])
 		*i += 2;
@@ -54,11 +73,9 @@ void	handle_special_token(const char *input, int *i, t_token **head)
 		val = ft_substr(input, start, *i - start);
 		add_token(head, new_token(val, ERROR, 0));
 		free(val);
-		return;
+		return ;
 	}
-
 	val = ft_substr(input, start, *i - start);
-
 	if (ft_strncmp(val, "|", 1) == 0)
 		type = PIPE;
 	else if (ft_strncmp(val, "<", 1) == 0)
@@ -71,11 +88,9 @@ void	handle_special_token(const char *input, int *i, t_token **head)
 		type = REDIR_HEREDOC;
 	else
 		type = ERROR;
-
 	add_token(head, new_token(val, type, 0));
 	free(val);
 }
-
 
 // --- Option Handling Helper ---
 int	handle_option_token(const char *input, int *i, t_token **head)
@@ -98,11 +113,11 @@ int	handle_option_token(const char *input, int *i, t_token **head)
 		if (!input[*i])
 		{
 			val = ft_substr(input, start, *i);
-			add_token(head, new_token(val, ERROR, 0));
+			add_token(head, new_token(val, ERROR, QUETS_INVA));
 			free(val);
 			return (0);
 		}
-		content = ft_substr(input, quoted_start, *i);
+		content = ft_substr(input, quoted_start, *i - quoted_start);
 		val = malloc(ft_strlen(content) + 2);
 		if (val)
 		{
@@ -132,7 +147,7 @@ void	handle_word_token(const char *input, int *i, t_token **head)
 {
 	int		start;
 	char	*val;
-	int type;
+	int		type;
 
 	start = *i;
 	type = WORD;
@@ -146,7 +161,6 @@ void	handle_word_token(const char *input, int *i, t_token **head)
 		free(val);
 	}
 }
-
 
 // --- Main Lexer Split Function ---
 t_token	*lexer_split_to_tokens(const char *input)
@@ -174,6 +188,8 @@ t_token	*lexer_split_to_tokens(const char *input)
 			if (!handle_option_token(input, &i, &head))
 				break ;
 		}
+		else if(input[i] == '$')
+			handle_variable_token(input, &i, &head);
 		else
 			handle_word_token(input, &i, &head);
 	}
