@@ -25,6 +25,7 @@
 # define REDIR_APPEND  5   // >>
 # define REDIR_HEREDOC 6   // <<
 # define OPTION        7   // e.g. -l or --help (optional: classify separately)
+# define VARIABLE      8   // $var
 
 // Execution Result Types (not for parsing, but post-exec status)
 # define EXEC          10
@@ -69,6 +70,7 @@ typedef struct s_shell
 
 // tokenized 
 t_token *lexer_split_to_tokens(const char *input);
+void handle_variable_token(const char *input, int *i, t_token **head);
 
 // tokenized Utils
 void add_token(t_token **head, t_token *new);
