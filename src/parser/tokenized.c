@@ -136,12 +136,6 @@ void	handle_word_token(const char *input, int *i, t_token **head)
 
 	start = *i;
 	type = WORD;
-	if(input[*i] == '-')
-	{
-		if (!handle_option_token(input, &i, &head))
-			return ;
-	}
-		
 	while (input[*i] && input[*i] != ' ' && !is_special(input[*i])
 		&& input[*i] != '"' && input[*i] != '\'') // نوقف عند quotes
 		(*i)++;
