@@ -12,7 +12,7 @@ t_token *new_token(char *val, int type, int error_type)
         return NULL;
     
     t->error = 0;
-    if(!type)
+    if(type)
         t->error = error_type;
     t->value = strdup(val);
     t->type = type;
@@ -82,7 +82,7 @@ void print_tokens(t_token *head)
     while (head)
     {
         printf("Token: %s | Type: %d ", head->value, head->type);
-        if(head->type == 0)
+        if(!head->type)
             printf("| error type %d", head->error);
         printf("\n");
         head = head->next;

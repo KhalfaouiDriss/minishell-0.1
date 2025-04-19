@@ -36,3 +36,16 @@ void exec_command(t_cmd *cmd, char **envp)
     perror("exec failed");
     exit(EXIT_FAILURE);
 }
+
+int is_all_space(const char *str)
+{
+    int i = 0;
+    while (str[i])
+    {
+        if (str[i] != ' ' && str[i] != '\t')
+            return 0;
+        i++;
+    }
+    return 1;
+}
+
