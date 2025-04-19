@@ -32,6 +32,7 @@
 # define NOT_FOUND     11
 # define INVALID_DIR   12
 # define QUETS_INVA    13
+# define OPTION_INVA   14
 
 typedef struct s_error
 {
@@ -71,6 +72,7 @@ typedef struct s_shell
 // tokenized 
 t_token *lexer_split_to_tokens(const char *input);
 void handle_variable_token(const char *input, int *i, t_token **head);
+int	handle_option_token(const char *input, int *i, t_token **head);
 
 // tokenized Utils
 void add_token(t_token **head, t_token *new);
@@ -97,5 +99,6 @@ t_cmd *parse_tokens(t_token *token);
 void error_exit(const char *msg);
 void redirect_input(const char *file);
 void redirect_output(const char *file, int append);
+int is_all_space(const char *str);
 
 #endif
