@@ -44,6 +44,7 @@ void exec_command(t_cmd *cmd, char **envp)
     exit(EXIT_FAILURE);
 }
 
+<<<<<<< HEAD
 char *ft_strcat(char *dest, const char *src)
 {
     char *ptr = dest;
@@ -78,3 +79,17 @@ char *ft_strcpy(char *dest, const char *src)
 
     return dest;
 }
+=======
+int is_all_space(const char *str)
+{
+    int i = 0;
+    while (str[i])
+    {
+        if (str[i] != ' ' && str[i] != '\t')
+            return 0;
+        i++;
+    }
+    return 1;
+}
+
+>>>>>>> c551993ea866309c300f3181ee9fefb617b3e879
