@@ -1,22 +1,34 @@
 #include "../include/minishell.h"
 
-int main(int ac, char **av, char **env)
+int main(int ac, char **av, char **envp)
 {
     t_shell shell;
+    int exit_status = 0;
+    
+    (void)ac;
+    (void)av;
     
     init_shell(&shell);
+    
     while (1)
     {
         shell.input = readline("minishell$ ");
-        if (shell.input == NULL)
-        {
-            free_all(&shell);
-            printf("exit\n");
-            exit(1);
-        }
+        if (!shell.input)
+            break;
+        
+        if (shell.input[0] != '\0')
+            add_history(shell.input);
+            
         shell.token = lexer_split_to_tokens(shell.input);
-        print_tokens(shell.token);
-        add_history(shell.input);
+        t_cmd *cmd_list = parse_tokens(shell.token);
+        if (cmd_list)
+            exit_status = execute_pipeline(cmd_list, envp);
+        
+        free_tokens(shell.token);
+        free_cmds(cmd_list);
+        free(shell.input);
     }
-    return 0;
+    
+    free_all(&shell);
+    return exit_status;
 }
