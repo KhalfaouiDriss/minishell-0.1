@@ -94,20 +94,15 @@ t_cmd *parse_tokens(t_token *token);
 int count_args(t_token *token);
 char *safe_strdup(const char *s);
 t_cmd *parse_tokens(t_token *token);
+void free_cmds(t_cmd *cmds);
 
 
 //utils_2.c
-<<<<<<< HEAD
 void error_exit(char *msg);
 void redirect_input(char *file);
 void redirect_output(char *file, int append);
-char *ft_strcat(char *dest, const char *src);
-
-=======
-void error_exit(const char *msg);
-void redirect_input(const char *file);
-void redirect_output(const char *file, int append);
 int is_all_space(const char *str);
->>>>>>> c551993ea866309c300f3181ee9fefb617b3e879
 
+// 
+int execute_pipeline(t_cmd *cmd_list, char **envp);
 #endif
