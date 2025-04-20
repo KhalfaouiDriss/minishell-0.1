@@ -32,9 +32,9 @@ char *find_command_path(char *cmd, char **envp)
         full_path = malloc(strlen(paths[i]) + ft_strlen(cmd) + 2);
         if (!full_path)
             return NULL;
-        ft_strcpy(full_path, paths[i]);
-        ft_strcat(full_path, "/");
-        ft_strcat(full_path, cmd);
+        strcpy(full_path, paths[i]);
+        strcat(full_path, "/");
+        strcat(full_path, cmd);
         if (access(full_path, X_OK) == 0) {
             free_split(paths);
             return full_path;
@@ -90,7 +90,7 @@ int execute_pipeline(t_cmd *cmd_list, char **envp)
 
             char *path = find_command_path(current->args[0], envp);
             if (!path) {
-                write(2, "minishell: command not found: ", 30);
+                write(2, "minishell: command not found \n", 31);
                 write(2, current->args[0], strlen(current->args[0]));
                 write(2, "\n", 1);
                 exit(1);
