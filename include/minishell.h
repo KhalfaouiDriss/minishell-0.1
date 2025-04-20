@@ -73,6 +73,7 @@ typedef struct s_shell
 t_token *lexer_split_to_tokens(const char *input);
 void handle_variable_token(const char *input, int *i, t_token **head);
 int	handle_option_token(const char *input, int *i, t_token **head);
+void	handle_special_token(const char *input, int *i, t_token **head);
 
 // tokenized Utils
 void add_token(t_token **head, t_token *new);
