@@ -235,25 +235,26 @@ void correct_lexer(t_token *head)
 }
 
 
-int is_quotes_correct(const char *s)
+int is_quots_correct(const char *s)
 {
-	int i = 0;
-	int single_quotes = 0;
-	int double_quotes = 0;
+	int i;
+	int quots;
+	int d_quots;
 
+	i = 0;
+	quots = 0;
+	d_quots = 0;
 	while (s[i])
 	{
-		if (s[i] == '"')
-			double_quotes++;
-		else if (s[i] == '\'')
-			single_quotes++;
+		if(s[i] == '"')
+			d_quots++;
+		else if(s[i] == '\'')
+			quots++;
 		i++;
 	}
 
-	// إذا عددهم فردي => خطأ
-	if (double_quotes % 2 != 0 || single_quotes % 2 != 0)
+	if(d_quots % 2 != 0 || quots % 2 != 0)
 		return 0;
-
 	return 1;
 }
 
@@ -265,7 +266,7 @@ t_token	*lexer_split_to_tokens(const char *input)
 
 	head = NULL;
 	i = 0;
-	if(!is_quotes_correct(input))
+	if(!is_quots_correct(input))
 		add_token(&head, new_token("NULL", 0, QUETS_INVA));
 	else
 	{
