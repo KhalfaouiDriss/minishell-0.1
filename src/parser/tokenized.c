@@ -235,6 +235,28 @@ void correct_lexer(t_token *head)
 }
 
 
+int is_quotes_correct(const char *s)
+{
+	int i = 0;
+	int single_quotes = 0;
+	int double_quotes = 0;
+
+	while (s[i])
+	{
+		if (s[i] == '"')
+			double_quotes++;
+		else if (s[i] == '\'')
+			single_quotes++;
+		i++;
+	}
+
+	// إذا عددهم فردي => خطأ
+	if (double_quotes % 2 != 0 || single_quotes % 2 != 0)
+		return 0;
+
+	return 1;
+}
+
 // --- Main Lexer Split Function ---
 t_token	*lexer_split_to_tokens(const char *input)
 {
@@ -243,28 +265,33 @@ t_token	*lexer_split_to_tokens(const char *input)
 
 	head = NULL;
 	i = 0;
-	while (input[i])
+	if(!is_quotes_correct(input))
+		add_token(&head, new_token("NULL", 0, QUETS_INVA));
+	else
 	{
-		while (input[i] == ' ')
-			i++;
-		if (!input[i])
-			break ;
-		if (input[i] == '\'' || input[i] == '"')
+		while (input[i])
 		{
-			if (!handle_quoted_token(input, &i, &head))
+			while (input[i] == ' ')
+				i++;
+			if (!input[i])
 				break ;
+			if (input[i] == '\'' || input[i] == '"')
+			{
+				if (!handle_quoted_token(input, &i, &head))
+					break ;
+			}
+			else if (is_special(input[i]))
+				handle_special_token(input, &i, &head);
+			else if (input[i] == '-' && input[i + 1])
+			{
+				if (!handle_option_token(input, &i, &head))
+					break ;
+			}
+			else if (input[i] == '$')
+				handle_variable_token(input, &i, &head);
+			else
+				handle_word_token(input, &i, &head);
 		}
-		else if (is_special(input[i]))
-			handle_special_token(input, &i, &head);
-		else if (input[i] == '-' && input[i + 1])
-		{
-			if (!handle_option_token(input, &i, &head))
-				break ;
-		}
-		else if (input[i] == '$')
-			handle_variable_token(input, &i, &head);
-		else
-			handle_word_token(input, &i, &head);
 	}
 	correct_lexer(head);
 	return (head);
