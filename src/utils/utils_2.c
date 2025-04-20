@@ -1,27 +1,34 @@
 #include "../../include/minishell.h"
 
-// دوال بسيطة لتقليل الأخطاء
-void error_exit(const char *msg)
+
+void error_exit(char *msg)
 {
     perror(msg);
-    exit(EXIT_FAILURE);
+    exit(1);
 }
 
-void redirect_input(const char *file) 
+void redirect_input(char *file) 
 {
     int fd = open(file, O_RDONLY);
     if (fd < 0)
         error_exit("open infile");
-    dup2(fd, STDIN_FILENO);
+    dup2(fd, 0);
     close(fd);
 }
 
-void redirect_output(const char *file, int append) 
+void redirect_output(char *file, int append) 
 {
-    int fd = open(file, O_WRONLY | O_CREAT | (append ? O_APPEND : O_TRUNC), 0644);
+    int fd;
+
+    if (append)
+        fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+    else
+        fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+
     if (fd < 0)
         error_exit("open outfile");
-    dup2(fd, STDOUT_FILENO);
+
+    dup2(fd, 1);
     close(fd);
 }
 
@@ -35,4 +42,39 @@ void exec_command(t_cmd *cmd, char **envp)
     execvp(cmd->args[0], cmd->args);
     perror("exec failed");
     exit(EXIT_FAILURE);
+}
+
+char *ft_strcat(char *dest, const char *src)
+{
+    char *ptr = dest;
+
+    while (*ptr != '\0')
+        ptr++;
+
+    while (*src != '\0')
+    {
+        *ptr = *src;
+        ptr++;
+        src++;
+    }
+
+    *ptr = '\0';
+
+    return dest;
+}
+
+char *ft_strcpy(char *dest, const char *src)
+{
+    char *ptr = dest;
+
+    while (*src != '\0')
+    {
+        *ptr = *src;
+        ptr++;
+        src++;
+    }
+
+    *ptr = '\0';
+
+    return dest;
 }

@@ -94,8 +94,10 @@ t_cmd *parse_tokens(t_token *token);
 
 
 //utils_2.c
-void error_exit(const char *msg);
-void redirect_input(const char *file);
-void redirect_output(const char *file, int append);
+void error_exit(char *msg);
+void redirect_input(char *file);
+void redirect_output(char *file, int append);
+char *ft_strcat(char *dest, const char *src);
+
 
 #endif

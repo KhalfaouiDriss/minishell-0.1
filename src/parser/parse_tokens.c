@@ -4,7 +4,7 @@ int count_args(t_token *token)
 {
     int count = 0;
     while (token && token->type != PIPE) {
-        if (token->type == WORD)
+        if (token->type == WORD || token->type == OPTION)  // Add OPTION here
             count++;
         else if (token->type >= REDIR_IN && token->type <= REDIR_HEREDOC)
             token = token->next;
@@ -80,24 +80,28 @@ t_cmd *parse_tokens(t_token *token)
 
         int i = 0;
         while (token && token->type != PIPE) {
-            if (token->type == WORD)
+            if (token->type == WORD || token->type == OPTION)
                 cmd->args[i++] = safe_strdup(token->value);
-            else if (token->type == REDIR_IN && token->next) {
+            else if (token->type == REDIR_IN && token->next)
+            {
                 cmd->infile = safe_strdup(token->next->value);
                 cmd->heredoc = 0;
                 token = token->next;
             }
-            else if (token->type == REDIR_HEREDOC && token->next) {
+            else if (token->type == REDIR_HEREDOC && token->next)
+            {
                 cmd->infile = safe_strdup(token->next->value);
                 cmd->heredoc = 1;
                 token = token->next;
             }
-            else if (token->type == REDIR_OUT && token->next) {
+            else if (token->type == REDIR_OUT && token->next)
+            {
                 cmd->outfile = safe_strdup(token->next->value);
                 cmd->append = 0;
                 token = token->next;
             }
-            else if (token->type == REDIR_APPEND && token->next) {
+            else if (token->type == REDIR_APPEND && token->next)
+            {
                 cmd->outfile = safe_strdup(token->next->value);
                 cmd->append = 1;
                 token = token->next;
