@@ -1,6 +1,17 @@
 #include "../include/minishell.h"
 
-int main(int ac, char av, char **envp)
+void get_sig(int sig)
+{
+    if (sig == SIGINT)
+    {
+        write(1, "\n", 1); 
+        rl_on_new_line();
+        rl_replace_line("", 0);
+        rl_redisplay();
+    }
+}
+
+int main(int ac, char **av, char **envp)
 {
     t_shell shell;
     int exit_status = 0;
@@ -9,15 +20,37 @@ int main(int ac, char av, char **envp)
     (void)av;
 
     init_shell(&shell);
+    signal(SIGINT, get_sig);
+    signal(SIGQUIT, SIG_IGN);
+    char *pwd = getcwd(NULL, 0);
+    if (!pwd)
+    {
+        perror("getcwd");
+        exit(1);
+    }
+    
+    const char *prefix = "\033[0;32mminishell-1337-rabat \033[0m";
+    int size = ft_strlen(prefix) + 4;
 
+    char *mini = malloc(size);
+
+    ft_strlcpy(mini, prefix, size);
+    ft_strlcat(mini, "\n$ ", size);
     while (1)
     {
-        shell.input = readline("minishell$ ");
+        shell.input = readline(mini);
         if (!shell.input)
             break;
+        if (shell.input == NULL)
+        {
+            free_all(&shell);
+            printf("exit\n");
+            exit(1);
+        }
 
         if (shell.input[0] != '\0')
             add_history(shell.input);
+        
         shell.token = lexer_split_to_tokens(shell.input);
         t_cmd *cmd_list = parse_tokens(shell.token);
         if (cmd_list)
@@ -29,52 +62,5 @@ int main(int ac, char av, char **envp)
     }
 
     // free_all(&shell);
-    return exit_status;
+    return 0;
 }
-
-// int main(int ac, char **av, char **env)
-// {
-//     t_shell shell;
-
-//     (void)ac;
-//     (void)av;
-//     (void)env;
-
-//     init_shell(&shell);
-
-//     while (1)
-//     {
-//         shell.input = readline("minishell$/~ ");
-//         if (!shell.input)
-//         {
-//             printf("exit\n");
-//             free_all(&shell);
-//             exit(0);
-//         }
-
-//         if (shell.input[0] == '\0' || is_all_space(shell.input))
-//         {
-//             free(shell.input);
-//             continue;
-//         }
-
-//         shell.token = lexer_split_to_tokens(shell.input);
-//         if (!shell.token)
-//         {
-//             // fprintf(stderr, "Lexer Error: Invalid input or quotes not closed.\n");
-//             free(shell.input);
-//             continue;
-//         }
-
-//         print_tokens(shell.token); // فقط للـ Debug حالياً
-//         add_history(shell.input);
-
-//         // هنا مستقبلاً: parse → exec → cleanup
-
-//         free_token(shell.token);
-//         shell.token = NULL;
-//         free(shell.input);
-//         shell.input = NULL;
-//     }
-//     return 0;
-// }
