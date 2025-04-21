@@ -63,30 +63,3 @@ char *ft_strcat(char *dest, const char *src)
     return dest;
 }
 
-char *ft_strcpy(char *dest, const char *src)
-{
-    char *ptr = dest;
-
-    while (*src != '\0')
-    {
-        *ptr = *src;
-        ptr++;
-        src++;
-    }
-
-    *ptr = '\0';
-
-    return dest;
-}
-int is_all_space(const char *str)
-{
-    int i = 0;
-    while (str[i])
-    {
-        if (str[i] != ' ' && str[i] != '\t')
-            return 0;
-        i++;
-    }
-    return 1;
-}
-

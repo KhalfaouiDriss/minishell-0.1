@@ -15,8 +15,10 @@ char *find_command_path(char *cmd, char **envp)
     }
 
     i = 0;
-    while (envp[i]) {
-        if (ft_strncmp(envp[i], "PATH=", 5) == 0) {
+    while (envp[i])
+    {
+        if (ft_strncmp(envp[i], "PATH=", 5) == 0)
+        {
             paths = ft_split(envp[i] + 5, ':');
             break;
         }
@@ -29,19 +31,17 @@ char *find_command_path(char *cmd, char **envp)
     i = 0;
     while (paths[i])
     {
-        full_path = malloc(strlen(paths[i]) + ft_strlen(cmd) + 2);
+        int total_size = ft_strlen(paths[i]) + ft_strlen(cmd) + 2;
+        full_path = malloc(total_size);
         if (!full_path)
             return NULL;
-            int total_size = strlen(paths[i]) + strlen(cmd) + 2;
-            full_path = malloc(total_size);
-            if (!full_path)
-                return NULL;
             
-            ft_strlcpy(full_path, paths[i], total_size);
-            ft_strlcat(full_path, "/", total_size);
-            ft_strlcat(full_path, cmd, total_size);
+        ft_strlcpy(full_path, paths[i], ft_strlen(paths[i]) + 1);
+        ft_strlcat(full_path, "/", ft_strlen(paths[i]) + 2);
+        ft_strlcat(full_path, cmd, total_size);
             
-        if (access(full_path, X_OK) == 0) {
+        if (access(full_path, X_OK) == 0)
+        {
             free_split(paths);
             return full_path;
         }
@@ -66,7 +66,7 @@ int execute_pipeline(t_cmd *cmd_list, char **envp)
     int exit_status = 0;
     int fd[2];
     int prev_pipe = -1;
-    pid_t pid;
+    int pid;
     t_cmd *current = cmd_list;
 
     while (current)
@@ -80,25 +80,25 @@ int execute_pipeline(t_cmd *cmd_list, char **envp)
 
         if (pid == 0)
         {
+            if (current->next)
+                dup2(fd[1], 1);
+
             if (prev_pipe != -1)
             {
                 dup2(prev_pipe, 0);
                 close(prev_pipe);
             }
-
-            if (current->next)
-                dup2(fd[1], 1);
-
             if (current->infile)
                 redirect_input(current->infile);
             if (current->outfile)
                 redirect_output(current->outfile, current->append);
 
             char *path = find_command_path(current->args[0], envp);
-            if (!path) {
-                write(2, "minishell: command not found \n", 31);
-                write(2, current->args[0], strlen(current->args[0]));
-                write(2, "\n", 1);
+            if (!path)
+            {
+                write(2, current->args[0], ft_strlen(current->args[0]));
+                write(2, ": ", 2);
+                write(2, "command not found \n", 20);
                 exit(1);
             }
 
@@ -120,9 +120,11 @@ int execute_pipeline(t_cmd *cmd_list, char **envp)
 
     int status;
 
-while (wait(&status) > 0)
-    exit_status = status >> 8;
-
-return exit_status;
+    while ((wait(&status)) > 0)
+    {
+        if (WIFEXITED(status))
+            exit_status = WEXITSTATUS(status);
+    }
+    return exit_status;
 
 }
