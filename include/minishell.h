@@ -105,4 +105,5 @@ int is_all_space(const char *str);
 
 // 
 int execute_pipeline(t_cmd *cmd_list, char **envp);
+int check_if_is_builtin(char *s);
 #endif
