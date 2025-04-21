@@ -71,6 +71,9 @@ int execute_pipeline(t_cmd *cmd_list, char **envp)
 
     while (current)
     {
+        if(check_if_is_builtin(current->args[0]))
+                
+
         if (current->next && pipe(fd) < 0)
             error_exit2("pipe error");
 

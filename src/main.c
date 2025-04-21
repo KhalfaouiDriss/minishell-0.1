@@ -29,13 +29,12 @@ int main(int ac, char **av, char **envp)
         exit(1);
     }
     
-    const char *prefix = "\033[0;32mminishell-1337-rabat \033[0m";
-    int size = ft_strlen(prefix) + 3;
+    const char *prefix = "\033[0;32mminishell-1337-rabat \n$ \033[0m";
+    int size = ft_strlen(prefix) + 4;
 
     char *mini = malloc(size);
 
     ft_strlcpy(mini, prefix, size);
-    ft_strlcat(mini, "\n ", size);
     while (1)
     {
         shell.input = readline(mini);
