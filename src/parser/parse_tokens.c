@@ -3,8 +3,9 @@
 int count_args(t_token *token)
 {
     int count = 0;
-    while (token && token->type != PIPE) {
-        if (token->type == WORD || token->type == OPTION)  // Add OPTION here
+    while (token && token->type != PIPE)
+    {
+        if (token->type == WORD || token->type == OPTION)
             count++;
         else if (token->type >= REDIR_IN && token->type <= REDIR_HEREDOC)
             token = token->next;
@@ -73,10 +74,6 @@ t_cmd *parse_tokens(t_token *token)
         
         int c = count_args(token);
         cmd->args = malloc((c + 1) * sizeof(char*));
-        if (!cmd->args) {
-            free(cmd);
-            return NULL;
-        }
 
         int i = 0;
         while (token && token->type != PIPE) {
