@@ -71,6 +71,9 @@ int execute_pipeline(t_cmd *cmd_list, char **envp)
 
     while (current)
     {
+        if (current->next == NULL && is_builtin(current->args[0]))
+            return execute_builtin(current->args[0], current->args);
+
         if (current->next && pipe(fd) < 0)
             error_exit2("pipe error");
 
@@ -92,6 +95,11 @@ int execute_pipeline(t_cmd *cmd_list, char **envp)
                 redirect_input(current->infile);
             if (current->outfile)
                 redirect_output(current->outfile, current->append);
+
+            if (is_builtin(current->args[0]))
+            {
+                exit(execute_builtin(current->args[0], current->args));
+            }
 
             char *path = find_command_path(current->args[0], envp);
             if (!path)
