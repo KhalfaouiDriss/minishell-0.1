@@ -57,8 +57,12 @@ typedef struct s_cmd {
     struct s_cmd *next; // next in pipeline
 } t_cmd;
 
-
-
+typedef struct s_env
+{
+    char *name;
+    char *value;
+    void *next;
+} t_env;
 
 typedef struct s_shell
 {
@@ -66,6 +70,7 @@ typedef struct s_shell
     int arg_count;
     char *input;
     t_token *token;
+    t_env *env;
 } t_shell;
 
 
@@ -105,4 +110,18 @@ int is_all_space(const char *str);
 
 // 
 int execute_pipeline(t_cmd *cmd_list, char **envp);
+
+// Built-in command functions
+void ft_echo(char **args);
+void ft_cd(char **args);
+void ft_pwd(char **args);
+void ft_export(char **args);
+void ft_unset(char **args);
+void ft_env(char **args);
+int ft_exit(char **args);
+
+// Helper function to identify built-ins
+int is_builtin(char *cmd);
+int execute_builtin(char *cmd, char **args);
+
 #endif

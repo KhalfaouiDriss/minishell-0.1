@@ -44,7 +44,6 @@ int main(int ac, char **av, char **envp)
         if (shell.input == NULL)
         {
             free_all(&shell);
-            printf("exit\n");
             exit(1);
         }
 
