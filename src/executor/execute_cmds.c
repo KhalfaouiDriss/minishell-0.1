@@ -32,9 +32,15 @@ char *find_command_path(char *cmd, char **envp)
         full_path = malloc(strlen(paths[i]) + ft_strlen(cmd) + 2);
         if (!full_path)
             return NULL;
-        strcpy(full_path, paths[i]);
-        strcat(full_path, "/");
-        strcat(full_path, cmd);
+            int total_size = strlen(paths[i]) + strlen(cmd) + 2;
+            full_path = malloc(total_size);
+            if (!full_path)
+                return NULL;
+            
+            ft_strlcpy(full_path, paths[i], total_size);
+            ft_strlcat(full_path, "/", total_size);
+            ft_strlcat(full_path, cmd, total_size);
+            
         if (access(full_path, X_OK) == 0) {
             free_split(paths);
             return full_path;
