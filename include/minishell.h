@@ -110,6 +110,7 @@ int is_all_space(const char *str);
 
 // 
 int execute_pipeline(t_cmd *cmd_list, char **envp);
+<<<<<<< HEAD
 
 // Built-in command functions
 void ft_echo(char **args);
@@ -124,4 +125,7 @@ int ft_exit(char **args);
 int is_builtin(char *cmd);
 int execute_builtin(char *cmd, char **args);
 
+=======
+int check_if_is_builtin(char *s);
+>>>>>>> 3e8dbbbd99369a756716d2475b518ba167acfe9a
 #endif
