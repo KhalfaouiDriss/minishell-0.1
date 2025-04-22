@@ -1,0 +1,10 @@
+include
+lib
+Makefile
+minishell
+q
+src
+ss
+test.c
+ttt
+vvv.c

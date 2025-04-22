@@ -71,9 +71,6 @@ int execute_pipeline(t_cmd *cmd_list, char **envp)
 
     while (current)
     {
-        // if (current->next == NULL && is_builtin(current->args[0]))
-        //     return execute_builtin(current->args[0], current->args);                
-
         if (current->next && pipe(fd) < 0)
             error_exit2("pipe error");
 
@@ -96,7 +93,7 @@ int execute_pipeline(t_cmd *cmd_list, char **envp)
             if (current->outfile)
                 redirect_output(current->outfile, current->append);
 
-            if (is_builtin(current->args[0]))
+            if (is_builtin(current->args[0]) && current->next == NULL)
                 exit(execute_builtin(current->args[0], current->args));
 
             char *path = find_command_path(current->args[0], envp);
@@ -105,13 +102,13 @@ int execute_pipeline(t_cmd *cmd_list, char **envp)
                 write(2, current->args[0], ft_strlen(current->args[0]));
                 write(2, ": ", 2);
                 write(2, "command not found \n", 20);
-                exit(1);
+                exit(127);
             }
 
             execve(path, current->args, envp);
             write(2, "minishell: execve failed\n", 26);
             free(path);
-            exit(1);
+            exit(126);
         }
 
         if (prev_pipe != -1)
@@ -123,14 +120,14 @@ int execute_pipeline(t_cmd *cmd_list, char **envp)
 
         current = current->next;
     }
-
     int status;
-
-    while ((wait(&status)) > 0)
-    {
-        if (WIFEXITED(status))
-            exit_status = WEXITSTATUS(status);
-    }
+    
+    while ((wait(NULL)) > 0)
+        ;
+    waitpid(pid, &status, 0);
+    if (WIFEXITED(status))
+        exit_status = WEXITSTATUS(status);
+    printf("exit status: %d\n", exit);
     return exit_status;
 
 }

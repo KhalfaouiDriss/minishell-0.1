@@ -76,7 +76,14 @@ t_cmd *parse_tokens(t_token *token)
         cmd->args = malloc((c + 1) * sizeof(char*));
 
         int i = 0;
-        while (token && token->type != PIPE) {
+        while (token && token->type != PIPE)
+        {
+            if (token->error)
+            {
+                if(token->error == 13)
+                    printf("%s\n", token->value);
+                return NULL;
+            }
             if (token->type == WORD || token->type == OPTION)
                 cmd->args[i++] = safe_strdup(token->value);
             else if (token->type == REDIR_IN && token->next)
