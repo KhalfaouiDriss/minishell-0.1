@@ -18,16 +18,16 @@ int is_builtin(char *cmd)
 
 int execute_builtin(char *cmd, char **args)
 {
-    if (ft_strncmp(cmd, "echo", 4) == 0) {
+    if (ft_strncmp(cmd, "echo", 5) == 0) {
         ft_echo(args);
-        return (0);  // Success
+        return (0);
     }
-    else if (ft_strncmp(cmd, "cd", 2) == 0) {
+    else if (ft_strncmp(cmd, "cd", 3) == 0) {
         ft_cd(args);
         return (0);
     }
     
-    else if (ft_strncmp(cmd, "pwd", 3) == 0) {
+    else if (ft_strncmp(cmd, "pwd", 4) == 0) {
         ft_pwd(args);
         return (0);
     }
@@ -44,8 +44,8 @@ int execute_builtin(char *cmd, char **args)
         ft_env(args);
         return (0);
     }*/
-    else if (ft_strncmp(cmd, "exit", 4) == 0) {
-        return (ft_exit(args));  // Only ft_exit returns a value
+    else if (ft_strncmp(cmd, "exit", 5) == 0) {
+        return (ft_exit(args));
     }
-    return (1);  // Command not found or error
+    return (1);
 }
