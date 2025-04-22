@@ -203,35 +203,46 @@ void	handle_word_token(const char *input, int *i, t_token **head)
 	free(buffer);
 }
 
-
 void correct_lexer(t_token *head)
-{	
-	t_token *tmp;
-	t_token *to_delete;
-	char	*joined;
+{
+    t_token *tmp;
+    t_token *to_delete;
+    char *joined;
 
-	tmp = head;
-	while (tmp && tmp->next)
-	{
-		if (ft_strlen(tmp->value) == 1 && tmp->value[0] == '-')
-		{
-			joined = ft_strjoin(tmp->value, tmp->next->value);
-			if (!joined)
-				return; // handle malloc failure if needed
-			free(tmp->value);
-			tmp->value = joined;
-			tmp->type = OPTION;
+    tmp = head;
+    while (tmp)
+    {
+        // Handle joined option like -a
+        if (ft_strlen(tmp->value) == 1 && tmp->value[0] == '-')
+        {
+            joined = ft_strjoin(tmp->value, tmp->next->value);
+            if (!joined)
+                return;
+            free(tmp->value);
+            tmp->value = joined;
+            tmp->type = OPTION;
 
-			// حذف التوكن اللي تم دمجه
-			to_delete = tmp->next;
-			tmp->next = tmp->next->next;
-			if (to_delete->value)
-				free(to_delete->value);
-			free(to_delete);
-		}
-		else
-			tmp = tmp->next;
-	}
+            to_delete = tmp->next;
+            tmp->next = tmp->next->next;
+            if (to_delete->value)
+                free(to_delete->value);
+            free(to_delete);
+            continue;
+        }
+
+        if (ft_strncmp(tmp->value, ">>", 2) == 0 && ft_strlen(tmp->value) == 2)
+            tmp->type = REDIR_APPEND;
+        else if (ft_strncmp(tmp->value, "<<", 2) == 0 && ft_strlen(tmp->value) == 2)
+            tmp->type = REDIR_HEREDOC;
+        else if (ft_strncmp(tmp->value, ">", 1) == 0 && ft_strlen(tmp->value) == 1)
+            tmp->type = REDIR_OUT;
+        else if (ft_strncmp(tmp->value, "<", 1) == 0 && ft_strlen(tmp->value) == 1)
+            tmp->type = REDIR_IN;
+        else if (ft_strncmp(tmp->value, "|", 1) == 0 && ft_strlen(tmp->value) == 1)
+            tmp->type = PIPE;
+
+        tmp = tmp->next;
+    }
 }
 
 

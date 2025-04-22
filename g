@@ -1,0 +1,17 @@
+a.out
+ddd
+file.txt
+g
+ggg
+gg.txt
+hhh
+include
+lib
+Makefile
+minishell
+ppp
+src
+test.c
+token
+tt
+vvv.c
