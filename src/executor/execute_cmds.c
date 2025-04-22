@@ -71,8 +71,8 @@ int execute_pipeline(t_cmd *cmd_list, char **envp)
 
     while (current)
     {
-        if (current->next == NULL && is_builtin(current->args[0]))
-            return execute_builtin(current->args[0], current->args);                
+        // if (current->next == NULL && is_builtin(current->args[0]))
+        //     return execute_builtin(current->args[0], current->args);                
 
         if (current->next && pipe(fd) < 0)
             error_exit2("pipe error");
