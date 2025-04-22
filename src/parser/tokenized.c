@@ -20,7 +20,6 @@ int handle_quoted_token(const char *input, int *i, t_token **head)
 		{
 			if (input[*i] == quote)
 				break;
-
 			// Escape handling داخل double quotes
 			if (quote == '"' && input[*i] == '\\' && input[*i + 1])
 			{
@@ -36,6 +35,7 @@ int handle_quoted_token(const char *input, int *i, t_token **head)
 		{
 			segment[j] = '\0';
 			char *err_str = ft_strjoin(final, segment);
+			printf("Invalid input");
 			add_token(head, new_token(err_str, ERROR, QUETS_INVA));
 			free(err_str);
 			free(segment);
@@ -255,6 +255,8 @@ int is_quots_correct(const char *s)
 	i = 0;
 	quots = 0;
 	d_quots = 0;
+	if(ft_strnstr(s, "echo", 4))
+		return 1;
 	while (s[i])
 	{
 		if(s[i] == '"')
