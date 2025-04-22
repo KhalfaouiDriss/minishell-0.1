@@ -1,7 +1,0 @@
-include
-lib
-Makefile
-minishell
-src
-token
-tt
