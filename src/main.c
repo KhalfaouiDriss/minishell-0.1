@@ -34,7 +34,7 @@ int main(int ac, char **av, char **envp)
         exit(1);
     }
     
-    const char *prefix = "\033[0;32mminishell-1337-rabat $ \033[0m";
+    const char *prefix = "\033[0;32mminishell-sendo-C47 $/~ \033[0m";
     int size = ft_strlen(prefix) + 1;
 
     char *mini = malloc(size);

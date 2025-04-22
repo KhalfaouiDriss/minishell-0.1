@@ -15,12 +15,18 @@ void	free_split(char **lst)
 	free(lst);
 }
 
+// void init_env(t_shell *shell, char **env)
+// {
+
+// }
+
 void init_shell(t_shell *shell)
 {
     shell->arg_count = 0;
     shell->args = NULL;
     shell->input = NULL;
     shell->token = NULL;
+    // init_env(&(shell->env), env);
 }
 
 void free_token(t_token *token)
