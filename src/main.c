@@ -1,13 +1,14 @@
 #include "../include/minishell.h"
 
+
 void get_sig(int sig)
 {
-    if (sig == SIGINT)
-    {
-        write(1, "\n", 1); 
-        rl_on_new_line();
-        rl_replace_line("", 0);
-        rl_redisplay();
+	if (sig == SIGINT)
+	{
+        ft_putstr_fd("\n", 1);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
     }
 }
 
@@ -29,8 +30,8 @@ int main(int ac, char **av, char **envp)
         exit(1);
     }
     
-    const char *prefix = "\033[0;32mminishell-1337-rabat \n$ \033[0m";
-    int size = ft_strlen(prefix) + 4;
+    const char *prefix = "\033[0;32mminishell-1337-rabat $ \033[0m";
+    int size = ft_strlen(prefix) + 1;
 
     char *mini = malloc(size);
 
