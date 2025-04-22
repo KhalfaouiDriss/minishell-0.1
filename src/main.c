@@ -1,11 +1,15 @@
 #include "../include/minishell.h"
 
+int blocked = 0;
+
 
 void get_sig(int sig)
 {
+    if (blocked)
+        return;
 	if (sig == SIGINT)
 	{
-        printf("\n");
+        write(1, "\n", 1);
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
@@ -52,9 +56,10 @@ int main(int ac, char **av, char **envp)
         
         shell.token = lexer_split_to_tokens(shell.input);
         t_cmd *cmd_list = parse_tokens(shell.token);
+        blocked = 1;
         if (cmd_list)
             exit_status = execute_pipeline(cmd_list, envp);
-
+        blocked = 0;
         free_token(shell.token);
         free_cmds(cmd_list);
         free(shell.input);
