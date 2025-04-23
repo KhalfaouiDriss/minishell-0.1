@@ -6,6 +6,7 @@ int ft_exit(char **args)
     
     if (args[1])
         exit_code = ft_atoi(args[1]); 
+    printf("exit");
     exit(exit_code);
     return (exit_code);
 }
