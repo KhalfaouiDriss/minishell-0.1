@@ -307,7 +307,7 @@ t_token	*lexer_split_to_tokens(const char *input)
 	head = NULL;
 	i = 0;
 	if(!is_quots_correct(input))
-		add_token(&head, new_token("NULL", 0, QUETS_INVA));
+		add_token(&head, new_token("Quots not valid", 0, QUETS_INVA));
 	else
 	{
 		while (input[i])
