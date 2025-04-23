@@ -53,9 +53,11 @@ typedef struct s_cmd {
     char **args;        // command & args
     char *infile;       // file for input redirection
     char *outfile;      // file for output redirection
+    int outfile_fd;     // type of redirection (in, out, append, heredoc)
     int append;         // 1 if >>, 0 if >
     int heredoc;        // 1 if << used
     int flag;
+    int in_child;       // 1 if command should run in child process, 0 otherwise
     struct s_cmd *next; // next in pipeline
 } t_cmd;
 
@@ -107,7 +109,7 @@ void free_cmds(t_cmd *cmds);
 //utils_2.c
 void error_exit(char *msg);
 void redirect_input(char *file,int heredoc);
-void redirect_output(char *file, int append);
+void redirect_output(t_cmd *cmd, int append);
 int is_all_space(const char *str);
 int handle_heredoc(char *delimiter);
 
