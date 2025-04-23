@@ -75,7 +75,7 @@ int execute_pipeline(t_cmd *cmd_list, char **envp)
         if (current->infile)
             redirect_input(current->infile, current->heredoc);
         if (current->outfile)
-            redirect_output(current->outfile, current->append);
+            redirect_output(current, current->append);
 
         exit_status = execute_builtin(current->args[0], current->args);
 
@@ -110,7 +110,7 @@ int execute_pipeline(t_cmd *cmd_list, char **envp)
             if (current->infile)
                 redirect_input(current->infile, current->heredoc);
             if (current->outfile)
-                redirect_output(current->outfile, current->append);
+                redirect_output(current, current->append);
 
             if (!current->args[0] || current->args[0][0] == '\0')
                 exit(0);
@@ -125,7 +125,11 @@ int execute_pipeline(t_cmd *cmd_list, char **envp)
                 write(2, ": command not found\n", 21);
                 exit(127);
             }
-
+            if (current->outfile_fd > 0)
+            {
+                dup2(current->outfile_fd, 1);
+                close(current->outfile_fd);
+            }
             execve(path, current->args, envp);
             write(2, "minishell: execve failed\n", 26);
             free(path);

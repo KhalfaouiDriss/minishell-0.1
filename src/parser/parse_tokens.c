@@ -71,6 +71,7 @@ t_cmd *parse_tokens(t_token *token)
         cmd->next = NULL;
         cmd->heredoc = 0;
         cmd->append = 0;
+        cmd->outfile_fd = 0;
         
         int c = count_args(token);
         cmd->args = malloc((c + 1) * sizeof(char*));
@@ -100,7 +101,7 @@ t_cmd *parse_tokens(t_token *token)
             else if (token->type == REDIR_OUT && token->next)
             {
                 cmd->outfile = safe_strdup(token->next->value);
-                cmd->append = 0;
+                redirect_output(cmd, 0);
                 token = token->next;
             }
             else if (token->type == REDIR_APPEND && token->next)
