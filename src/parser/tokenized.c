@@ -3,12 +3,13 @@
 int h = 0;
 
 // --- Quoted Tokens Helper ---
-int handle_quoted_token(const char *input, int *i, t_token **head)
+int handle_quoted_token(const char *input, int *i, t_shell *shell)
 {
 	char	quote;
 	char	*final = ft_strdup("");
 	int		type = WORD;
 	int		error = 0;
+	t_token **head = &(shell->token);
 
 	while (input[*i] == '"' || input[*i] == '\'')
 	{
@@ -71,7 +72,7 @@ int handle_quoted_token(const char *input, int *i, t_token **head)
 		error = OPTION_INVA;
 	}
 	if(final[0] == '$')
-		handle_variable_token(input, i, head);
+		handle_variable_token(input, i, shell);
 	else
 		add_token(head, new_token(final, type, error));
 	free(final);
@@ -324,7 +325,7 @@ t_token	*lexer_split_to_tokens(t_shell *shell)
 				break ;
 			if (input[i] == '\'' || input[i] == '"')
 			{
-				if (!handle_quoted_token(input, &i, &head))
+				if (!handle_quoted_token(input, &i, shell))
 					break ;
 			}
 			else if (is_special(input[i]))

@@ -72,35 +72,36 @@ t_env *find_env_node(t_env *env, const char *key)
 }
 
 
-// يتعامل مع التوكن من نوع متغير بيئة
+
+
 void handle_variable_token(const char *input, int *i, t_shell *shell)
 {
     int start;
     int var_len;
     char *var_name = NULL;
     char *var_value = NULL;
-    t_token **head = &(shell->token);
+    t_token *head = shell->token;
     t_env *tmp;
 
     (*i)++;
     start = *i;
 
-    // حالة $?
+    // Special case for $?
     if (input[*i] == '?')
     {
         (*i)++;
-        add_token(head, new_token(strdup("0"), WORD, 0)); // تأكدنا من strdup
+        add_token(&head, new_token(strdup("0"), WORD, 0)); // Replace "0" with actual exit status if needed
         return;
     }
 
-    // جمع اسم المتغير
+    // Collect variable name (alphanumeric and _)
     while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'))
         (*i)++;
 
     if (start == *i)
     {
-        // مجرد $ بدون اسم
-        add_token(head, new_token(strdup("$"), WORD, 0));
+        // No variable name after $, treat it as literal '$'
+        add_token(&head, new_token(strdup("$"), WORD, 0));
         return;
     }
 
@@ -111,13 +112,14 @@ void handle_variable_token(const char *input, int *i, t_shell *shell)
 
     tmp = find_env_node(shell->env, var_name);
 
-    if (tmp->name)
-        add_token(head, new_token(strdup(tmp->value), WORD, 0)); // strdup هنا مهم لتجنب مشاركة الذاكرة
+    if (tmp && tmp->value)
+        add_token(&head, new_token(strdup(tmp->value), WORD, 0)); // Use strdup to avoid shared memory
     else
-        add_token(head, new_token(strdup(""), WORD, 0)); // نعطي توكن فارغ
+        add_token(&head, new_token(strdup(""), WORD, 0)); // Empty token if variable not found
 
     free(var_name);
 }
+
 
 // تحويل نوع التوكن إلى سترينغ للعرض
 const char *token_type_to_str(int type)
