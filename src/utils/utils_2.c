@@ -27,23 +27,18 @@ void redirect_input(char *file, int heredoc)
     close(fd);
 }
 
-void redirect_output(char *file, int append)
+void redirect_output(t_cmd *cmd, int append)
 {
     int fd;
 
     if (append)
-        fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+        fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
     else
-        fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+        fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 
     if (fd < 0)
         error_exit("open outfile");
-
-    if (dup2(fd, STDOUT_FILENO) < 0)
-        error_exit("dup2 outfile");
-    
-
-    close(fd);
+    cmd->outfile_fd = fd;
 }
 
 int handle_heredoc(char *delimiter)
