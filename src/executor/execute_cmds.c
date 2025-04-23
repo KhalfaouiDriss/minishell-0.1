@@ -2,8 +2,7 @@
 
 char *find_command_path(char *cmd, char **envp)
 {
-    char **paths;
-    char *path = NULL;
+    char **paths = NULL;
     char *full_path = NULL;
     int i;
 
@@ -14,39 +13,38 @@ char *find_command_path(char *cmd, char **envp)
         return NULL;
     }
 
-    i = 0;
-    while (envp[i])
+    for (i = 0; envp[i]; i++)
     {
         if (ft_strncmp(envp[i], "PATH=", 5) == 0)
         {
             paths = ft_split(envp[i] + 5, ':');
             break;
         }
-        i++;
     }
 
     if (!paths)
         return NULL;
 
-    i = 0;
-    while (paths[i])
+    for (i = 0; paths[i]; i++)
     {
         int total_size = ft_strlen(paths[i]) + ft_strlen(cmd) + 2;
         full_path = malloc(total_size);
         if (!full_path)
+        {
+            free_split(paths);
             return NULL;
-            
-        ft_strlcpy(full_path, paths[i], ft_strlen(paths[i]) + 1);
-        ft_strlcat(full_path, "/", ft_strlen(paths[i]) + 2);
+        }
+
+        ft_strlcpy(full_path, paths[i], total_size);
+        ft_strlcat(full_path, "/", total_size);
         ft_strlcat(full_path, cmd, total_size);
-            
+
         if (access(full_path, X_OK) == 0)
         {
             free_split(paths);
             return full_path;
         }
         free(full_path);
-        i++;
     }
 
     free_split(paths);
@@ -69,6 +67,26 @@ int execute_pipeline(t_cmd *cmd_list, char **envp)
     int pid;
     t_cmd *current = cmd_list;
 
+    if (current && !current->next && is_builtin(current->args[0]))
+    {
+        int stdin_backup = dup(0);
+        int stdout_backup = dup(1);
+
+        if (current->infile)
+            redirect_input(current->infile, current->heredoc);
+        if (current->outfile)
+            redirect_output(current->outfile, current->append);
+
+        exit_status = execute_builtin(current->args[0], current->args);
+
+        dup2(stdin_backup, 0);
+        dup2(stdout_backup, 1);
+        close(stdin_backup);
+        close(stdout_backup);
+
+        return exit_status;
+    }
+
     while (current)
     {
         if (current->next && pipe(fd) < 0)
@@ -78,20 +96,24 @@ int execute_pipeline(t_cmd *cmd_list, char **envp)
         if (pid < 0)
             error_exit2("fork error");
 
-        if (pid == 0)
+        if (pid == 0) // Child process
         {
             if (current->next)
                 dup2(fd[1], 1);
+            if (prev_pipe != -1)
+                dup2(prev_pipe, 0);
 
             if (prev_pipe != -1)
-            {
-                dup2(prev_pipe, 0);
                 close(prev_pipe);
-            }
+            if (current->next)
+                close(fd[0]);
             if (current->infile)
-                redirect_input(current->infile);
+                redirect_input(current->infile, current->heredoc);
             if (current->outfile)
                 redirect_output(current->outfile, current->append);
+
+            if (!current->args[0] || current->args[0][0] == '\0')
+                exit(0);
 
             if (is_builtin(current->args[0]) && current->next == NULL)
                 exit(execute_builtin(current->args[0], current->args));
@@ -100,8 +122,7 @@ int execute_pipeline(t_cmd *cmd_list, char **envp)
             if (!path)
             {
                 write(2, current->args[0], ft_strlen(current->args[0]));
-                write(2, ": ", 2);
-                write(2, "command not found \n", 20);
+                write(2, ": command not found\n", 21);
                 exit(127);
             }
 
@@ -111,23 +132,22 @@ int execute_pipeline(t_cmd *cmd_list, char **envp)
             exit(126);
         }
 
+        // Parent process
         if (prev_pipe != -1)
             close(prev_pipe);
-        if (current->next) {
+        if (current->next)
+        {
             close(fd[1]);
             prev_pipe = fd[0];
         }
 
         current = current->next;
     }
+
     int status;
-    
-    while ((wait(NULL)) > 0)
+    while (wait(&status) > 0)
         ;
-    waitpid(pid, &status, 0);
     if (WIFEXITED(status))
         exit_status = WEXITSTATUS(status);
-    printf("exit status: %d\n", exit);
     return exit_status;
-
 }
