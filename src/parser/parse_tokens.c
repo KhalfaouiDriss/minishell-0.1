@@ -78,10 +78,9 @@ t_cmd *parse_tokens(t_token *token)
         int i = 0;
         while (token && token->type != PIPE)
         {
-            if (token->error)
+            if (!token->type)
             {
-                if(token->error == 13)
-                    printf("%s\n", token->value);
+                printf("%s\n", token->value);
                 return NULL;
             }
             if (token->type == WORD || token->type == OPTION)
