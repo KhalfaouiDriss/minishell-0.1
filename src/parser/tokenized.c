@@ -308,6 +308,11 @@ t_token	*lexer_split_to_tokens(const char *input)
 	i = 0;
 	if(!is_quots_correct(input))
 		add_token(&head, new_token("Quots not valid", 0, QUETS_INVA));
+		if ((ft_strlen(input) <= 2 &&
+		(ft_strncmp(input, ">", 2) == 0 || ft_strncmp(input, ">>", 2) == 0 ||
+		 ft_strncmp(input, "<", 2) == 0 || ft_strncmp(input, "<<", 2) == 0)))
+	   add_token(&head, new_token("Invalid Input", 0, INPUT_INVA));
+   
 	else
 	{
 		while (input[i])
