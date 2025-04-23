@@ -56,11 +56,13 @@ void free_cmds(t_cmd *cmds)
     }
 }
 
-t_cmd *parse_tokens(t_token *token)
+t_cmd *parse_tokens(t_shell *shell)
 {
     t_cmd *head = NULL;
     t_cmd *last = NULL;
+    t_token *token;
 
+    token = shell->token;
     while (token) {
         t_cmd *cmd = malloc(sizeof(t_cmd));
         if (!cmd)

@@ -299,10 +299,11 @@ int is_quots_correct(const char *s)
 }
 
 // --- Main Lexer Split Function ---
-t_token	*lexer_split_to_tokens(const char *input)
+t_token	*lexer_split_to_tokens(t_shell *shell)
 {
 	t_token	*head;
 	int		i;
+	char *input = shell->input;
 
 	head = NULL;
 	i = 0;
@@ -334,7 +335,7 @@ t_token	*lexer_split_to_tokens(const char *input)
 					break ;
 			}
 			else if (input[i] == '$')
-				handle_variable_token(input, &i, &head);
+				handle_variable_token(input, &i, shell);
 			else
 				handle_word_token(input, &i, &head);
 		}

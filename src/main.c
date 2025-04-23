@@ -16,6 +16,44 @@ void get_sig(int sig)
     }
 }
 
+void init_env(t_shell *shell, char **envp)
+{
+    int i = 0;
+    char **variable;
+    t_env *new_env;
+    t_env *last;
+
+    shell->env = NULL;
+
+    while (envp[i])
+    {
+        variable = ft_split(envp[i], '=');
+        if (!variable)
+            return ; 
+
+        new_env = malloc(sizeof(t_env));
+        if (!new_env)
+            return ;
+
+        new_env->name = ft_strdup(variable[0]);
+        new_env->value = ft_strdup(variable[1]);
+        new_env->next = NULL;
+
+        if (!shell->env)
+            shell->env = new_env;
+        else
+        {
+            last = shell->env;
+            while (last->next)
+                last = last->next;
+            last->next = new_env;
+        }
+        free_split(variable);
+        i++;
+    }
+}
+
+
 int main(int ac, char **av, char **envp)
 {
     t_shell shell;
@@ -25,6 +63,7 @@ int main(int ac, char **av, char **envp)
     (void)av;
 
     init_shell(&shell);
+    init_env(&shell, envp);
     signal(SIGINT, get_sig);
     signal(SIGQUIT, SIG_IGN);
     char *pwd = getcwd(NULL, 0);
@@ -54,14 +93,14 @@ int main(int ac, char **av, char **envp)
         if (shell.input[0] != '\0')
             add_history(shell.input);
         
-        shell.token = lexer_split_to_tokens(shell.input);
-        t_cmd *cmd_list = parse_tokens(shell.token);
+        shell.token = lexer_split_to_tokens(&shell);
+        shell.cmd_list = parse_tokens(&shell);
         blocked = 1;
-        if (cmd_list)
-            exit_status = execute_pipeline(cmd_list, envp);
+        if (shell.cmd_list)
+            exit_status = execute_pipeline(&shell, envp);
         blocked = 0;
         free_token(shell.token);
-        free_cmds(cmd_list);
+        free_cmds(shell.cmd_list);
         free(shell.input);
     }
 

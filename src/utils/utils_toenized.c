@@ -58,13 +58,29 @@ void add_token(t_token **head, t_token *new)
     tmp->next = new;
 }
 
+t_env *find_env_node(t_env *env, const char *key)
+{
+    t_env *tmp = env;
+
+    while (tmp)
+    {
+        if (ft_strncmp(tmp->name, key, ft_strlen(key)) == 0)  // مقارنة الأسماء
+            return tmp;
+        tmp = tmp->next;
+    }
+    return NULL;  // إذا لم نجدها
+}
+
+
 // يتعامل مع التوكن من نوع متغير بيئة
-void handle_variable_token(const char *input, int *i, t_token **head)
+void handle_variable_token(const char *input, int *i, t_shell *shell)
 {
     int start;
     int var_len;
     char *var_name = NULL;
     char *var_value = NULL;
+    t_token **head = &(shell->token);
+    t_env *tmp;
 
     (*i)++;
     start = *i;
@@ -93,10 +109,10 @@ void handle_variable_token(const char *input, int *i, t_token **head)
     if (!var_name)
         return;
 
-    var_value = getenv(var_name);
+    tmp = find_env_node(shell->env, var_name);
 
-    if (var_value)
-        add_token(head, new_token(strdup(var_value), WORD, 0)); // strdup هنا مهم لتجنب مشاركة الذاكرة
+    if (tmp->name)
+        add_token(head, new_token(strdup(tmp->value), WORD, 0)); // strdup هنا مهم لتجنب مشاركة الذاكرة
     else
         add_token(head, new_token(strdup(""), WORD, 0)); // نعطي توكن فارغ
 
