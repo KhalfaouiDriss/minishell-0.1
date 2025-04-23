@@ -1,22 +1,33 @@
 #include "../../include/minishell.h"
 
-
 void error_exit(char *msg)
 {
     perror(msg);
     exit(1);
 }
 
-void redirect_input(char *file) 
+void redirect_input(char *file, int heredoc)
 {
-    int fd = open(file, O_RDONLY);
-    if (fd < 0)
-        error_exit("open infile");
-    dup2(fd, 0);
+    int fd;
+
+    if (heredoc)
+    {
+        fd = handle_heredoc(file);
+    }
+    else
+    {
+        fd = open(file, O_RDONLY);
+        if (fd < 0)
+            error_exit("open infile");
+    }
+
+    if (dup2(fd, STDIN_FILENO) < 0)
+        error_exit("dup2 infile");
+
     close(fd);
 }
 
-void redirect_output(char *file, int append) 
+void redirect_output(char *file, int append)
 {
     int fd;
 
@@ -28,38 +39,39 @@ void redirect_output(char *file, int append)
     if (fd < 0)
         error_exit("open outfile");
 
-    dup2(fd, 1);
+    if (dup2(fd, STDOUT_FILENO) < 0)
+        error_exit("dup2 outfile");
+    
+
     close(fd);
 }
 
-void exec_command(t_cmd *cmd, char **envp) 
+int handle_heredoc(char *delimiter)
 {
-    if (cmd->infile)
-        redirect_input(cmd->infile);
-    if (cmd->outfile)
-        redirect_output(cmd->outfile, cmd->append);
+    int pipe_fd[2];
+    char *line;
 
-    execvp(cmd->args[0], cmd->args);
-    perror("exec failed");
-    exit(EXIT_FAILURE);
-}
+    if (pipe(pipe_fd) == -1)
+        error_exit("pipe");
 
-char *ft_strcat(char *dest, const char *src)
-{
-    char *ptr = dest;
-
-    while (*ptr != '\0')
-        ptr++;
-
-    while (*src != '\0')
+    while (1)
     {
-        *ptr = *src;
-        ptr++;
-        src++;
+        line = readline("> ");
+        if (!line) // EOF
+            break;
+
+        if (strcmp(line, delimiter) == 0)
+        {
+            free(line);
+            break;
+        }
+
+        write(pipe_fd[1], line, ft_strlen(line));
+        write(pipe_fd[1], "\n", 1);
+        free(line);
     }
 
-    *ptr = '\0';
-
-    return dest;
+    close(pipe_fd[1]);
+    return pipe_fd[0];
 }
 
