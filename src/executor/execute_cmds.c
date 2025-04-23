@@ -59,13 +59,13 @@ static void error_exit2(const char *msg)
     exit(1);
 }
 
-int execute_pipeline(t_cmd *cmd_list, char **envp)
+int execute_pipeline(t_shell *shell, char **envp)
 {
     int exit_status = 0;
     int fd[2];
     int prev_pipe = -1;
     int pid;
-    t_cmd *current = cmd_list;
+    t_cmd *current = shell->cmd_list;
 
     if (current && !current->next && is_builtin(current->args[0]))
     {
@@ -77,7 +77,7 @@ int execute_pipeline(t_cmd *cmd_list, char **envp)
         if (current->outfile)
             redirect_output(current->outfile, current->append);
 
-        exit_status = execute_builtin(current->args[0], current->args);
+        exit_status = execute_builtin(shell, current->args[0], current->args);
 
         dup2(stdin_backup, 0);
         dup2(stdout_backup, 1);
@@ -116,7 +116,7 @@ int execute_pipeline(t_cmd *cmd_list, char **envp)
                 exit(0);
 
             if (is_builtin(current->args[0]) && current->next == NULL)
-                exit(execute_builtin(current->args[0], current->args));
+                exit(execute_builtin(shell, current->args[0], current->args));
 
             char *path = find_command_path(current->args[0], envp);
             if (!path)
@@ -124,8 +124,7 @@ int execute_pipeline(t_cmd *cmd_list, char **envp)
                 write(2, current->args[0], ft_strlen(current->args[0]));
                 write(2, ": command not found\n", 21);
                 exit(127);
-            }
-
+            }            
             execve(path, current->args, envp);
             write(2, "minishell: execve failed\n", 26);
             free(path);

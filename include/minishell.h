@@ -73,12 +73,13 @@ typedef struct s_shell
     char *input;
     t_token *token;
     t_env *env;
+    t_cmd *cmd_list;
 } t_shell;
 
 
 // tokenized 
-t_token *lexer_split_to_tokens(const char *input);
-void handle_variable_token(const char *input, int *i, t_token **head);
+t_token	*lexer_split_to_tokens(t_shell *shell);
+void handle_variable_token(const char *input, int *i, t_shell *shell);
 int	handle_option_token(const char *input, int *i, t_token **head);
 void	handle_special_token(const char *input, int *i, t_token **head);
 
@@ -97,10 +98,9 @@ void free_all(t_shell *shell);
 t_token	*new_node(char *value);
 
 // parse_tokens.
-t_cmd *parse_tokens(t_token *token);
+t_cmd *parse_tokens(t_shell *shell);
 int count_args(t_token *token);
 char *safe_strdup(const char *s);
-t_cmd *parse_tokens(t_token *token);
 void free_cmds(t_cmd *cmds);
 
 
@@ -112,20 +112,20 @@ int is_all_space(const char *str);
 int handle_heredoc(char *delimiter);
 
 // 
-int execute_pipeline(t_cmd *cmd_list, char **envp);
+int execute_pipeline(t_shell *shell, char **envp);
 
 // Built-in command functions
 void ft_echo(char **args);
 void ft_cd(char **args);
 void ft_pwd(char **args);
-void ft_export(char **args);
+void ft_export(t_env **env, char **args);
 void ft_unset(char **args);
-void ft_env(char **args);
 int ft_exit(char **args);
+void ft_env(t_env *env);
 
 // Helper function to identify built-ins
 int is_builtin(char *cmd);
-int execute_builtin(char *cmd, char **args);
+int execute_builtin(t_shell *shell, char *cmd, char **args);
 
 
 int check_if_is_builtin(char *s);
