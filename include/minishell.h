@@ -33,6 +33,7 @@
 # define INVALID_DIR   12
 # define QUETS_INVA    13
 # define OPTION_INVA   14
+# define INPUT_INVA    15
 
 typedef struct s_error
 {
