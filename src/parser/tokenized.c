@@ -206,12 +206,36 @@ void	handle_word_token(const char *input, int *i, t_token **head)
 	free(buffer);
 }
 
+int ft_nodelen(t_token *head)
+{
+	int i;
+	t_token *tmp;
+
+	tmp = head;
+	i = 0;
+	while(tmp)
+	{
+		i++;
+		tmp = tmp->next;
+	}
+	return i;
+} 
+
 void correct_lexer(t_token *head)
 {
     t_token *tmp;
     t_token *to_delete;
     char *joined;
+	int token_count;
 
+	token_count = ft_nodelen(head);
+
+	if((token_count == 1 && head->value[0] == '<') || (token_count == 1 && head->value[0] == '>'))
+	{
+		head->error = INPUT_INVA;
+		head->value = ft_strdup("Invalid input");
+		return;
+	}
     tmp = head;
     while (tmp)
     {
