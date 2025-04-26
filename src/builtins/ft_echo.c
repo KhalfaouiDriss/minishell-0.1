@@ -1,5 +1,13 @@
 #include "../../include/minishell.h"
 
+void ft_strchar(char *s, char f)
+{
+    int len = ft_strlen(s);
+    write(1, s, len);
+    if (f == 1)
+        write(1, " ", 1);
+}
+
 void ft_echo(char **args)
 {
     int i = 1;
@@ -22,13 +30,13 @@ void ft_echo(char **args)
         while (args[i])
         {
             if (args[i + 1])
-                printf("%s ", args[i]);
+                ft_strchar(args[i], 1);
             else 
-                printf("%s", args[i]);
+                ft_strchar(args[i], 0);
             i++;
         }
 
         if (!no_newline)
-            printf("\n");
+            write(1, "\n", 1);
 }
 }

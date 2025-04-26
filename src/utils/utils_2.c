@@ -50,7 +50,6 @@ void redirect_output_bu(t_cmd *cmd, int append)
         fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
     else
         fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-
     if (fd < 0)
         error_exit("open outfile");
     if (dup2(fd, 1) < 0)

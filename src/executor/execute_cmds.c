@@ -69,6 +69,7 @@ int execute_pipeline(t_shell *shell, char **envp)
 
     if (current && !current->next && is_builtin(current->args[0]))
     {
+        
         int stdin_backup = dup(0);
         int stdout_backup = dup(1);
 
