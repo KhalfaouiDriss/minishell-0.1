@@ -13,19 +13,21 @@ char *find_command_path(char *cmd, char **envp)
         return NULL;
     }
 
-    for (i = 0; envp[i]; i++)
+    i = 0;  
+    while (envp[i])
     {
         if (ft_strncmp(envp[i], "PATH=", 5) == 0)
         {
             paths = ft_split(envp[i] + 5, ':');
             break;
         }
+        i++;
     }
-
     if (!paths)
         return NULL;
 
-    for (i = 0; paths[i]; i++)
+    i = 0;
+    while (paths[i])
     {
         int total_size = ft_strlen(paths[i]) + ft_strlen(cmd) + 2;
         full_path = malloc(total_size);
@@ -45,19 +47,12 @@ char *find_command_path(char *cmd, char **envp)
             return full_path;
         }
         free(full_path);
+        i++;
     }
 
     free_split(paths);
     return NULL;
-}
-
-static void error_exit2(const char *msg)
-{
-    write(2, "minishell: ", 11);
-    write(2, msg, ft_strlen(msg));
-    write(2, "\n", 1);
-    exit(1);
-}
+    }
 
 int execute_pipeline(t_shell *shell, char **envp)
 {
@@ -91,11 +86,11 @@ int execute_pipeline(t_shell *shell, char **envp)
     while (current)
     {
         if (current->next && pipe(fd) < 0)
-            error_exit2("pipe error");
+            error_exit("pipe error");
 
         pid = fork();
         if (pid < 0)
-            error_exit2("fork error");
+            error_exit("fork error");
 
         if (pid == 0)
         {

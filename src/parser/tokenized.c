@@ -190,13 +190,13 @@ void	handle_word_token(const char *input, int *i, t_token **head)
 	while (input[*i] && input[*i] != ' ' && !is_special(input[*i])
 		&& input[*i] != '"' && input[*i] != '\'')
 	{
-		if (input[*i] == '\\')
-		{
-			(*i)++;
-			if (input[*i])
-				buffer[j++] = input[(*i)++];
-			continue;
-		}
+		// if (input[*i] == '\\')
+		// {
+		// 	(*i)++;
+		// 	if (input[*i])
+		// 		buffer[j++] = input[(*i)++];
+		// 	continue;
+		// }
 		buffer[j++] = input[(*i)++];
 	}
 
