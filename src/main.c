@@ -62,7 +62,6 @@ int	main(int ac, char **av, char **envp)
 	(void)ac;
 	(void)av;
 	init_shell(&shell);
-	init_env(&shell, envp);
 	signal(SIGINT, get_sig);
 	signal(SIGQUIT, SIG_IGN);
 	pwd = getcwd(NULL, 0);
@@ -73,10 +72,10 @@ int	main(int ac, char **av, char **envp)
 	}
 	size = ft_strlen(prefix) + 1;
 	mini = malloc(size);
-	ft_strlcpy(mini, prefix, size);
 	while (1)
 	{
-		shell.input = readline(mini);
+		init_env(&shell, envp);
+		shell.input = readline(prefix);
 		if (!shell.input)
 		{
 			printf("exit\n");
@@ -87,6 +86,7 @@ int	main(int ac, char **av, char **envp)
 		shell.token = lexer_split_to_tokens(&shell);
 		shell.cmd_list = parse_tokens(&shell);
 		blocked = 1;
+		
 		if (shell.cmd_list)
 			exit_status = execute_pipeline(&shell, envp);
 		blocked = 0;

@@ -75,7 +75,7 @@ int execute_pipeline(t_shell *shell, char **envp)
         if (current->infile)
             redirect_input(current->infile, current->heredoc);
         if (current->outfile)
-            redirect_output(current, current->append);
+            redirect_output_bu(current, current->append);
 
         exit_status = execute_builtin(shell, current->args[0], current->args);
 
@@ -96,7 +96,7 @@ int execute_pipeline(t_shell *shell, char **envp)
         if (pid < 0)
             error_exit2("fork error");
 
-        if (pid == 0) // Child process
+        if (pid == 0)
         {
             if (current->next)
                 dup2(fd[1], 1);
@@ -136,7 +136,6 @@ int execute_pipeline(t_shell *shell, char **envp)
             exit(126);
         }
 
-        // Parent process
         if (prev_pipe != -1)
             close(prev_pipe);
         if (current->next)
