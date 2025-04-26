@@ -126,6 +126,7 @@ int execute_pipeline(t_shell *shell, char **envp)
                 close(current->outfile_fd);
             }
             
+            
             execve(path, current->args, envp);
             write(2, "minishell: execve failed\n", 26);
             free(path);
