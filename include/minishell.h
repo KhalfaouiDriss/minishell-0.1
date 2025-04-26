@@ -16,18 +16,17 @@
 # include <sys/wait.h>
 # include <errno.h>
 
-// Basic Token Types
-# define ERROR         0   // Error
-# define WORD          1   // Any word (command or argument)
-# define PIPE          2   // |
-# define REDIR_IN      3   // <
-# define REDIR_OUT     4   // >
-# define REDIR_APPEND  5   // >>
-# define REDIR_HEREDOC 6   // <<
-# define OPTION        7   // e.g. -l or --help (optional: classify separately)
-# define VARIABLE      8   // $var
 
-// Execution Result Types (not for parsing, but post-exec status)
+# define ERROR         0
+# define WORD          1   
+# define PIPE          2   
+# define REDIR_IN      3   
+# define REDIR_OUT     4   
+# define REDIR_APPEND  5   
+# define REDIR_HEREDOC 6   
+# define OPTION        7   
+# define VARIABLE      8   
+
 # define EXEC          10
 # define NOT_FOUND     11
 # define INVALID_DIR   12
@@ -50,15 +49,13 @@ typedef struct s_token
 } t_token;
 
 typedef struct s_cmd {
-    char **args;        // command & args
-    char *infile;       // file for input redirection
-    char *outfile;      // file for output redirection
-    int outfile_fd;     // type of redirection (in, out, append, heredoc)
-    int append;         // 1 if >>, 0 if >
-    int heredoc;        // 1 if << used
-    int flag;
-    int in_child;       // 1 if command should run in child process, 0 otherwise
-    struct s_cmd *next; // next in pipeline
+    char **args;        
+    char *infile;       
+    char *outfile;      
+    int outfile_fd;
+    int append;
+    int heredoc;
+    struct s_cmd *next;
 } t_cmd;
 
 typedef struct s_env
@@ -127,6 +124,7 @@ void ft_env(t_env *env);
 
 // Helper function to identify built-ins
 int is_builtin(char *cmd);
+void redirect_output_bu(t_cmd *cmd, int append);
 int execute_builtin(t_shell *shell, char *cmd, char **args);
 
 

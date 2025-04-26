@@ -88,10 +88,12 @@ t_cmd *parse_tokens(t_shell *shell)
             }
             if (token->type == WORD || token->type == OPTION)
                 cmd->args[i++] = safe_strdup(token->value);
+              
             else if (token->type == REDIR_IN && token->next)
             {
                 cmd->infile = safe_strdup(token->next->value);
                 cmd->heredoc = 0;
+                
                 token = token->next;
             }
             else if (token->type == REDIR_HEREDOC && token->next)
@@ -104,25 +106,28 @@ t_cmd *parse_tokens(t_shell *shell)
             {
                 cmd->outfile = safe_strdup(token->next->value);
                 redirect_output(cmd, 0);
+                cmd->append = 0;
                 token = token->next;
             }
             else if (token->type == REDIR_APPEND && token->next)
             {
                 cmd->outfile = safe_strdup(token->next->value);
+                redirect_output(cmd, 1);
                 cmd->append = 1;
                 token = token->next;
             }
+           
             token = token->next;
         }
 
         cmd->args[i] = NULL;
 
-        if (!head)
-            head = cmd;
-        else
+        if (!head && !last)
+            head = last = cmd;
+        else{
             last->next = cmd;
-        last = cmd;
-
+            last = last->next;
+        }
         if (token && token->type == PIPE)
             token = token->next;
     }

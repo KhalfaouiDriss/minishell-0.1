@@ -299,7 +299,6 @@ int is_quots_correct(const char *s)
 	return 1;
 }
 
-// --- Main Lexer Split Function ---
 t_token	*lexer_split_to_tokens(t_shell *shell)
 {
 	t_token	*head;
