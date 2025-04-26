@@ -62,6 +62,7 @@ int	main(int ac, char **av, char **envp)
 	(void)ac;
 	(void)av;
 	init_shell(&shell);
+	rl_catch_signals = 0;
 	signal(SIGINT, get_sig);
 	signal(SIGQUIT, SIG_IGN);
 	pwd = getcwd(NULL, 0);
