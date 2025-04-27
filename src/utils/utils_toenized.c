@@ -90,11 +90,15 @@ void handle_variable_token(const char *input, int *i, t_shell *shell)
     if (input[*i] == '?')
     {
         (*i)++;
-        add_token(&head, new_token(strdup("0"), WORD, 0)); // Replace "0" with actual exit status if needed
+        char *exit_status_str = ft_itoa(shell->exit_status);
+        if (exit_status_str)
+        {
+            add_token(&head, new_token(exit_status_str, WORD, 0));
+        }
         return;
     }
 
-    // Collect variable name (alphanumeric and _)
+
     while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'))
         (*i)++;
 

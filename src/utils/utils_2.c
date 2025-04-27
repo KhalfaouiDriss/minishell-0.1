@@ -71,7 +71,7 @@ int handle_heredoc(char *delimiter)
         if (!line)
             break;
 
-        if (ft_strncmp(line, delimiter,ft_strlen(delimiter)) == 0)
+        if (ft_strncmp(line, delimiter,ft_strlen(delimiter)+1) == 0)
         {
             free(line);
             break;
