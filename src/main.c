@@ -96,5 +96,5 @@ int	main(int ac, char **av, char **envp)
 		free(shell.input);
 	}
 	// free_all(&shell);
-	return (0);
+	return (128);
 }

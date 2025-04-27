@@ -148,6 +148,6 @@ int execute_pipeline(t_shell *shell, char **envp)
     while (wait(&status) > 0)
         ;
     if (WIFEXITED(status))
-        exit_status = WEXITSTATUS(status);
+        shell->exit_status = WEXITSTATUS(status);
     return exit_status;
 }

@@ -73,6 +73,7 @@ typedef struct s_shell
     t_token *token;
     t_env *env;
     t_cmd *cmd_list;
+    int exit_status;
 } t_shell;
 
 
