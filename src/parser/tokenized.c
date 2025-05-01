@@ -2,16 +2,31 @@
 
 int h = 0;
 
+char *strjoin_free(char *s1, char *s2)
+{
+	char *new_str;
+
+	if (!s1 && !s2)
+		return NULL;
+	if (!s1)
+		return strdup(s2);
+	if (!s2)
+		return strdup(s1);
+	new_str = ft_strjoin(s1, s2);
+	free(s1);
+	return new_str;
+}
+
 // --- Quoted Tokens Helper ---
 int handle_quoted_token(const char *input, int *i, t_shell *shell)
 {
 	char quote;
-	char *final = ft_strdup("");
+	char *final = NULL;
 	int type = WORD;
 	int error = 0;
 	t_token **head = &(shell->token);
 
-	while (input[*i] == '"' || input[*i] == '\'')
+	if (input[*i] == '"' || input[*i] == '\'')
 	{
 		quote = input[(*i)++];
 		int j = 0;
@@ -23,22 +38,22 @@ int handle_quoted_token(const char *input, int *i, t_shell *shell)
 		{
 			if (input[*i] == quote)
 				break;
-			// Escape handling داخل double quotes
+
+			// Escape داخل double quotes فقط
 			if (quote == '"' && input[*i] == '\\' && input[*i + 1])
 			{
 				(*i)++;
 				segment[j++] = input[(*i)++];
-				continue;
 			}
-
-			segment[j++] = input[(*i)++];
+			else
+			{
+				segment[j++] = input[(*i)++];
+			}
 		}
 
-		h++;
 		if (input[*i] != quote)
 		{
 			segment[j] = '\0';
-			// char *err_str = ft_strjoin(final, segment);
 			char *err_str = ft_strdup("Error: Unmatched quote");
 			add_token(head, new_token(err_str, ERROR, QUETS_INVA));
 			free(err_str);
@@ -47,34 +62,80 @@ int handle_quoted_token(const char *input, int *i, t_shell *shell)
 			return (0);
 		}
 
-		(*i)++; // Skip closing quote
+		(*i)++; // تجاوز الاقتباس النهائي
 		segment[j] = '\0';
 
-		// 🔍 نحيد المسافة إذا كانت فقط ' '
+		// حذف المسافة إذا كانت فقط ' '
 		if (ft_strncmp(segment, " ", 2) == 0)
 		{
 			free(segment);
-			continue;
+		}
+		else
+		{
+			char *tmp = ft_strjoin(final ? final : "", segment);
+			free(final);
+			free(segment);
+			final = tmp;
 		}
 
-		char *tmp = ft_strjoin(final, segment);
-		free(final);
-		free(segment);
-		final = tmp;
+		// تابع إذا مباشرة بعدها اقتباس ثاني مختلف (ex: "hello'world'")
+		while (input[*i] == '"' || input[*i] == '\'')
+		{
+			char nested_quote = input[(*i)++];
+			j = 0;
+			segment = malloc(ft_strlen(input) + 1);
+			if (!segment)
+			{
+				free(final);
+				return (0);
+			}
+			while (input[*i])
+			{
+				if (input[*i] == nested_quote)
+					break;
+				if (nested_quote == '"' && input[*i] == '\\' && input[*i + 1])
+				{
+					(*i)++;
+					segment[j++] = input[(*i)++];
+				}
+				else
+				{
+					segment[j++] = input[(*i)++];
+				}
+			}
+			if (input[*i] != nested_quote)
+			{
+				segment[j] = '\0';
+				char *err_str = ft_strdup("Error: Unmatched quote");
+				add_token(head, new_token(err_str, ERROR, QUETS_INVA));
+				free(err_str);
+				free(segment);
+				free(final);
+				return (0);
+			}
+			(*i)++; // تجاوز الاقتباس الثاني
+			segment[j] = '\0';
+
+			char *tmp = ft_strjoin(final ? final : "", segment);
+			free(final);
+			free(segment);
+			final = tmp;
+		}
 	}
 
 	// 🧠 هل هو OPTION؟
-	if (final[0] == '-' && ft_strlen(final) >= 2)
+	if (final && final[0] == '-' && ft_strlen(final) >= 2)
 		type = OPTION;
-	if (input[*i + 1] == ' ')
+
+	if (final && input[*i + 1] == ' ')
 	{
 		type = ERROR;
 		error = OPTION_INVA;
 	}
-	if (final[0] == '$')
-		handle_variable_token(input, i, shell);
-	else
+
+	if (final)
 		add_token(head, new_token(final, type, error));
+
 	free(final);
 	return (1);
 }
@@ -161,7 +222,12 @@ int handle_option_token(const char *input, int *i, t_token **head)
 	else
 	{
 		opt_start = *i;
-		while (input[*i] && !(input[*i] == ' ') && !is_special(input[*i]))
+		if (input[*i + 1] == ' ')
+		{
+			add_token(head, new_token(val, 0, OPTION_INVA));
+			return 0;
+		}
+		while (input[*i] && !input[*i] == ' ' && !is_special(input[*i]))
 			(*i)++;
 		val = ft_substr(input, start, *i - start);
 	}
@@ -217,19 +283,23 @@ int ft_nodelen(t_token *head)
 	return i;
 }
 
-void correct_lexer(t_token *head)
+void correct_lexer(t_shell *shell)
 {
 	t_token *tmp;
 	t_token *to_delete;
 	char *joined;
 	int token_count;
+	t_token *head = shell->token;
+	int i = 0;
 
 	token_count = ft_nodelen(head);
 
 	if ((token_count == 1 && head->value[0] == '<') || (token_count == 1 && head->value[0] == '>'))
 	{
 		head->error = INPUT_INVA;
-		head->value = ft_strdup("Invalid input");
+		shell->exit_status = 258;
+		free(head->value);
+		head->value = ft_strdup("syntax error");
 		return;
 	}
 	tmp = head;
@@ -238,19 +308,11 @@ void correct_lexer(t_token *head)
 		// Handle joined option like -a
 		if (ft_strlen(tmp->value) == 1 && tmp->value[0] == '-')
 		{
-			joined = ft_strjoin(tmp->value, tmp->next->value);
-			if (!joined)
-				return;
-			free(tmp->value);
-			tmp->value = joined;
-			tmp->type = OPTION;
-
-			to_delete = tmp->next;
-			tmp->next = tmp->next->next;
-			if (to_delete->value)
-				free(to_delete->value);
-			free(to_delete);
-			continue;
+			tmp->type = ERROR;
+			tmp->error = OPTION_INVA;
+			tmp->value = ft_strdup("syntax error");
+			shell->exit_status = 258;
+			return;
 		}
 
 		if (ft_strncmp(tmp->value, ">>", 2) == 0 && ft_strlen(tmp->value) == 2)
@@ -263,103 +325,79 @@ void correct_lexer(t_token *head)
 			tmp->type = REDIR_IN;
 		else if (ft_strncmp(tmp->value, "|", 1) == 0 && ft_strlen(tmp->value) == 1)
 			tmp->type = PIPE;
+		// else if (tmp->value[0] == '$')
+		// {
+		// 	int j = 0;
+		// 	handle_variable_token(tmp->value, &j, shell, tmp);
+		// }
 
 		tmp = tmp->next;
 	}
 }
-
-int is_quots_correct(const char *s)
-{
-	int i;
-	int quots;
-	int d_quots;
-
-	i = 0;
-	quots = 0;
-	d_quots = 0;
-	if (ft_strnstr(s, "echo", 4))
-		return 1;
-	while (s[i])
-	{
-		if (s[i] == '"')
-			d_quots++;
-		else if (s[i] == '\'')
-			quots++;
-		i++;
-	}
-
-	if (d_quots % 2 != 0 || quots % 2 != 0)
-		return 0;
-	return 1;
-}
-
-// t_token *split_tok(char *str)
-// {
-// 	int i = 0;
-// 	t_token *head;
-// 	char quote;
-// 	char *tmp;
-// 	int is_open = 0;
-// 	int start;
-
-// 	while(str[i])
-// 	{
-// 		if((str[i] == '\'' || str[i] == '"') && !is_open)
-// 		{
-// 			is_open = 1;
-// 			quote = str[i];
-// 			start = i;
-// 			while (str[i] && str[i] != quote)
-// 			{
-// 				i++;
-// 			}
-// 			if(str[i] == '\0')
-// 			{
-// 				add_token(&head, new_token("Invalaid quote", 0, QUETS_INVA));
-// 				return (head);
-// 			}
-// 			else if(str[i] == quote && is_open)
-// 			{
-// 				is_open = 0;
-// 				tmp = ft_substr(str, start, i - start);
-// 				add_token(&head, new_token(tmp, WORD, 0));
-// 			}
-// 		}
-// 		else
-// 			i++;
-// 	}
-// 	return head;
-// }
 
 int is_space(char c)
 {
 	return (c == ' ' || c == '\t' || c == '\n');
 }
 
-char *strjoin_free(char *s1, char *s2)
+char *expand_variables_in_string(char *str, t_shell *shell)
 {
-	char *new_str;
+	int i = 0;
+	char *result = NULL;
+	char *tmp;
 
-	if (!s1 && !s2)
-		return NULL;
-	if (!s1)
-		return strdup(s2);
-	if (!s2)
-		return strdup(s1);
-	new_str = ft_strjoin(s1, s2);
-	free(s1);
-	return new_str;
+	while (str[i])
+	{
+		if (str[i] == '$')
+		{
+			tmp = handle_variable_token(str, &i, shell);
+			result = strjoin_free(result, tmp);
+			free(tmp);
+		}
+		else
+		{
+			int start = i;
+			while (str[i] && str[i] != '$')
+				i++;
+			tmp = ft_substr(str, start, i - start);
+			result = strjoin_free(result, tmp);
+			free(tmp);
+		}
+	}
+	return result;
 }
+
 
 t_token *lexer_split_to_tokens(t_shell *shell)
 {
 	int i = 0;
 	t_token *head = NULL;
+	t_token *t_tmp = NULL;
 	char quote;
+	int current_quote_type = 0;
+	int token_type = 0;
 	char *str = shell->input;
 	char *tmp;
 	int start = 0;
 	char *current_word = NULL;
+
+	// معالجة الأخطاء الصغيرة
+	if ((ft_strncmp(str, ">", 1) == 0 && str[1] == '\0') ||
+		(ft_strncmp(str, ">>", 2) == 0 && str[2] == '\0') ||
+		(ft_strncmp(str, "<", 1) == 0 && str[1] == '\0') ||
+		(ft_strncmp(str, "<<", 2) == 0 && str[2] == '\0') ||
+		(ft_strncmp(str, "|", 1) == 0 && str[1] == '\0'))
+	{
+		add_token(&head, new_token("minishell: syntax error", 0, INPUT_INVA));
+		shell->exit_status = 258;
+		return head;
+	}
+	else if (str[0] == '$' && (!str[1] || str[1] == ' '))
+	{
+		add_token(&head, new_token("minishell: '$' command not found", 0, NOT_FOUND));
+		shell->exit_status = 127;
+		return head;
+	}
 
 	while (str[i])
 	{
@@ -372,36 +410,72 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 		{
 			if (str[i] == '\'' || str[i] == '"')
 			{
-				quote = str[i++];
+				quote = str[i];
+				current_quote_type = (quote == '"') ? D_QUOTE : S_QUOTE;
+				i++; // تخطى علامة الاقتباس
 				start = i;
+
 				while (str[i] && str[i] != quote)
 					i++;
 				if (str[i] == '\0')
 				{
 					add_token(&head, new_token("Invalid quote", 0, QUETS_INVA));
+					shell->exit_status = 258;
+					free(current_word);
 					return head;
 				}
 				tmp = ft_substr(str, start, i - start);
-				current_word = strjoin_free(current_word, tmp);
+				if (quote == '\'')
+					current_word = strjoin_free(current_word, tmp);
+				else
+				{
+					char *expanded = expand_variables_in_string(tmp, shell);
+					current_word = strjoin_free(current_word, expanded);
+					free(expanded);
+				}
 				free(tmp);
-				i++; // skip closing quote
+				i++; // تخطى نهاية الاقتباس
+				current_quote_type = 0;
 			}
+
 			else if (is_special(str[i]))
 			{
 				if (current_word)
 				{
-					add_token(&head, new_token(current_word, WORD, 0));
+					t_tmp = new_token(current_word, WORD, 0);
+					t_tmp->quot_type = current_quote_type;
+					add_token(&head, t_tmp);
 					free(current_word);
 					current_word = NULL;
 				}
 				handle_special_token(str, &i, &head);
+				break;
 			}
 			else if (str[i] == '$')
-				handle_variable_token(str, &i, shell);
+			{
+				if (current_quote_type == S_QUOTE)
+				{
+					// لا توسع المتغير داخل single quotes
+					start = i;
+					i++; // تخطى علامة $
+					while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
+						i++;
+					tmp = ft_substr(str, start, i - start);
+					current_word = strjoin_free(current_word, tmp);
+					free(tmp);
+				}
+				else
+				{
+					char *value = handle_variable_token(str, &i, shell);
+					current_word = strjoin_free(current_word, value);
+					free(value);
+				}
+			}
+
 			else
 			{
 				start = i;
-				while (str[i] && !is_space(str[i]) && str[i] != '\'' && str[i] != '"' && !is_special(str[i]))
+				while (str[i] && !is_space(str[i]) && str[i] != '\'' && str[i] != '"' && !is_special(str[i]) && str[i] != '$')
 					i++;
 				tmp = ft_substr(str, start, i - start);
 				current_word = strjoin_free(current_word, tmp);
@@ -410,13 +484,21 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 		}
 		if (current_word)
 		{
-			add_token(&head, new_token(current_word, WORD, 0));
+			if (current_word[0] == '$')
+				token_type = VARIABLE;
+			else if (current_word[0] == '-' && ft_strlen(current_word) >= 2)
+				token_type = OPTION;
+			else
+				token_type = WORD;
+
+			t_tmp = new_token(current_word, token_type, 0);
+			t_tmp->quot_type = current_quote_type;
+			add_token(&head, t_tmp);
 			free(current_word);
 			current_word = NULL;
 		}
 	}
-	correct_lexer(head);
-	// print_tokens(head);
+	correct_lexer(shell);
 	return head;
 }
 

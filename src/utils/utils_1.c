@@ -39,6 +39,8 @@ void free_token(t_token *token)
     {
         next = head->next;
         free(head);
+        if (head->value)
+            free(head->value);
         head = next;
     }
     
