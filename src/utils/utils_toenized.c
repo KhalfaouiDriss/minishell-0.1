@@ -83,8 +83,14 @@ char *handle_variable_token(char *str, int *i, t_shell *shell)
 	char	*var_value = NULL;
 	t_env	*env = shell->env;
 
+    if (str[*i] == '$' && str[*i + 1] == '?')
+	{
+		*i += 2;
+		return ft_itoa(shell->exit_status); // تحويل القيمة إلى string
+	}
 	(*i)++; // تجاوز علامة $
 	start = *i;
+
 
 	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
 		(*i)++;
