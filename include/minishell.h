@@ -15,6 +15,7 @@
 # include <signal.h>
 # include <sys/wait.h>
 # include <errno.h>
+#include <stdbool.h>
 
 
 # define ERROR         0
@@ -33,6 +34,9 @@
 # define QUETS_INVA    13
 # define OPTION_INVA   14
 # define INPUT_INVA    15
+# define D_QUOTE       16
+# define S_QUOTE       17
+
 
 typedef struct s_error
 {
@@ -44,7 +48,9 @@ typedef struct s_token
 {
     char *value;
     int type;
+    int quot_type;
     struct s_token *next;
+    struct s_token *prev;
     int error;
 } t_token;
 
@@ -79,7 +85,7 @@ typedef struct s_shell
 
 // tokenized 
 t_token	*lexer_split_to_tokens(t_shell *shell);
-void handle_variable_token(const char *input, int *i, t_shell *shell);
+char *handle_variable_token(char *input, int *i, t_shell *shell);
 int	handle_option_token(const char *input, int *i, t_token **head);
 void	handle_special_token(const char *input, int *i, t_token **head);
 
@@ -128,6 +134,7 @@ int is_builtin(char *cmd);
 void redirect_output_bu(t_cmd *cmd, int append);
 int execute_builtin(t_shell *shell, char *cmd, char **args);
 
+char *find_env_node(t_env *env, char *key);
 
 int check_if_is_builtin(char *s);
 #endif
