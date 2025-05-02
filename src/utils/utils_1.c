@@ -15,10 +15,6 @@ void	free_split(char **lst)
 	free(lst);
 }
 
-// void init_env(t_shell *shell, char **env)
-// {
-
-// }
 
 void init_shell(t_shell *shell)
 {
@@ -26,35 +22,77 @@ void init_shell(t_shell *shell)
     shell->args = NULL;
     shell->input = NULL;
     shell->token = NULL;
-    // init_env(&(shell->env), env);
+    shell->cmd_list = NULL;
+    shell->exit_status = 0;
+    shell->env = NULL;
+    shell->input = NULL;
 }
 
-void free_token(t_token *token)
+void free_tokens(t_token *tokens)
 {
-    t_token *head;
-    t_token *next;
+    t_token *tmp;
 
-    head = token;
-    while (head)
+    while (tokens)
     {
-        next = head->next;
-        free(head);
-        if (head->value)
-            free(head->value);
-        head = next;
+        tmp = tokens->next;
+        if (tokens->value)
+            free(tokens->value);
+        free(tokens);
+        tokens = tmp;
     }
-    
 }
+
+void free_env(t_env *env)
+{
+    t_env *tmp;
+
+    while (env)
+    {
+        tmp = env->next;
+        if (env->name)
+            free(env->name);
+        if (env->value)
+            free(env->value);
+        free(env);
+        env = tmp;
+    }
+}
+
 
 void free_all(t_shell *shell)
 {
-    if(shell->input)
+    if (!shell)
+        return;
+
+    if (shell->input)
+    {
         free(shell->input);
-    if(shell->token)
-        free_token(shell->token);
-    if(shell->args)
+        shell->input = NULL;
+    }
+
+    if (shell->token)
+    {
+        free_tokens(shell->token);
+        shell->token = NULL;
+    }
+
+    if (shell->args)
+    {
         free_split(shell->args);
+        shell->args = NULL;
+    }
+    if (shell->cmd_list)
+    {
+        free_cmds(shell->cmd_list);
+        shell->cmd_list = NULL;
+    }
+    // if (shell->env)
+    // {
+    //     free_env(shell->env);
+    //     shell->env = NULL;
+    // }
 }
+
 
 t_token	*new_node(char *value)
 {

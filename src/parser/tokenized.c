@@ -38,7 +38,6 @@ int handle_quoted_token(const char *input, int *i, t_shell *shell)
 			if (input[*i] == quote)
 				break;
 
-			// Escape داخل double quotes فقط
 			if (quote == '"' && input[*i] == '\\' && input[*i + 1])
 			{
 				(*i)++;
@@ -58,27 +57,31 @@ int handle_quoted_token(const char *input, int *i, t_shell *shell)
 			free(err_str);
 			free(segment);
 			free(final);
-			shell->exit_status = 258; // Set exit status on error
+			shell->exit_status = 258;
 			return (0);
 		}
 
-		(*i)++; // تجاوز الاقتباس النهائي
+		(*i)++;
 		segment[j] = '\0';
 
-		// حذف المسافة إذا كانت فقط ' '
 		if (ft_strncmp(segment, " ", 2) == 0)
 		{
 			free(segment);
 		}
 		else
 		{
-			char *tmp = ft_strjoin(final ? final : "", segment);
+			char *tmp;
+
+			if (final)
+				tmp = ft_strjoin(final, segment);
+			else
+				tmp = ft_strjoin("", segment);
+
 			free(final);
 			free(segment);
 			final = tmp;
 		}
 
-		// تابع إذا مباشرة بعدها اقتباس ثاني مختلف (ex: "hello'world'")
 		while (input[*i] == '"' || input[*i] == '\'')
 		{
 			char nested_quote = input[(*i)++];
@@ -111,10 +114,10 @@ int handle_quoted_token(const char *input, int *i, t_shell *shell)
 				free(err_str);
 				free(segment);
 				free(final);
-				shell->exit_status = 258; // Set exit status on error
+				shell->exit_status = 258;
 				return (0);
 			}
-			(*i)++; // تجاوز الاقتباس الثاني
+			(*i)++;
 			segment[j] = '\0';
 
 			char *tmp = ft_strjoin(final ? final : "", segment);
@@ -124,7 +127,6 @@ int handle_quoted_token(const char *input, int *i, t_shell *shell)
 		}
 	}
 
-	// 🧠 هل هو OPTION؟
 	if (final && final[0] == '-' && ft_strlen(final) >= 2)
 		type = OPTION;
 
@@ -138,11 +140,19 @@ int handle_quoted_token(const char *input, int *i, t_shell *shell)
 		add_token(head, new_token(final, type, error));
 
 	free(final);
+	// new
+	if (error)
+	{
+		char *err_str = ft_strdup("Error: Invalid option");
+		add_token(head, new_token(err_str, ERROR, error));
+		free(err_str);
+		shell->exit_status = 258;
+		return (0);
+	}
+	// 
 	return (1);
 }
 
-
-// --- Redirections and Pipes Helper ---
 void handle_special_token(const char *input, int *i, t_token **head)
 {
 	int start;
@@ -179,7 +189,6 @@ void handle_special_token(const char *input, int *i, t_token **head)
 	free(val);
 }
 
-// --- Option Handling Helper ---
 int handle_option_token(const char *input, int *i, t_token **head)
 {
 	int start;
@@ -241,7 +250,6 @@ int handle_option_token(const char *input, int *i, t_token **head)
 	return (1);
 }
 
-// --- Normal Words ---
 void handle_word_token(const char *input, int *i, t_token **head)
 {
 	int start = *i;
@@ -252,16 +260,7 @@ void handle_word_token(const char *input, int *i, t_token **head)
 		return;
 
 	while (input[*i] && input[*i] != ' ' && !is_special(input[*i]) && input[*i] != '"' && input[*i] != '\'')
-	{
-		// if (input[*i] == '\\')
-		// {
-		// 	(*i)++;
-		// 	if (input[*i])
-		// 		buffer[j++] = input[(*i)++];
-		// 	continue;
-		// }
 		buffer[j++] = input[(*i)++];
-	}
 
 	buffer[j] = '\0';
 
@@ -298,7 +297,7 @@ void correct_lexer(t_shell *shell)
 	if ((token_count == 1 && head->value[0] == '<') || (token_count == 1 && head->value[0] == '>'))
 	{
 		head->error = INPUT_INVA;
-		shell->exit_status = 258; // Exit status set on error
+		shell->exit_status = 258;
 		free(head->value);
 		head->value = ft_strdup("syntax error");
 		return;
@@ -306,13 +305,13 @@ void correct_lexer(t_shell *shell)
 	tmp = head;
 	while (tmp)
 	{
-		// Handle joined option like -a
 		if (ft_strlen(tmp->value) == 1 && tmp->value[0] == '-')
 		{
 			tmp->type = ERROR;
 			tmp->error = OPTION_INVA;
+			free(tmp->value);
 			tmp->value = ft_strdup("syntax error");
-			shell->exit_status = 258; // Exit status set on error
+			shell->exit_status = 258;
 			return;
 		}
 
@@ -363,7 +362,6 @@ char *expand_variables_in_string(char *str, t_shell *shell)
 	return result;
 }
 
-
 t_token *lexer_split_to_tokens(t_shell *shell)
 {
 	int i = 0;
@@ -377,7 +375,6 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 	int start = 0;
 	char *current_word = NULL;
 
-	// معالجة الأخطاء الصغيرة
 	if ((ft_strncmp(str, ">", 1) == 0 && str[1] == '\0') ||
 		(ft_strncmp(str, ">>", 2) == 0 && str[2] == '\0') ||
 		(ft_strncmp(str, "<", 1) == 0 && str[1] == '\0') ||
@@ -408,7 +405,7 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 			{
 				quote = str[i];
 				current_quote_type = (quote == '"') ? D_QUOTE : S_QUOTE;
-				i++; // تخطى علامة الاقتباس
+				i++;
 				start = i;
 
 				while (str[i] && str[i] != quote)
@@ -430,7 +427,7 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 					free(expanded);
 				}
 				free(tmp);
-				i++; // تخطى نهاية الاقتباس
+				i++;
 				current_quote_type = 0;
 			}
 
@@ -452,7 +449,7 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 				if (current_quote_type == S_QUOTE)
 				{
 					start = i;
-					i++; // تخطى علامة $
+					i++;
 					while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
 						i++;
 					tmp = ft_substr(str, start, i - start);
@@ -466,7 +463,6 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 					free(value);
 				}
 			}
-
 			else
 			{
 				start = i;
@@ -494,51 +490,6 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 		}
 	}
 	correct_lexer(shell);
-	print_tokens(head);
+	// print_tokens(head);
 	return head;
 }
-
-// t_token	*lexer_split_to_tokens(t_shell *shell)
-// {
-// 	t_token	*head;
-// 	int		i;
-// 	char *input = shell->input;
-
-// 	head = NULL;
-// 	i = 0;
-// 	if(!is_quots_correct(input))
-// 		add_token(&head, new_token("Quots not valid", 0, QUETS_INVA));
-// 		if ((ft_strlen(input) <= 2 &&
-// 		(ft_strncmp(input, ">", 2) == 0 || ft_strncmp(input, ">>", 2) == 0 ||
-// 		 ft_strncmp(input, "<", 2) == 0 || ft_strncmp(input, "<<", 2) == 0)))
-// 	   add_token(&head, new_token("Invalid Input", 0, INPUT_INVA));
-
-// 	else
-// 	{
-// 		while (input[i])
-// 		{
-// 			while (input[i] == ' ')
-// 				i++;
-// 			if (!input[i])
-// 				break ;
-// 			if (input[i] == '\'' || input[i] == '"')
-// 			{
-// 				if (!handle_quoted_token(input, &i, shell))
-// 					break ;
-// 			}
-// 			else if (is_special(input[i]))
-// 				handle_special_token(input, &i, &head);
-// 			else if (input[i] == '-' && input[i + 1])
-// 			{
-// 				if (!handle_option_token(input, &i, &head))
-// 					break ;
-// 			}
-// 			else if (input[i] == '$')
-// 				handle_variable_token(input, &i, shell);
-// 			else
-// 				handle_word_token(input, &i, &head);
-// 		}
-// 	}
-// 	correct_lexer(head);
-// 	return (head);
-// }

@@ -56,7 +56,7 @@ int main(int ac, char **av, char **envp)
 	char *pwd;
 	const char *prefix = "\033[0;32mminishell-sendo-C47 $/~ \033[0m";
 	int size;
-	char *mini;
+	// char *mini;
 
 	shell.exit_status = 0;
 	(void)ac;
@@ -71,38 +71,34 @@ int main(int ac, char **av, char **envp)
 		perror("getcwd");
 		exit(1);
 	}
+	free(pwd);
 	size = ft_strlen(prefix) + 1;
-	mini = malloc(size);
+	// mini = malloc(size);
 	init_env(&shell, envp);
 	while (1)
 	{
-		// if (!shell.exit_status)
-		// 	shell.exit_status = 0;
-		// t_env *tmp = shell.env; // Corrected from shell->env to shell.env
-		// while (tmp)
-		// {
-		// 	printf("[ENV] %s = %s\n", tmp->name, tmp->value); // Corrected from tmp->key to tmp->name
-		// 	tmp = tmp->next;
-		// }
 		shell.input = readline(prefix);
 		if (!shell.input)
 		{
 			printf("exit\n");
+			free_all(&shell);
+			free_env(shell.env);
 			break;
 		}
 		if (shell.input[0] != '\0')
 			add_history(shell.input);
-		// print_tokens(shell.token);
 		shell.token = lexer_split_to_tokens(&shell);
 		shell.cmd_list = parse_tokens(&shell);
+		if (!shell.cmd_list)
+		{
+			free_all(&shell);
+			continue;
+		}
 		blocked = 1;
-
 		if (shell.cmd_list)
 			exit_status = execute_pipeline(&shell, envp);
 		blocked = 0;
-		// free_token(shell.token);
-		free_cmds(shell.cmd_list);
-		free(shell.input);
+		free_all(&shell);
 	}
 	// free_all(&shell);
 	return (128);

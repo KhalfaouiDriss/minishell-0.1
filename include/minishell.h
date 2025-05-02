@@ -99,7 +99,7 @@ void add_token(t_token **head, t_token *new);
 // utils_1.c
 void	free_split(char **lst);
 void init_shell(t_shell *shell);
-void free_token(t_token *token);
+void free_tokens(t_token *token);
 void free_all(t_shell *shell);
 t_token	*new_node(char *value);
 
@@ -108,6 +108,7 @@ t_cmd *parse_tokens(t_shell *shell);
 int count_args(t_token *token);
 char *safe_strdup(const char *s);
 void free_cmds(t_cmd *cmds);
+void free_env(t_env *env);
 
 
 //utils_2.c
@@ -126,7 +127,7 @@ void ft_cd(char **args);
 void ft_pwd(char **args);
 void ft_export(t_env **env, char **args);
 void ft_unset(t_env **env, char **args);
-int ft_exit(char **args);
+int ft_exit(t_shell *shell, char **args);
 void ft_env(t_env *env);
 
 // Helper function to identify built-ins

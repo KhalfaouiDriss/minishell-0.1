@@ -47,7 +47,7 @@ int execute_builtin(t_shell *shell, char *cmd, char **args)
         return (0);
     }
     else if (ft_strncmp(cmd, "exit", 5) == 0) {
-        return (ft_exit(args));
+        return (ft_exit(shell, args));
     }
     return (1);
 }
