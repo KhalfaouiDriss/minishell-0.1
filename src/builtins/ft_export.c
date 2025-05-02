@@ -26,30 +26,48 @@ void add_env_node(t_env **env, const char *key, const char *value)
 
 void ft_export(t_env **env, char **args)
 {
-    if (!args[1])
-        return;
+    int i = 1;
 
-    char **kv = malloc(sizeof(char *) * 3);
-    if (!kv)
-        return;
-
-    char *equal_sign = ft_strchr(args[1], '=');
-    if (!equal_sign)
+    while (args[i])
     {
-        free(kv);
-        return;
+        char *equal_sign = ft_strchr(args[i], '=');
+        if (!equal_sign)
+        {
+            i++;
+            continue; // تخطى الإدخالات التي لا تحتوي "="
+        }
+
+        size_t key_len = equal_sign - args[i];
+        char *key = ft_substr(args[i], 0, key_len);
+        char *value = ft_strdup(equal_sign + 1);
+
+        if (key && value)
+        {
+            // تحقق إن كان المفتاح موجودًا مسبقًا
+            t_env *tmp = *env;
+            while (tmp)
+            {
+                if (ft_strncmp(tmp->name, key, ft_strlen(key)) == 0)
+                {
+                    free(tmp->value);             // حذف القيمة القديمة
+                    tmp->value = ft_strdup(value); // تعيين الجديدة
+                    break;
+                }
+                tmp = tmp->next;
+            }
+
+            // إذا لم يوجد المفتاح، أضفه
+            if (!tmp)
+                add_env_node(env, key, value);
+        }
+
+        free(key);
+        free(value);
+        i++;
     }
-
-    size_t key_len = equal_sign - args[1];
-    kv[0] = ft_substr(args[1], 0, key_len);          
-    kv[1] = ft_strdup(equal_sign + 1);               
-    kv[2] = NULL;
-
-    if (kv[0] && kv[1])
-        add_env_node(env, kv[0], kv[1]);
-
-    free_split(kv);
 }
+
+
 
 
 

@@ -73,11 +73,11 @@ int main(int ac, char **av, char **envp)
 	}
 	size = ft_strlen(prefix) + 1;
 	mini = malloc(size);
+	init_env(&shell, envp);
 	while (1)
 	{
 		// if (!shell.exit_status)
 		// 	shell.exit_status = 0;
-		init_env(&shell, envp);
 		// t_env *tmp = shell.env; // Corrected from shell->env to shell.env
 		// while (tmp)
 		// {
