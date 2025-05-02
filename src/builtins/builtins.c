@@ -26,7 +26,7 @@ int execute_builtin(t_shell *shell, char *cmd, char **args)
         return (0);
     }
     else if (ft_strncmp(cmd, "cd", 3) == 0) {
-        ft_cd(args);
+        ft_cd(shell, args);
         return (0);
     }
     

@@ -1,57 +1,54 @@
 #include "../../include/minishell.h"
 
-char *find_command_path(char *cmd, char **envp)
+char *find_command_path(char *cmd, t_env *envp)
 {
-    char **paths = NULL;
-    char *full_path = NULL;
-    int i;
+	char **paths = NULL;
+	char *full_path = NULL;
+	char *envp_value;
+	int i;
 
-    if (!cmd || ft_strchr(cmd, '/'))
-    {
-        if (access(cmd, X_OK) == 0)
-            return ft_strdup(cmd);
-        return NULL;
-    }
+	if (!cmd || ft_strchr(cmd, '/'))
+	{
+		if (access(cmd, X_OK) == 0)
+			return ft_strdup(cmd);
+		return NULL;
+	}
 
-    i = 0;
-    while (envp[i])
-    {
-        if (ft_strncmp(envp[i], "PATH=", 5) == 0)
-        {
-            paths = ft_split(envp[i] + 5, ':');
-            break;
-        }
-        i++;
-    }
-    if (!paths)
-        return NULL;
+	// ✅ Get PATH from linked list environment
+	envp_value = find_env_node(envp, "PATH");
+	if (!envp_value)
+		return NULL;
 
-    i = 0;
-    while (paths[i])
-    {
-        int total_size = ft_strlen(paths[i]) + ft_strlen(cmd) + 2;
-        full_path = malloc(total_size);
-        if (!full_path)
-        {
-            free_split(paths);
-            return NULL;
-        }
+	paths = ft_split(envp_value, ':');
+	if (!paths)
+		return NULL;
 
-        ft_strlcpy(full_path, paths[i], total_size);
-        ft_strlcat(full_path, "/", total_size);
-        ft_strlcat(full_path, cmd, total_size);
+	i = 0;
+	while (paths[i])
+	{
+		int total_size = ft_strlen(paths[i]) + ft_strlen(cmd) + 2;
+		full_path = malloc(total_size);
+		if (!full_path)
+		{
+			free_split(paths);
+			return NULL;
+		}
 
-        if (access(full_path, X_OK) == 0)
-        {
-            free_split(paths);
-            return full_path;
-        }
-        free(full_path);
-        i++;
-    }
+		ft_strlcpy(full_path, paths[i], total_size);
+		ft_strlcat(full_path, "/", total_size);
+		ft_strlcat(full_path, cmd, total_size);
 
-    free_split(paths);
-    return NULL;
+		if (access(full_path, X_OK) == 0)
+		{
+			free_split(paths);
+			return full_path;
+		}
+		free(full_path);
+		i++;
+	}
+
+	free_split(paths);
+	return NULL;
 }
 
 int execute_pipeline(t_shell *shell, char **envp)
@@ -118,7 +115,7 @@ int execute_pipeline(t_shell *shell, char **envp)
             if (is_builtin(current->args[0]) && current->next == NULL)
                 exit(execute_builtin(shell, current->args[0], current->args));
 
-            char *path = find_command_path(current->args[0], envp);
+            char *path = find_command_path(current->args[0], shell->env);
             if (!path)
             {
                 write(2, current->args[0], ft_strlen(current->args[0]));
