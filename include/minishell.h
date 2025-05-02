@@ -123,7 +123,7 @@ int execute_pipeline(t_shell *shell, char **envp);
 
 // Built-in command functions
 void ft_echo(char **args);
-void ft_cd(char **args);
+void ft_cd(t_shell *shell, char **args);
 void ft_pwd(char **args);
 void ft_export(t_env **env, char **args);
 void ft_unset(t_env **env, char **args);
