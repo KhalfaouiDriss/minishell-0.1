@@ -17,7 +17,6 @@ char *strjoin_free(char *s1, char *s2)
 	return new_str;
 }
 
-// --- Quoted Tokens Helper ---
 int handle_quoted_token(const char *input, int *i, t_shell *shell)
 {
 	char quote;
@@ -59,6 +58,7 @@ int handle_quoted_token(const char *input, int *i, t_shell *shell)
 			free(err_str);
 			free(segment);
 			free(final);
+			shell->exit_status = 258; // Set exit status on error
 			return (0);
 		}
 
@@ -111,6 +111,7 @@ int handle_quoted_token(const char *input, int *i, t_shell *shell)
 				free(err_str);
 				free(segment);
 				free(final);
+				shell->exit_status = 258; // Set exit status on error
 				return (0);
 			}
 			(*i)++; // تجاوز الاقتباس الثاني
@@ -139,6 +140,7 @@ int handle_quoted_token(const char *input, int *i, t_shell *shell)
 	free(final);
 	return (1);
 }
+
 
 // --- Redirections and Pipes Helper ---
 void handle_special_token(const char *input, int *i, t_token **head)
@@ -282,7 +284,6 @@ int ft_nodelen(t_token *head)
 	}
 	return i;
 }
-
 void correct_lexer(t_shell *shell)
 {
 	t_token *tmp;
@@ -297,7 +298,7 @@ void correct_lexer(t_shell *shell)
 	if ((token_count == 1 && head->value[0] == '<') || (token_count == 1 && head->value[0] == '>'))
 	{
 		head->error = INPUT_INVA;
-		shell->exit_status = 258;
+		shell->exit_status = 258; // Exit status set on error
 		free(head->value);
 		head->value = ft_strdup("syntax error");
 		return;
@@ -311,7 +312,7 @@ void correct_lexer(t_shell *shell)
 			tmp->type = ERROR;
 			tmp->error = OPTION_INVA;
 			tmp->value = ft_strdup("syntax error");
-			shell->exit_status = 258;
+			shell->exit_status = 258; // Exit status set on error
 			return;
 		}
 
@@ -325,11 +326,6 @@ void correct_lexer(t_shell *shell)
 			tmp->type = REDIR_IN;
 		else if (ft_strncmp(tmp->value, "|", 1) == 0 && ft_strlen(tmp->value) == 1)
 			tmp->type = PIPE;
-		// else if (tmp->value[0] == '$')
-		// {
-		// 	int j = 0;
-		// 	handle_variable_token(tmp->value, &j, shell, tmp);
-		// }
 
 		tmp = tmp->next;
 	}
@@ -455,7 +451,6 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 			{
 				if (current_quote_type == S_QUOTE)
 				{
-					// لا توسع المتغير داخل single quotes
 					start = i;
 					i++; // تخطى علامة $
 					while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
@@ -499,6 +494,7 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 		}
 	}
 	correct_lexer(shell);
+	print_tokens(head);
 	return head;
 }
 

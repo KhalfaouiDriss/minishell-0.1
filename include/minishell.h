@@ -125,7 +125,7 @@ void ft_echo(char **args);
 void ft_cd(char **args);
 void ft_pwd(char **args);
 void ft_export(t_env **env, char **args);
-void ft_unset(char **args);
+void ft_unset(t_env **env, char **args);
 int ft_exit(char **args);
 void ft_env(t_env *env);
 

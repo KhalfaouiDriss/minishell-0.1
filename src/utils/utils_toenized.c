@@ -83,41 +83,45 @@ char *handle_variable_token(char *str, int *i, t_shell *shell)
 	char	*var_value = NULL;
 	t_env	*env = shell->env;
 
-    if (str[*i] == '$' && str[*i + 1] == '?')
+	if (str[*i] == '$' && (str[*i + 1] == '\0' || str[*i + 1] == ' '))
+	{
+		(*i)++;
+		return ft_strdup("$");
+	}
+	if (str[*i] == '$' && str[*i + 1] == '$')
 	{
 		*i += 2;
-		return ft_itoa(shell->exit_status); // تحويل القيمة إلى string
+		return ft_itoa(getpid());
 	}
-	(*i)++; // تجاوز علامة $
+	if (str[*i] == '$' && str[*i + 1] == '?')
+	{
+		*i += 2;
+		return ft_itoa(shell->exit_status);
+	}
+	(*i)++;
 	start = *i;
-
-
 	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
 		(*i)++;
 
 	len = *i - start;
 	if (len == 0)
-		var_name = ft_strdup("");
-	else
-		var_name = ft_substr(str, start, len);
+		return ft_strdup("$");
 
+	var_name = ft_substr(str, start, len);
 	while (env)
 	{
-		if (ft_strncmp(env->name, var_name, ft_strlen(var_name)) == 0)
+		if (ft_strncmp(env->name, var_name, len) == 0)
 		{
 			var_value = ft_strdup(env->value);
 			break;
 		}
 		env = env->next;
 	}
-	if (!var_value)
-		var_value = ft_strdup(""); // متغير غير موجود
-
 	free(var_name);
-	return var_value; // أرجع القيمة بدل إضافتها هنا
+	if (!var_value)
+		var_value = ft_strdup("");
+	return var_value;
 }
-
-
 
 
 
