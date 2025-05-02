@@ -85,4 +85,3 @@ int handle_heredoc(char *delimiter)
     close(pipe_fd[1]);
     return pipe_fd[0];
 }
-
