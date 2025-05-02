@@ -175,14 +175,14 @@ void handle_special_token(const char *input, int *i, t_token **head)
 	val = ft_substr(input, start, *i - start);
 	if (ft_strncmp(val, "|", 1) == 0)
 		type = PIPE;
-	else if (ft_strncmp(val, "<", 1) == 0)
-		type = REDIR_IN;
-	else if (ft_strncmp(val, ">", 1) == 0)
-		type = REDIR_OUT;
 	else if (ft_strncmp(val, ">>", 2) == 0)
 		type = REDIR_APPEND;
 	else if (ft_strncmp(val, "<<", 2) == 0)
 		type = REDIR_HEREDOC;
+	else if (ft_strncmp(val, "<", 1) == 0)
+		type = REDIR_IN;
+	else if (ft_strncmp(val, ">", 1) == 0)
+		type = REDIR_OUT;
 	else
 		type = ERROR;
 	add_token(head, new_token(val, type, 0));

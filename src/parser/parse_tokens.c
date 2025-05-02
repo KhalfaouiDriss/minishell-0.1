@@ -20,21 +20,21 @@ char *safe_strdup(const char *s)
         return NULL;
     return ft_strdup(s);
 }
-
-// void free_tokens(t_token *tokens)
-// {
-//     t_token *current;
-//     t_token *next;
+/*
+void free_tokens(t_token *tokens)
+{
+    t_token *current;
+    t_token *next;
     
-//     current = tokens;
-//     while (current)
-//     {
-//         next = current->next;
-//         free(current->value);
-//         free(current);
-//         current = next;
-//     }
-// }
+    current = tokens;
+    while (current)
+    {
+        next = current->next;
+        free(current->value);
+        free(current);
+        current = next;
+    }
+}*/
 
 void free_cmds(t_cmd *cmds)
 {
@@ -54,7 +54,6 @@ void free_cmds(t_cmd *cmds)
         free(current);
         current = next;
     }
-    cmds = NULL;
 }
 
 t_cmd *parse_tokens(t_shell *shell)
@@ -67,10 +66,7 @@ t_cmd *parse_tokens(t_shell *shell)
     while (token) {
         t_cmd *cmd = malloc(sizeof(t_cmd));
         if (!cmd)
-        {
-            free_cmds(head);
             return NULL;
-        }
             
         cmd->infile = NULL;
         cmd->outfile = NULL;
@@ -89,8 +85,6 @@ t_cmd *parse_tokens(t_shell *shell)
             if (!token->type)
             {
                 printf("%s\n", token->value);
-                free_all(shell);
-                // free(cmd->args);
                 return NULL;
             }
             if (token->type == WORD || token->type == OPTION)
@@ -99,14 +93,20 @@ t_cmd *parse_tokens(t_shell *shell)
             else if (token->type == REDIR_IN && token->next)
             {
                 cmd->infile = safe_strdup(token->next->value);
+                redirect_input(cmd->infile, 0);
                 cmd->heredoc = 0;
                 
                 token = token->next;
             }
             else if (token->type == REDIR_HEREDOC && token->next)
             {
+                int temp_fd = handle_heredoc(token->next->value);
+                close(temp_fd);
+                if (cmd->infile)
+                    free(cmd->infile);
                 cmd->infile = safe_strdup(token->next->value);
                 cmd->heredoc = 1;
+                
                 token = token->next;
             }
             else if (token->type == REDIR_OUT && token->next)
@@ -138,7 +138,6 @@ t_cmd *parse_tokens(t_shell *shell)
         if (token && token->type == PIPE)
             token = token->next;
     }
-    free_tokens(shell->token);
-    shell->token = NULL;
+
     return head;
 }

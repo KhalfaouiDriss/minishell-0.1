@@ -1,11 +1,11 @@
 #include "../include/minishell.h"
 
-int blocked = 0;
+int		blocked = 0;
 
-void get_sig(int sig)
+void	get_sig(int sig)
 {
 	if (blocked)
-		return;
+		return ;
 	if (sig == SIGINT)
 	{
 		rl_replace_line("", 0);
@@ -15,12 +15,12 @@ void get_sig(int sig)
 	}
 }
 
-void init_env(t_shell *shell, char **envp)
+void	init_env(t_shell *shell, char **envp)
 {
-	int i;
-	char **variable;
-	t_env *new_env;
-	t_env *last;
+	int		i;
+	char	**variable;
+	t_env	*new_env;
+	t_env	*last;
 
 	i = 0;
 	shell->env = NULL;
@@ -28,10 +28,10 @@ void init_env(t_shell *shell, char **envp)
 	{
 		variable = ft_split(envp[i], '=');
 		if (!variable)
-			return;
+			return ;
 		new_env = malloc(sizeof(t_env));
 		if (!new_env)
-			return;
+			return ;
 		new_env->name = ft_strdup(variable[0]);
 		new_env->value = ft_strdup(variable[1]);
 		new_env->next = NULL;
@@ -49,16 +49,16 @@ void init_env(t_shell *shell, char **envp)
 	}
 }
 
-int main(int ac, char **av, char **envp)
+int	main(int ac, char **av, char **envp)
 {
-	t_shell shell;
-	int exit_status;
-	char *pwd;
-	const char *prefix = "\033[0;32mminishell-sendo-C47 $/~ \033[0m";
-	int size;
-	// char *mini;
+	t_shell		shell;
+	int			exit_status;
+	char		*pwd;
+	const char	*prefix = "\033[0;32mminishell-sendo-C47 $/~ \033[0m";
+	int			size;
+	char		*mini;
 
-	shell.exit_status = 0;
+	exit_status = 0;
 	(void)ac;
 	(void)av;
 	init_shell(&shell);
@@ -71,35 +71,28 @@ int main(int ac, char **av, char **envp)
 		perror("getcwd");
 		exit(1);
 	}
-	free(pwd);
 	size = ft_strlen(prefix) + 1;
-	// mini = malloc(size);
-	init_env(&shell, envp);
+	mini = malloc(size);
 	while (1)
 	{
+		init_env(&shell, envp);
 		shell.input = readline(prefix);
-		if (!shell.input)
+		if (!shell.input )
 		{
-			printf("exit\n");
 			free_all(&shell);
-			free_env(shell.env);
-			break;
+			printf("exit\n");
+			break ;
 		}
 		if (shell.input[0] != '\0')
 			add_history(shell.input);
 		shell.token = lexer_split_to_tokens(&shell);
 		shell.cmd_list = parse_tokens(&shell);
-		if (!shell.cmd_list)
-		{
-			free_all(&shell);
-			continue;
-		}
 		blocked = 1;
 		if (shell.cmd_list)
 			exit_status = execute_pipeline(&shell, envp);
 		blocked = 0;
-		free_all(&shell);
+		free_cmds(shell.cmd_list);
 	}
-	// free_all(&shell);
-	return (128);
+	free_all(&shell);
+	return (0);
 }

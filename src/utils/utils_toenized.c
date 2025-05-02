@@ -96,7 +96,9 @@ char *handle_variable_token(char *str, int *i, t_shell *shell)
 	if (str[*i] == '$' && str[*i + 1] == '?')
 	{
 		*i += 2;
-		return ft_itoa(shell->exit_status);
+        int op = shell->exit_status;
+        shell->exit_status = 0;
+		return ft_itoa(op);
 	}
 	(*i)++;
 	start = *i;
