@@ -28,13 +28,20 @@ void ft_export(t_env **env, char **args)
 {
     int i = 1;
 
-    while (args[i])
+    if(args[i] == NULL)
+    {
+        ft_env(*env, 1);
+        return;
+    }
+    else
+    {
+        while (args[i])
     {
         char *equal_sign = ft_strchr(args[i], '=');
         if (!equal_sign)
         {
             i++;
-            continue; // تخطى الإدخالات التي لا تحتوي "="
+            continue;
         }
 
         size_t key_len = equal_sign - args[i];
@@ -47,7 +54,7 @@ void ft_export(t_env **env, char **args)
             t_env *tmp = *env;
             while (tmp)
             {
-                if (ft_strncmp(tmp->name, key, ft_strlen(key)) == 0)
+                if (ft_strncmp(tmp->name, key, ft_strlen(key) + 1) == 0)
                 {
                     free(tmp->value);             // حذف القيمة القديمة
                     tmp->value = ft_strdup(value); // تعيين الجديدة
@@ -64,6 +71,7 @@ void ft_export(t_env **env, char **args)
         free(key);
         free(value);
         i++;
+    }
     }
 }
 

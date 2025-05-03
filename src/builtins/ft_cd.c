@@ -64,7 +64,8 @@ void ft_cd(t_shell *shell, char **args)
 	oldpwd = getcwd(NULL, 0); // Save OLDPWD before changing directory
 	if (!oldpwd)
 	{
-		perror("getcwd");
+        // chdir("HOME");
+		perror("minishell");
 		return;
 	}
 
@@ -75,17 +76,16 @@ void ft_cd(t_shell *shell, char **args)
 		return;
 	}
 
-	cwd = getcwd(NULL, 0); // New PWD
+	update_env_var(shell->env, "OLDPWD", oldpwd);
+	free(oldpwd);
+
+	cwd = getcwd(NULL, 0); // Try get new PWD
 	if (!cwd)
 	{
 		perror("getcwd");
-		free(oldpwd);
-		return;
+		return; // لا ترجع بعد free لل cwd لأنه فشل
 	}
 
-	update_env_var(shell->env, "OLDPWD", oldpwd);
 	update_env_var(shell->env, "PWD", cwd);
-
-	free(oldpwd);
 	free(cwd);
 }
