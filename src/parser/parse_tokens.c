@@ -93,7 +93,6 @@ t_cmd *parse_tokens(t_shell *shell)
             else if (token->type == REDIR_IN && token->next)
             {
                 cmd->infile = safe_strdup(token->next->value);
-                redirect_input(cmd->infile, 0);
                 cmd->heredoc = 0;
                 
                 token = token->next;
