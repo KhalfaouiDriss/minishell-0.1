@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 14:45:52 by dkhalfao          #+#    #+#             */
-/*   Updated: 2024/11/17 11:24:53 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/05/03 16:24:19 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	ft_atoi(const char *str)
 {
 	int	sign;
-	int	value;
+	long	value;
 
 	sign = 1;
 	value = 0;
@@ -30,6 +30,8 @@ int	ft_atoi(const char *str)
 		value = value * 10 + (*str - '0');
 		str++;
 	}
+	if(value > 2147483647 && sign == 1)
+		return (-1);
 	value = sign * value;
 	return (value);
 }
