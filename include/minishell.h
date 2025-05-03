@@ -124,11 +124,11 @@ int execute_pipeline(t_shell *shell, char **envp);
 // Built-in command functions
 void ft_echo(char **args);
 void ft_cd(t_shell *shell, char **args);
-void ft_pwd(char **args);
+void ft_pwd(t_shell *shell, char **args);
 void ft_export(t_env **env, char **args);
 void ft_unset(t_env **env, char **args);
 int ft_exit(t_shell *shell, char **args);
-void ft_env(t_env *env);
+void ft_env(t_env *env, int is_export);
 
 // Helper function to identify built-ins
 int is_builtin(char *cmd);

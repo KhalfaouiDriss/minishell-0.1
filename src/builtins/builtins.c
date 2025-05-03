@@ -31,7 +31,7 @@ int execute_builtin(t_shell *shell, char *cmd, char **args)
     }
     
     else if (ft_strncmp(cmd, "pwd", 4) == 0) {
-        ft_pwd(args);
+        ft_pwd(shell ,args);
         return (0);
     }
     else if (ft_strncmp(cmd, "export", 6) == 0) {
@@ -43,7 +43,7 @@ int execute_builtin(t_shell *shell, char *cmd, char **args)
         return (0);
     }
     else if (ft_strncmp(cmd, "env", 3) == 0) {
-        ft_env(shell->env);
+        ft_env(shell->env, 0);
         return (0);
     }
     else if (ft_strncmp(cmd, "exit", 5) == 0) {
