@@ -92,7 +92,6 @@ int execute_pipeline(t_shell *shell, char **envp)
 
         if (pid == 0)
         {
-            // 🧠 Restore default signal handlers in child
             signal(SIGINT, SIG_DFL);
             signal(SIGQUIT, SIG_DFL);
 
