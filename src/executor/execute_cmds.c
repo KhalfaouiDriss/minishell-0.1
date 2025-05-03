@@ -78,6 +78,8 @@ int execute_pipeline(t_shell *shell, char **envp)
 
         return exit_status;
     }
+    if(current && !current->next && current->infile)
+        return 0;
 
     while (current)
     {
@@ -149,7 +151,6 @@ int execute_pipeline(t_shell *shell, char **envp)
     int status;
     while (wait(&status) > 0)
     {
-        // 🧠 Print newline if child was killed by a signal
         if (WIFSIGNALED(status))
         {
             int sig = WTERMSIG(status);
