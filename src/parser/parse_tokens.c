@@ -20,21 +20,6 @@ char *safe_strdup(const char *s)
         return NULL;
     return ft_strdup(s);
 }
-/*
-void free_tokens(t_token *tokens)
-{
-    t_token *current;
-    t_token *next;
-    
-    current = tokens;
-    while (current)
-    {
-        next = current->next;
-        free(current->value);
-        free(current);
-        current = next;
-    }
-}*/
 
 void free_cmds(t_cmd *cmds)
 {
@@ -94,7 +79,6 @@ t_cmd *parse_tokens(t_shell *shell)
             {
                 cmd->infile = safe_strdup(token->next->value);
                 cmd->heredoc = 0;
-                
                 token = token->next;
             }
             else if (token->type == REDIR_HEREDOC && token->next)

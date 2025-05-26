@@ -61,10 +61,12 @@ int handle_heredoc(char *delimiter)
 {
     int pipe_fd[2];
     char *line;
-
+    
+    
     if (pipe(pipe_fd) == -1)
         error_exit("pipe");
-
+    
+    signal(SIGINT,SIG_DFL);
     while (1)
     {
         line = readline("> ");

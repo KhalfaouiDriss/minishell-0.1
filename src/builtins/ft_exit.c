@@ -6,12 +6,6 @@ int ft_exit(t_shell *shell, char **args)
     
     if (args[1])
         exit_code = ft_atoi(args[1]);
-    if(exit_code == -1 )
-    {
-        write(2, "exit: numeric argument required\n", 33);
-        shell->exit_status = 2;
-        exit(2);
-    }
     printf("exit\n");
     free_all(shell);
     free_env(shell->env);
