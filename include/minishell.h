@@ -55,7 +55,8 @@ typedef struct s_token
 } t_token;
 
 typedef struct s_cmd {
-    char **args;        
+    char **args;
+    int c_flag;       
     char *infile;       
     char *outfile;      
     int outfile_fd;
@@ -109,6 +110,7 @@ int count_args(t_token *token);
 char *safe_strdup(const char *s);
 void free_cmds(t_cmd *cmds);
 void free_env(t_env *env);
+int stati(int n);
 
 
 //utils_2.c

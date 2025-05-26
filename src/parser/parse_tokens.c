@@ -83,8 +83,14 @@ t_cmd *parse_tokens(t_shell *shell)
             }
             else if (token->type == REDIR_HEREDOC && token->next)
             {
+                
+                int temp_fd = handle_heredoc(token->next->value);
+                close(temp_fd);
+                if (cmd->infile)
+                    free(cmd->infile);
                 cmd->infile = safe_strdup(token->next->value);
                 cmd->heredoc = 1;
+                cmd->c_flag = 1;
                 
                 token = token->next;
             }
