@@ -78,8 +78,8 @@ int execute_pipeline(t_shell *shell, char **envp)
         return exit_status;
     }
     
-    if(current && !current->next && current->infile && current->heredoc ==1)
-         return 0;
+    // if(current && !current->next && current->infile && current->heredoc == 1)
+    //      return 0;
 
     while (current)
     {

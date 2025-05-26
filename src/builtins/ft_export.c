@@ -50,20 +50,17 @@ void ft_export(t_env **env, char **args)
 
         if (key && value)
         {
-            // تحقق إن كان المفتاح موجودًا مسبقًا
             t_env *tmp = *env;
             while (tmp)
             {
                 if (ft_strncmp(tmp->name, key, ft_strlen(key) + 1) == 0)
                 {
-                    free(tmp->value);             // حذف القيمة القديمة
-                    tmp->value = ft_strdup(value); // تعيين الجديدة
+                    free(tmp->value);      
+                    tmp->value = ft_strdup(value);
                     break;
                 }
                 tmp = tmp->next;
             }
-
-            // إذا لم يوجد المفتاح، أضفه
             if (!tmp)
                 add_env_node(env, key, value);
         }
