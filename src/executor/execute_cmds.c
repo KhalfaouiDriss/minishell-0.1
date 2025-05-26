@@ -77,8 +77,9 @@ int execute_pipeline(t_shell *shell, char **envp)
 
         return exit_status;
     }
-    if(current && !current->next && current->infile)
-        return 0;
+    
+    if(current && !current->next && current->infile && current->heredoc ==1)
+         return 0;
 
     while (current)
     {
@@ -91,8 +92,6 @@ int execute_pipeline(t_shell *shell, char **envp)
 
         if (pid == 0)
         {
-            
-
             if (current->next)
                 dup2(fd[1], 1);
             if (prev_pipe != -1)
@@ -102,7 +101,6 @@ int execute_pipeline(t_shell *shell, char **envp)
                 close(prev_pipe);
             if (current->next)
                 close(fd[0]);
-
             if (current->infile)
                 redirect_input(current->infile, current->heredoc);
             if (current->outfile)

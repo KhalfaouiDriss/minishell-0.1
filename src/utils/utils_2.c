@@ -61,29 +61,28 @@ int handle_heredoc(char *delimiter)
 {
     int pipe_fd[2];
     char *line;
-    
-    
+
     if (pipe(pipe_fd) == -1)
         error_exit("pipe");
-    
-    signal(SIGINT,SIG_DFL);
+
     while (1)
     {
         line = readline("> ");
         if (!line)
             break;
 
-        if (ft_strncmp(line, delimiter,ft_strlen(delimiter)+1) == 0)
+        if (ft_strncmp(line, delimiter,ft_strlen(delimiter) +1) == 0)
         {
             free(line);
             break;
         }
 
-        write(pipe_fd[1], line, ft_strlen(line));
-        write(pipe_fd[1], "\n", 1);
+        // write(pipe_fd[1], line, ft_strlen(line));
+        // write(pipe_fd[1], "\n", 1);
         free(line);
     }
 
     close(pipe_fd[1]);
     return pipe_fd[0];
 }
+
