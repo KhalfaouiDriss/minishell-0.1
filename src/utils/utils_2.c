@@ -77,8 +77,8 @@ int handle_heredoc(char *delimiter)
             break;
         }
 
-        // write(pipe_fd[1], line, ft_strlen(line));
-        // write(pipe_fd[1], "\n", 1);
+        write(pipe_fd[1], line, ft_strlen(line));
+        write(pipe_fd[1], "\n", 1);
         free(line);
     }
 
