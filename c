@@ -1,9 +1,0 @@
-<
-a
-b
-c
-include
-lib
-Makefile
-minishell
-src
