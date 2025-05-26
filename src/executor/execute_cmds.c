@@ -78,9 +78,7 @@ int execute_pipeline(t_shell *shell, char **envp)
         return exit_status;
     }
     
-    // if(current && !current->next && current->infile && current->heredoc == 1)
-    //      return 0;
-
+  
     while (current)
     {
         if (current->next && pipe(fd) < 0)
@@ -101,7 +99,7 @@ int execute_pipeline(t_shell *shell, char **envp)
                 close(prev_pipe);
             if (current->next)
                 close(fd[0]);
-            if (current->infile)
+            if (current->infile && current->c_flag != 1)
                 redirect_input(current->infile, current->heredoc);
             if (current->outfile)
                 redirect_output(current, current->append);
