@@ -14,7 +14,6 @@ char *find_command_path(char *cmd, t_env *envp)
 		return NULL;
 	}
 
-	// ✅ Get PATH from linked list environment
 	envp_value = find_env_node(envp, "PATH");
 	if (!envp_value)
 		return NULL;
@@ -92,8 +91,7 @@ int execute_pipeline(t_shell *shell, char **envp)
 
         if (pid == 0)
         {
-            signal(SIGINT, SIG_DFL);
-            signal(SIGQUIT, SIG_DFL);
+            
 
             if (current->next)
                 dup2(fd[1], 1);
@@ -151,11 +149,7 @@ int execute_pipeline(t_shell *shell, char **envp)
     while (wait(&status) > 0)
     {
         if (WIFSIGNALED(status))
-        {
-            int sig = WTERMSIG(status);
-            if (sig == SIGINT || sig == SIGQUIT)
                 write(1, "\n", 1);
-        }
     }
 
     if (WIFEXITED(status))
