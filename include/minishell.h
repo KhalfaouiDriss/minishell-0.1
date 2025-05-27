@@ -62,8 +62,10 @@ typedef struct s_cmd {
     int outfile_fd;
     int append;
     int heredoc;
+    int heredoc_fd;
     struct s_cmd *next;
 } t_cmd;
+
 
 typedef struct s_env
 {

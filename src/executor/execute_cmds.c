@@ -49,7 +49,6 @@ char *find_command_path(char *cmd, t_env *envp)
 	free_split(paths);
 	return NULL;
 }
-
 int execute_pipeline(t_shell *shell, char **envp)
 {
     int exit_status = 0;
@@ -77,8 +76,7 @@ int execute_pipeline(t_shell *shell, char **envp)
 
         return exit_status;
     }
-    
-  
+
     while (current)
     {
         if (current->next && pipe(fd) < 0)
@@ -99,8 +97,16 @@ int execute_pipeline(t_shell *shell, char **envp)
                 close(prev_pipe);
             if (current->next)
                 close(fd[0]);
-            if (current->infile && current->c_flag != 1)
+
+            if (current->heredoc)
+            {
+                dup2(current->heredoc_fd, STDIN_FILENO);
+                close(current->heredoc_fd);
+            }
+
+            if (current->infile)
                 redirect_input(current->infile, current->heredoc);
+
             if (current->outfile)
                 redirect_output(current, current->append);
 
@@ -145,7 +151,7 @@ int execute_pipeline(t_shell *shell, char **envp)
     while (wait(&status) > 0)
     {
         if (WIFSIGNALED(status))
-                write(1, "\n", 1);
+            write(1, "\n", 1);
     }
 
     if (WIFEXITED(status))
