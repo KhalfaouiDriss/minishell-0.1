@@ -9,17 +9,9 @@ void error_exit(char *msg)
 void redirect_input(char *file, int heredoc)
 {
     int fd;
-
-    if (heredoc)
-    {
-        fd = handle_heredoc(file);
-    }
-    else
-    {
-        fd = open(file, O_RDONLY);
-        if (fd < 0)
-            error_exit("open infile");
-    }
+    fd = open(file, O_RDONLY);
+    if (fd < 0)
+        error_exit("open infile");
 
     if (dup2(fd, 0) < 0)
         error_exit("dup2 infile");
@@ -71,7 +63,7 @@ int handle_heredoc(char *delimiter)
         if (!line)
             break;
 
-        if (ft_strncmp(line, delimiter,ft_strlen(delimiter) +1) == 0)
+        if (ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1) == 0)
         {
             free(line);
             break;
@@ -85,4 +77,3 @@ int handle_heredoc(char *delimiter)
     close(pipe_fd[1]);
     return pipe_fd[0];
 }
-
