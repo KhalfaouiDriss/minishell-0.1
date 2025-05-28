@@ -99,7 +99,7 @@ int execute_pipeline(t_shell *shell, char **envp)
 
             if (current->heredoc)
             {
-                dup2(current->heredoc_fd, STDIN_FILENO);
+                dup2(current->heredoc_fd, 0);
                 close(current->heredoc_fd);
             }
 
@@ -111,6 +111,7 @@ int execute_pipeline(t_shell *shell, char **envp)
 
             if (!current->args[0] || current->args[0][0] == '\0')
                 exit(0);
+            
 
             if (is_builtin(current->args[0]) && current->next == NULL)
                 exit(execute_builtin(shell, current->args[0], current->args));

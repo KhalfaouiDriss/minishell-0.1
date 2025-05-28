@@ -3,23 +3,26 @@
 void error_exit(char *msg)
 {
     perror(msg);
-    exit(1);
+    return ;
 }
 
-void redirect_input(char *file, int heredoc)
+int redirect_input(char *file, int heredoc)
 {
     int fd;
     fd = open(file, O_RDONLY);
     if (fd < 0)
         error_exit("open infile");
 
-    if (dup2(fd, 0) < 0)
+    if (dup2(fd, 0) < 0){
         error_exit("dup2 infile");
+        return 1;
+    }
 
     close(fd);
+    return 0;
 }
 
-void redirect_output(t_cmd *cmd, int append)
+int redirect_output(t_cmd *cmd, int append)
 {
     int fd;
 
@@ -28,9 +31,12 @@ void redirect_output(t_cmd *cmd, int append)
     else
         fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 
-    if (fd < 0)
+    if (fd < 0){
         error_exit("open outfile");
+        return 1;
+    }
     cmd->outfile_fd = fd;
+    return 0;
 }
 
 

@@ -63,6 +63,7 @@ typedef struct s_cmd {
     int append;
     int heredoc;
     int heredoc_fd;
+    int aa;
     struct s_cmd *next;
 } t_cmd;
 
@@ -117,8 +118,8 @@ int stati(int n);
 
 //utils_2.c
 void error_exit(char *msg);
-void redirect_input(char *file,int heredoc);
-void redirect_output(t_cmd *cmd, int append);
+int redirect_input(char *file,int heredoc);
+int redirect_output(t_cmd *cmd, int append);
 int is_all_space(const char *str);
 int handle_heredoc(char *delimiter);
 
