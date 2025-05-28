@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 14:45:52 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/05/03 16:24:19 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/05/28 13:36:32 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ int	ft_atoi(const char *str)
 		value = value * 10 + (*str - '0');
 		str++;
 	}
+	if(!ft_isdigit(*str) && *str != '\0')
+		return -1;
 	if(value > 2147483647 && sign == 1)
 		return (-1);
 	value = sign * value;

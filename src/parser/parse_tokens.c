@@ -58,6 +58,7 @@ t_cmd *parse_tokens(t_shell *shell)
         cmd->heredoc = 0;
         cmd->append = 0;
         cmd->outfile_fd = 0;
+        cmd->aa =0;
         
         int c = count_args(token);
         cmd->args = malloc((c + 1) * sizeof(char*));
@@ -89,15 +90,26 @@ t_cmd *parse_tokens(t_shell *shell)
 
             else if (token->type == REDIR_OUT && token->next)
             {
+                int n=0;
                 cmd->outfile = safe_strdup(token->next->value);
-                redirect_output(cmd, 0);
+                n = redirect_output(cmd, 0);
+                if(n == 1){
+                    cmd->aa = 1;
+                    return NULL;
+                }
                 cmd->append = 0;
+                cmd->aa = 1;
                 token = token->next;
             }
             else if (token->type == REDIR_APPEND && token->next)
             {
+                int n=0;
                 cmd->outfile = safe_strdup(token->next->value);
-                redirect_output(cmd, 1);
+                n = redirect_output(cmd, 1);
+                if(n == 1){
+                    cmd->aa = 1;
+                    return NULL;
+                }
                 cmd->append = 1;
                 token = token->next;
             }

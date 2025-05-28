@@ -7,8 +7,11 @@ int ft_exit(t_shell *shell, char **args)
     if (args[1])
         exit_code = ft_atoi(args[1]);
     printf("exit\n");
-    free_all(shell);
-    free_env(shell->env);
+    if(exit_code == -1)
+    {
+        printf("%s :numeric argument required\n",args[1]);
+        exit(2);
+    }
     exit(exit_code);
     return (exit_code);
 }
