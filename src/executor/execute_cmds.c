@@ -76,7 +76,6 @@ int execute_pipeline(t_shell *shell, char **envp)
 
         return exit_status;
     }
-
     while (current)
     {
         if (current->next && pipe(fd) < 0)
@@ -115,7 +114,6 @@ int execute_pipeline(t_shell *shell, char **envp)
 
             if (is_builtin(current->args[0]) && current->next == NULL)
                 exit(execute_builtin(shell, current->args[0], current->args));
-
             char *path = find_command_path(current->args[0], shell->env);
             if (!path)
             {
@@ -148,7 +146,7 @@ int execute_pipeline(t_shell *shell, char **envp)
     }
 
     int status;
-    while (wait(&status) > 0)
+    while (waitpid(pid,&status,0) > 0)
     {
         if (WIFSIGNALED(status))
             write(1, "\n", 1);

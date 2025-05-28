@@ -54,15 +54,11 @@ int main(int ac, char **av, char **envp)
 	t_shell shell;
 	int exit_status;
 	char *pwd;
-	const char *prefix = "\033[0;32mminishell-sendo-C47 $/~ \033[0m";
-	int size;
-	// char *mini;
 
 	shell.exit_status = 0;
 	(void)ac;
 	(void)av;
 	init_shell(&shell);
-	rl_catch_signals = 0;
 	signal(SIGINT, get_sig);
 	signal(SIGQUIT, SIG_IGN);
 	pwd = getcwd(NULL, 0);
@@ -72,12 +68,10 @@ int main(int ac, char **av, char **envp)
 		exit(1);
 	}
 	free(pwd);
-	size = ft_strlen(prefix) + 1;
-	// mini = malloc(size);
 	init_env(&shell, envp);
 	while (1)
 	{
-		shell.input = readline(prefix);
+		shell.input = readline("\033[0;32mminishell-sendo-C47 $/~ \033[0m");
 		if (!shell.input)
 		{
 			printf("exit\n");
@@ -100,6 +94,5 @@ int main(int ac, char **av, char **envp)
 		blocked = 0;
 		free_all(&shell);
 	}
-	// free_all(&shell);
-	return (128);
+	return (0);
 }
