@@ -1,22 +1,22 @@
 #include "../../include/minishell.h"
 
-char *get_env_value(t_env *env, const char *name)
+char *get_env_value(t_env *env, char *name)
 {
 	while (env)
 	{
-		if (strcmp(env->name, name) == 0)
+		if (ft_strncmp(env->name, name, ft_strlen(name) + 1) == 0)
 			return env->value;
 		env = env->next;
 	}
 	return NULL;
 }
 
-void update_env_var(t_env *env, const char *name, const char *value)
+void update_env_var(t_env *env, char *name, char *value)
 {
 	t_env *tmp = env;
 	while (tmp)
 	{
-		if (strcmp(tmp->name, name) == 0)
+		if (ft_strncmp(env->name, name, ft_strlen(name) + 1) == 0)
 		{
 			free(tmp->value);
 			tmp->value = ft_strdup(value);
@@ -25,7 +25,6 @@ void update_env_var(t_env *env, const char *name, const char *value)
 		tmp = tmp->next;
 	}
 
-	// Add new variable if not found
 	t_env *new_var = malloc(sizeof(t_env));
 	if (!new_var)
 		return;
@@ -46,9 +45,6 @@ void ft_cd(t_shell *shell, char **args)
 	char *oldpwd;
 	char *cwd;
 
-	if (!args[0] || strcmp(args[0], "cd") != 0)
-		return;
-
 	if (args[1] == NULL)
 	{
 		dir = get_env_value(shell->env, "HOME");
@@ -61,10 +57,9 @@ void ft_cd(t_shell *shell, char **args)
 	else
 		dir = args[1];
 
-	oldpwd = getcwd(NULL, 0); // Save OLDPWD before changing directory
+	oldpwd = getcwd(NULL, 0);
 	if (!oldpwd)
 	{
-        // chdir("HOME");
 		perror("minishell");
 		return;
 	}
@@ -78,14 +73,12 @@ void ft_cd(t_shell *shell, char **args)
 
 	update_env_var(shell->env, "OLDPWD", oldpwd);
 	free(oldpwd);
-
-	cwd = getcwd(NULL, 0); // Try get new PWD
+	cwd = getcwd(NULL, 0);
 	if (!cwd)
 	{
 		perror("getcwd");
-		return; // لا ترجع بعد free لل cwd لأنه فشل
+		return;
 	}
-
 	update_env_var(shell->env, "PWD", cwd);
 	free(cwd);
 }

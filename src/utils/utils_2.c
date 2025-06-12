@@ -1,46 +1,34 @@
 #include "../../include/minishell.h"
 
-void error_exit(char *msg)
-{
-    perror(msg);
-    return ;
-}
-
-int redirect_input(char *file, int heredoc)
+void redirect_input(char *file, t_cmd *cmd)
 {
     int fd;
     fd = open(file, O_RDONLY);
-    if (fd < 0)
-        error_exit("open infile");
-
-    if (dup2(fd, 0) < 0){
-        error_exit("dup2 infile");
-        return 1;
+    if (fd < 0){
+        perror("open infile");
+        if(!is_builtin(cmd->args[0]))
+            exit(1);
     }
-
+    dup2(fd, 0);
     close(fd);
-    return 0;
 }
 
-int redirect_output(t_cmd *cmd, int append)
+void redirect_output(t_cmd *cmd, int append)
 {
     int fd;
-
     if (append)
-        fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+        fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
     else
-        fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-
-    if (fd < 0){
-        error_exit("open outfile");
-        return 1;
+        fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+    if(fd < 0){
+        perror("open outfile");
+        cmd->c_flag = 1;
     }
     cmd->outfile_fd = fd;
-    return 0;
 }
 
 
-void redirect_output_bu(t_cmd *cmd, int append)
+void redirect_output_builtin(t_cmd *cmd, int append)
 {
     int fd;
 
@@ -48,38 +36,53 @@ void redirect_output_bu(t_cmd *cmd, int append)
         fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
     else
         fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    if (fd < 0)
-        error_exit("open outfile");
-    if (dup2(fd, 1) < 0)
-        error_exit("dup2 outfile");
-    close(fd);  
+    if (fd < 0){
+        perror("open outfile");
+        cmd->c_flag = 1;
+    }
+    dup2(fd, 1);
 }
 
-int handle_heredoc(char *delimiter)
+int	handle_heredoc(char *delimiter)
 {
-    int pipe_fd[2];
-    char *line;
+	int		tmp_fd;
+	pid_t	pid;
+	int		status;
+	const char *tmp_name = "/tmp/.heredoc_tmp";
 
-    if (pipe(pipe_fd) == -1)
-        error_exit("pipe");
+	tmp_fd = open(tmp_name, O_CREAT | O_WRONLY | O_TRUNC, 0600);
+	if (tmp_fd == -1)
+		return (perror("open"), -1);
 
-    while (1)
-    {
-        line = readline("> ");
-        if (!line)
-            break;
+	pid = fork();
+	if (pid == -1)
+		return (perror("fork"), close(tmp_fd), -1);
 
-        if (ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1) == 0)
-        {
-            free(line);
-            break;
-        }
+	if (pid == 0)
+	{
+		char *line;
+		while (1)
+		{
+			line = readline("> ");
+			if (!line || ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1) == 0)
+			{
+				free(line);
+				break;
+			}
+			write(tmp_fd, line, ft_strlen(line));
+			write(tmp_fd, "\n", 1);
+			free(line);
+		}
+		close(tmp_fd);
+		exit(0);
+	}
 
-        write(pipe_fd[1], line, ft_strlen(line));
-        write(pipe_fd[1], "\n", 1);
-        free(line);
-    }
+	close(tmp_fd);
+	waitpid(pid, &status, 0);
 
-    close(pipe_fd[1]);
-    return pipe_fd[0];
+	tmp_fd = open(tmp_name, O_RDONLY);
+	unlink(tmp_name);
+	if (tmp_fd == -1)
+		perror("open heredoc read");
+	return tmp_fd;
 }

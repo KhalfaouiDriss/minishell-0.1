@@ -4,10 +4,11 @@ int blocked = 0;
 
 void	get_sig(int sig)
 {
-	if (blocked)
+	if (blocked == 1)
 		return;
 	if (sig == SIGINT)
 	{
+		blocked = 2;
 		write(1, "\n", 1);
 		rl_replace_line("", 0);
 		rl_on_new_line();
@@ -71,7 +72,8 @@ int main(int ac, char **av, char **envp)
 	init_env(&shell, envp);
 	while (1)
 	{
-		shell.input = readline("\033[0;32mminishell-sendo-C47 $/~ \033[0m");
+		
+		shell.input = readline("minishell-sendo-C47 $/~ ");
 		if (!shell.input)
 		{
 			printf("exit\n");
@@ -81,6 +83,8 @@ int main(int ac, char **av, char **envp)
 		}
 		if (shell.input[0] != '\0')
 			add_history(shell.input);
+		if(blocked == 2)
+			shell.exit_status = 130;
 		shell.token = lexer_split_to_tokens(&shell);
 		shell.cmd_list = parse_tokens(&shell);
 		if (!shell.cmd_list)
@@ -90,7 +94,7 @@ int main(int ac, char **av, char **envp)
 		}
 		blocked = 1;
 		if (shell.cmd_list)
-			exit_status = execute_pipeline(&shell, envp);
+			execute_pipeline(&shell, envp);
 		blocked = 0;
 		free_all(&shell);
 	}

@@ -12,7 +12,7 @@ void add_env_node(t_env **env, const char *key, const char *value)
     new_node->value = ft_strdup(value);
     new_node->next = NULL;
 
-    if (!*env)
+    if (*env == NULL)
     {
         *env = new_node;
         return;
@@ -36,7 +36,7 @@ void ft_export(t_env **env, char **args)
     else
     {
         while (args[i])
-    {
+        {
         char *equal_sign = ft_strchr(args[i], '=');
         if (!equal_sign)
         {
@@ -44,7 +44,7 @@ void ft_export(t_env **env, char **args)
             continue;
         }
 
-        size_t key_len = equal_sign - args[i];
+        int key_len = equal_sign - args[i];
         char *key = ft_substr(args[i], 0, key_len);
         char *value = ft_strdup(equal_sign + 1);
 
@@ -64,15 +64,9 @@ void ft_export(t_env **env, char **args)
             if (!tmp)
                 add_env_node(env, key, value);
         }
-
-        free(key);
-        free(value);
-        i++;
-    }
+            free(key);
+            free(value);
+            i++;
+        }
     }
 }
-
-
-
-
-

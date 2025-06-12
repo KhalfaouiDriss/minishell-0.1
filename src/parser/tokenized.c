@@ -149,7 +149,7 @@ int handle_quoted_token(const char *input, int *i, t_shell *shell)
 		shell->exit_status = 258;
 		return (0);
 	}
-	// 
+	//
 	return (1);
 }
 
@@ -283,26 +283,27 @@ int ft_nodelen(t_token *head)
 	}
 	return i;
 }
-void correct_lexer(t_shell *shell)
+void correct_lexer(t_shell *shell, t_token **token)
 {
 	t_token *tmp;
-	t_token *to_delete;
-	char *joined;
-	int token_count;
-	t_token *head = shell->token;
-	int i = 0;
+	char *tok = NULL;
+	t_token *head = *token;
 
-	token_count = ft_nodelen(head);
-
-	if ((token_count == 1 && head->value[0] == '<') || (token_count == 1 && head->value[0] == '>'))
+	if (!head)
 	{
-		head->error = INPUT_INVA;
-		shell->exit_status = 258;
-		free(head->value);
-		head->value = ft_strdup("syntax error");
 		return;
 	}
-	tmp = head;
+	tmp = *token;
+
+	if(ft_strncmp(tmp->value, "|", 1) == 0)
+	{
+		free(tmp->value);
+		tmp->value = ft_strdup("syntax error");
+		tmp->type = ERROR;
+		tmp->error = INPUT_INVA;
+		return;
+	}
+
 	while (tmp)
 	{
 		if (ft_strlen(tmp->value) == 1 && tmp->value[0] == '-')
@@ -312,22 +313,102 @@ void correct_lexer(t_shell *shell)
 			free(tmp->value);
 			tmp->value = ft_strdup("syntax error");
 			shell->exit_status = 258;
+			free(tok);
 			return;
 		}
-
 		if (ft_strncmp(tmp->value, ">>", 2) == 0 && ft_strlen(tmp->value) == 2)
+		{
+			if (tok && ft_strncmp(tmp->value, tok, 2) == 0)
+			{
+				free(tmp->value);
+				tmp->value = ft_strdup("syntax error");
+				tmp->type = ERROR;
+				tmp->error = INPUT_INVA;
+				free(tok);
+				return;
+			}
 			tmp->type = REDIR_APPEND;
+		}
 		else if (ft_strncmp(tmp->value, "<<", 2) == 0 && ft_strlen(tmp->value) == 2)
+		{
+			if (tok && ft_strncmp(tmp->value, tok, 2) == 0)
+			{
+				free(tmp->value);
+				tmp->value = ft_strdup("syntax error");
+				tmp->type = ERROR;
+				tmp->error = INPUT_INVA;
+				free(tok);
+				return;
+			}
 			tmp->type = REDIR_HEREDOC;
+		}
 		else if (ft_strncmp(tmp->value, ">", 1) == 0 && ft_strlen(tmp->value) == 1)
+		{
+			if (tok && ft_strncmp(tmp->value, tok, 1) == 0)
+			{
+				free(tmp->value);
+				tmp->value = ft_strdup("syntax error");
+				tmp->type = ERROR;
+				tmp->error = INPUT_INVA;
+				free(tok);
+				return;
+			}
 			tmp->type = REDIR_OUT;
+		}
 		else if (ft_strncmp(tmp->value, "<", 1) == 0 && ft_strlen(tmp->value) == 1)
+		{
+			if (tok && ft_strncmp(tmp->value, tok, 1) == 0)
+			{
+				free(tmp->value);
+				tmp->value = ft_strdup("syntax error");
+				tmp->type = ERROR;
+				tmp->error = INPUT_INVA;
+				free(tok);
+				return;
+			}
 			tmp->type = REDIR_IN;
+		}
 		else if (ft_strncmp(tmp->value, "|", 1) == 0 && ft_strlen(tmp->value) == 1)
+		{
+			if (tok && ft_strncmp(tmp->value, tok, 1) == 0)
+			{
+				free(tmp->value);
+				tmp->value = ft_strdup("syntax error");
+				tmp->type = ERROR;
+				tmp->error = INPUT_INVA;
+				free(tok);
+				return;
+			}
 			tmp->type = PIPE;
+		}
+		else
+		{
+			tmp->type = WORD;
+			free(tok);
+			tok = NULL;
+		}
+		if (!tmp->next)
+		{
+			if (!ft_strncmp(tmp->value, "|", 1) || !ft_strncmp(tmp->value, ">", 1) ||
+				!ft_strncmp(tmp->value, "<<", 2) || !ft_strncmp(tmp->value, "<", 1) ||
+				!ft_strncmp(tmp->value, ">>", 2))
+			{
+				free(tmp->value);
+				tmp->value = ft_strdup("syntax error");
+				tmp->type = 0;
+				tmp->error = INPUT_INVA;
+			}
+		}
+		if (tmp->type != WORD)
+		{
+			free(tok);
+			tok = ft_strdup(tmp->value);
+		}
 
 		tmp = tmp->next;
 	}
+	// print_tokens(head);
+	free(tok);
 }
 
 int is_space(char c)
@@ -335,7 +416,7 @@ int is_space(char c)
 	return (c == ' ' || c == '\t' || c == '\n');
 }
 
-char *expand_variables_in_string(char *str, t_shell *shell)
+char *expand_variables_in_string(char *str, t_shell *shell, char qt)
 {
 	int i = 0;
 	char *result = NULL;
@@ -345,7 +426,7 @@ char *expand_variables_in_string(char *str, t_shell *shell)
 	{
 		if (str[i] == '$')
 		{
-			tmp = handle_variable_token(str, &i, shell);
+			tmp = handle_variable_token(str, &i, shell, qt);
 			result = strjoin_free(result, tmp);
 			free(tmp);
 		}
@@ -362,12 +443,25 @@ char *expand_variables_in_string(char *str, t_shell *shell)
 	return result;
 }
 
+int isAllSpace(char *str)
+{
+	int i = 0;
+	printf("check 2");
+	while (str[i])
+	{
+		if (str[i] && str[i] != ' ')
+			return 0;
+		return 1;
+	}
+}
+
 t_token *lexer_split_to_tokens(t_shell *shell)
 {
 	int i = 0;
 	t_token *head = NULL;
 	t_token *t_tmp = NULL;
 	char quote;
+	char *isQuote = NULL;
 	int current_quote_type = 0;
 	int token_type = 0;
 	char *str = shell->input;
@@ -375,17 +469,17 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 	int start = 0;
 	char *current_word = NULL;
 
-	if ((ft_strncmp(str, ">", 1) == 0 && str[1] == '\0') ||
-		(ft_strncmp(str, ">>", 2) == 0 && str[2] == '\0') ||
-		(ft_strncmp(str, "<", 1) == 0 && str[1] == '\0') ||
-		(ft_strncmp(str, "<<", 2) == 0 && str[2] == '\0') ||
-		(ft_strncmp(str, "|", 1) == 0 && str[1] == '\0'))
-	{
-		add_token(&head, new_token("minishell: syntax error", 0, INPUT_INVA));
-		shell->exit_status = 258;
-		return head;
-	}
-	else if (str[0] == '$' && (!str[1] || str[1] == ' '))
+	// if ((ft_strncmp(str, ">", 1) == 0 && isAllSpace(str + 1)) ||
+	// 	(ft_strncmp(str, ">>", 2) == 0 && isAllSpace(str + 2)) ||
+	// 	(ft_strncmp(str, "<", 1) == 0 && isAllSpace(str + 1)) ||
+	// 	(ft_strncmp(str, "<<", 2) == 0 && isAllSpace(str + 2)) ||
+	// 	(ft_strncmp(str, "|", 1) == 0 && isAllSpace(str + 1)))
+	// {
+	// 	add_token(&head, new_token("minishell: syntax error", 0, INPUT_INVA));
+	// 	shell->exit_status = 258;
+	// 	return head;
+	// }
+	if (str[0] == '$' && (!str[1] || str[1] == ' '))
 	{
 		add_token(&head, new_token("minishell: '$' command not found", 0, NOT_FOUND));
 		shell->exit_status = 127;
@@ -404,7 +498,10 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 			if (str[i] == '\'' || str[i] == '"')
 			{
 				quote = str[i];
-				current_quote_type = (quote == '"') ? D_QUOTE : S_QUOTE;
+				if ((quote == '"'))
+					current_quote_type = D_QUOTE;
+				else
+					current_quote_type = S_QUOTE;
 				i++;
 				start = i;
 
@@ -418,11 +515,11 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 					return head;
 				}
 				tmp = ft_substr(str, start, i - start);
-				if (quote == '\'')
+				if (quote == '\'' && tmp[0] != '$')
 					current_word = strjoin_free(current_word, tmp);
 				else
 				{
-					char *expanded = expand_variables_in_string(tmp, shell);
+					char *expanded = expand_variables_in_string(tmp, shell, quote);
 					current_word = strjoin_free(current_word, expanded);
 					free(expanded);
 				}
@@ -441,8 +538,14 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 					free(current_word);
 					current_word = NULL;
 				}
+				if (str[i] == '|' && str[i + 1] == '|')
+				{
+					// printf("check 1");
+					correct_lexer(shell, &head);
+					return head;
+				}
 				handle_special_token(str, &i, &head);
-				break;
+				// break;
 			}
 			else if (str[i] == '$')
 			{
@@ -458,7 +561,7 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 				}
 				else
 				{
-					char *value = handle_variable_token(str, &i, shell);
+					char *value = handle_variable_token(str, &i, shell, 0);
 					current_word = strjoin_free(current_word, value);
 					free(value);
 				}
@@ -489,7 +592,7 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 			current_word = NULL;
 		}
 	}
-	correct_lexer(shell);
 	// print_tokens(head);
+	correct_lexer(shell, &head);
 	return head;
 }

@@ -2,21 +2,23 @@
 
 int count_args(t_token *token)
 {
-    int count = 0;
-    while (token && token->type != PIPE)
+    int i;
+    i = 0;
+    while(token && token->type != PIPE)
     {
-        if (token->type == WORD || token->type == OPTION)
-            count++;
-        else if (token->type >= REDIR_IN && token->type <= REDIR_HEREDOC)
+        if(token->type == OPTION || token->type == WORD)
+            i++;
+        if(token->type >= REDIR_IN && token->type <= REDIR_HEREDOC)
             token = token->next;
         token = token->next;
+
     }
-    return count;
+    return i;
 }
 
-char *safe_strdup(const char *s)
+char *safe_strdup(char *s)
 {
-    if (!s) 
+    if(!s)
         return NULL;
     return ft_strdup(s);
 }
@@ -41,6 +43,17 @@ void free_cmds(t_cmd *cmds)
     }
 }
 
+void init_str(t_cmd *cmd)
+{
+    cmd->infile = NULL;
+    cmd->outfile = NULL;
+    cmd->next = NULL;
+    cmd->heredoc = 0;
+    cmd->append = 0;
+    cmd->outfile_fd = 0;
+    cmd->c_flag = 0;
+}
+
 t_cmd *parse_tokens(t_shell *shell)
 {
     t_cmd *head = NULL;
@@ -48,84 +61,62 @@ t_cmd *parse_tokens(t_shell *shell)
     t_token *token;
 
     token = shell->token;
+    while (token)
+    {
+        if(!token->type)
+        {
+            printf("%s\n", token->value);
+            return NULL;
+        }
+        token = token->next;
+    }
+    token = shell->token;
     while (token) {
         t_cmd *cmd = malloc(sizeof(t_cmd));
         if (!cmd)
             return NULL;
-        cmd->infile = NULL;
-        cmd->outfile = NULL;
-        cmd->next = NULL;
-        cmd->heredoc = 0;
-        cmd->append = 0;
-        cmd->outfile_fd = 0;
-        cmd->aa =0;
-        
+        init_str(cmd);
         int c = count_args(token);
         cmd->args = malloc((c + 1) * sizeof(char*));
 
         int i = 0;
-        while (token && token->type != PIPE)
+        while(token && token->type != PIPE)
         {
-            if (!token->type)
-            {
-                printf("%s\n", token->value);
-                return NULL;
-            }
-            if (token->type == WORD || token->type == OPTION)
+            if(token->type == WORD || token->type == OPTION)
                 cmd->args[i++] = safe_strdup(token->value);
-              
-            else if (token->type == REDIR_IN && token->next)
+            else if(token->type == REDIR_IN && token->next)
             {
                 cmd->infile = safe_strdup(token->next->value);
-                cmd->heredoc = 0;
                 token = token->next;
             }
-            else if (token->type == REDIR_HEREDOC && token->next)
-            {
-                cmd->heredoc = 1;
+            else if(token->type == REDIR_HEREDOC && token->next){
                 cmd->heredoc_fd = handle_heredoc(token->next->value);
                 token = token->next;
             }
-
-
-            else if (token->type == REDIR_OUT && token->next)
-            {
-                int n=0;
+             else if(token->type == REDIR_OUT && token->next){
                 cmd->outfile = safe_strdup(token->next->value);
-                n = redirect_output(cmd, 0);
-                if(n == 1){
-                    cmd->aa = 1;
-                    return NULL;
-                }
+                redirect_output(cmd,0);
                 cmd->append = 0;
-                cmd->aa = 1;
                 token = token->next;
             }
-            else if (token->type == REDIR_APPEND && token->next)
-            {
-                int n=0;
+             else if(token->type == REDIR_APPEND && token->next){
                 cmd->outfile = safe_strdup(token->next->value);
-                n = redirect_output(cmd, 1);
-                if(n == 1){
-                    cmd->aa = 1;
-                    return NULL;
-                }
+                redirect_output(cmd,1);
                 cmd->append = 1;
                 token = token->next;
             }
-           
             token = token->next;
         }
-
         cmd->args[i] = NULL;
-
-        if (!head && !last)
-            head = last = cmd;
+        if(!head && !last){
+            head = cmd;
+            last = cmd;
+        }
         else{
             last->next = cmd;
             last = last->next;
         }
-        if (token && token->type == PIPE)
+        if(token && token->type == PIPE)
             token = token->next;
     }
 
