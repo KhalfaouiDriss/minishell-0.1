@@ -75,55 +75,100 @@ char *find_env_node(t_env *env, char *key)
     }
     return NULL;
 }
-char *handle_variable_token(char *str, int *i, t_shell *shell)
+
+char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 {
-	int		start;
-	int		len;
-	char	*var_name;
+	int		start, len;
+	char	*var_name = NULL;
 	char	*var_value = NULL;
 	t_env	*env = shell->env;
 
+    if(ft_isdigit(str[*i + 1]))
+    {
+        *i += 2;
+        return ft_strdup(" ");
+    }
+    
+	if (*i > 0 && (str[*i - 1] == '\\'))
+	{
+		(*i)++;
+		start = *i;
+		while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
+			(*i)++;
+		len = *i - start;
+		var_name = ft_substr(str, start, len);
+		char *result = ft_strjoin("$", var_name);
+		free(var_name);
+		return result;
+	}
+
+	// الحالة 1: فقط $ بدون متغيّر بعدها
 	if (str[*i] == '$' && (str[*i + 1] == '\0' || str[*i + 1] == ' '))
 	{
 		(*i)++;
 		return ft_strdup("$");
 	}
+
+	// الحالة 2: $$ → رقم الـ PID
 	if (str[*i] == '$' && str[*i + 1] == '$')
 	{
 		*i += 2;
 		return ft_itoa(getpid());
 	}
+
+	// الحالة 3: $? → آخر كود خروج
 	if (str[*i] == '$' && str[*i + 1] == '?')
 	{
 		*i += 2;
-        int op = shell->exit_status;
-        shell->exit_status = 0;
-		return ft_itoa(op);
+		int status = shell->exit_status;
+		shell->exit_status = 0;
+		return ft_itoa(status);
 	}
+
+	// نمرّ لاستخراج اسم المتغيّر من بعد $
 	(*i)++;
 	start = *i;
+
 	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
 		(*i)++;
 
 	len = *i - start;
-	if (len == 0)
-		return ft_strdup("$");
-
 	var_name = ft_substr(str, start, len);
+
+	// لو المتغيّر كان داخل ' ' نرجعو كما هو، بدون توسعة
+	if (quote == '\'')
+	{
+		char *result = ft_strjoin("$", var_name);
+		free(var_name);
+		return result;
+	}
+
+	// البحث عن المتغيّر داخل البيئة
 	while (env)
 	{
-		if (ft_strncmp(env->name, var_name, len) == 0)
+		if (ft_strncmp(env->name, var_name, ft_strlen(env->name)) == 0
+			&& ft_strlen(env->name) == len)
 		{
 			var_value = ft_strdup(env->value);
 			break;
 		}
 		env = env->next;
 	}
-	free(var_name);
+
+	// لو ما لقيناهش، نرجعو الاسم كما هو مع $ في البداية
 	if (!var_value)
-		var_value = ft_strdup("");
+	{
+		char *unknown = NULL;
+		// char *unknown = ft_strjoin("$", var_name);
+		free(var_name);
+		return unknown;
+	}
+
+	free(var_name);
 	return var_value;
 }
+
+
 
 
 

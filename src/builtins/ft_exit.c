@@ -13,5 +13,5 @@ int ft_exit(t_shell *shell, char **args)
         exit(2);
     }
     exit(exit_code);
-    return (exit_code);
+    return 0;
 }

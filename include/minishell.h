@@ -17,17 +17,15 @@
 # include <errno.h>
 #include <stdbool.h>
 
-
 # define ERROR         0
 # define WORD          1   
 # define PIPE          2   
 # define REDIR_IN      3   
 # define REDIR_OUT     4   
-# define REDIR_APPEND  5   
-# define REDIR_HEREDOC 6   
-# define OPTION        7   
-# define VARIABLE      8   
-
+# define REDIR_APPEND  5
+# define REDIR_HEREDOC 6
+# define OPTION        7
+# define VARIABLE      8
 # define EXEC          10
 # define NOT_FOUND     11
 # define INVALID_DIR   12
@@ -54,16 +52,17 @@ typedef struct s_token
     int error;
 } t_token;
 
-typedef struct s_cmd {
+typedef struct s_cmd
+{
     char **args;
-    int c_flag;       
     char *infile;       
     char *outfile;      
     int outfile_fd;
     int append;
     int heredoc;
     int heredoc_fd;
-    int aa;
+    int c_flag;
+    int fd_builtin;
     struct s_cmd *next;
 } t_cmd;
 
@@ -89,7 +88,7 @@ typedef struct s_shell
 
 // tokenized 
 t_token	*lexer_split_to_tokens(t_shell *shell);
-char *handle_variable_token(char *input, int *i, t_shell *shell);
+char *handle_variable_token(char *str, int *i, t_shell *shell, char qte);
 int	handle_option_token(const char *input, int *i, t_token **head);
 void	handle_special_token(const char *input, int *i, t_token **head);
 
@@ -107,40 +106,25 @@ void free_tokens(t_token *token);
 void free_all(t_shell *shell);
 t_token	*new_node(char *value);
 
-// parse_tokens.
 t_cmd *parse_tokens(t_shell *shell);
 int count_args(t_token *token);
-char *safe_strdup(const char *s);
+char *safe_strdup(char *s);
 void free_cmds(t_cmd *cmds);
 void free_env(t_env *env);
-int stati(int n);
-
-
-//utils_2.c
-void error_exit(char *msg);
-int redirect_input(char *file,int heredoc);
-int redirect_output(t_cmd *cmd, int append);
-int is_all_space(const char *str);
+void redirect_input(char *file, t_cmd *cmd);
+void redirect_output(t_cmd *cmd, int append);
 int handle_heredoc(char *delimiter);
-
-// 
-int execute_pipeline(t_shell *shell, char **envp);
-
-// Built-in command functions
+void execute_pipeline(t_shell *shell, char **envp);
 void ft_echo(char **args);
 void ft_cd(t_shell *shell, char **args);
 void ft_pwd(t_shell *shell, char **args);
 void ft_export(t_env **env, char **args);
 void ft_unset(t_env **env, char **args);
 int ft_exit(t_shell *shell, char **args);
-void ft_env(t_env *env, int is_export);
-
-// Helper function to identify built-ins
+void ft_env(t_env *env, int export);
 int is_builtin(char *cmd);
-void redirect_output_bu(t_cmd *cmd, int append);
+void redirect_output_builtin(t_cmd *cmd, int append);
 int execute_builtin(t_shell *shell, char *cmd, char **args);
-
 char *find_env_node(t_env *env, char *key);
 
-int check_if_is_builtin(char *s);
 #endif
