@@ -78,10 +78,16 @@ void execute_pipeline(t_shell *shell, char **envp)
             {
                 dup2(current->heredoc_fd, 0);
                 close(current->heredoc_fd);
-            }if (current->infile)
+            }
+            if (current->infile)
                 redirect_input(current->infile, current);
             if (!current->args[0] || current->args[0][0] == '\0')
                 exit(0);
+            if(is_builtin(current->args[0]))
+            {
+                execute_builtin(shell, current->args[0], current->args);
+                exit(0);
+            } 
             char *path = find_command_path(current->args[0], shell->env);
             if (!path)
             {

@@ -66,6 +66,7 @@ t_cmd *parse_tokens(t_shell *shell)
         if(!token->type)
         {
             printf("%s\n", token->value);
+            shell->exit_status = 127;
             return NULL;
         }
         token = token->next;
