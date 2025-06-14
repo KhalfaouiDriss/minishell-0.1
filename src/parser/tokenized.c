@@ -467,19 +467,12 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 	int token_type = 0;
 	char *str = shell->input;
 	char *tmp;
+	char *tmp_2;
+	char *tmp_3;
 	int start = 0;
 	char *current_word = NULL;
+	int j;
 
-	// if ((ft_strncmp(str, ">", 1) == 0 && isAllSpace(str + 1)) ||
-	// 	(ft_strncmp(str, ">>", 2) == 0 && isAllSpace(str + 2)) ||
-	// 	(ft_strncmp(str, "<", 1) == 0 && isAllSpace(str + 1)) ||
-	// 	(ft_strncmp(str, "<<", 2) == 0 && isAllSpace(str + 2)) ||
-	// 	(ft_strncmp(str, "|", 1) == 0 && isAllSpace(str + 1)))
-	// {
-	// 	add_token(&head, new_token("minishell: syntax error", 0, INPUT_INVA));
-	// 	shell->exit_status = 258;
-	// 	return head;
-	// }
 	if (str[0] == '$' && (!str[1] || str[1] == ' '))
 	{
 		add_token(&head, new_token("minishell: '$' command not found", 0, NOT_FOUND));
@@ -541,12 +534,10 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 				}
 				if (str[i] == '|' && str[i + 1] == '|')
 				{
-					// printf("check 1");
 					correct_lexer(shell, &head);
 					return head;
 				}
 				handle_special_token(str, &i, &head);
-				// break;
 			}
 			else if (str[i] == '$')
 			{
@@ -562,9 +553,22 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 				}
 				else
 				{
+					j = i;
 					char *value = handle_variable_token(str, &i, shell, 0);
-					current_word = strjoin_free(current_word, value);
+					tmp_2 = ft_substr(str, 0, j);
+					tmp_3 = ft_substr(str, i, ft_strlen(str) - i);
+					free(shell->input);
+					shell->input = ft_strjoin(tmp_2, value);
+					free(tmp_2);
+					tmp_2 = shell->input;
+					shell->input = ft_strjoin(shell->input, tmp_3);
+					i = j;
+					// printf("----------- %s ---------\n", shell->input);
+					// current_word = strjoin_free(current_word, value);
+					free(tmp_2);
 					free(value);
+					str = shell->input;
+					break;
 				}
 			}
 			else
