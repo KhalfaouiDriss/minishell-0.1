@@ -12,7 +12,6 @@ void add_env_node(t_env **env, const char *key, const char *value)
     if(value)
         new_node->value = ft_strdup(value);
     new_node->next = NULL;
-    printf("+==============+\n");
 
     if (*env == NULL)
     {
@@ -62,6 +61,12 @@ void ft_export(t_env **env, char **args)
             }
             if (key)
             {
+                if(ft_strchr(key, '-'))
+                {
+                    printf("minishell: export: %s not a valid identifier\n", args[i]);
+                    i++;
+                    continue;
+                }
                 while (tmp)
                 {
                     if (ft_strncmp(tmp->name, key, ft_strlen(key) + 1) == 0)
