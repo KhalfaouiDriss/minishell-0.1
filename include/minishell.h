@@ -113,7 +113,7 @@ void free_cmds(t_cmd *cmds);
 void free_env(t_env *env);
 void redirect_input(char *file, t_cmd *cmd);
 void redirect_output(t_cmd *cmd, int append);
-int handle_heredoc(char *delimiter);
+int handle_heredoc(char *delimiter, t_shell *shell);
 void execute_pipeline(t_shell *shell, char **envp);
 void ft_echo(char **args);
 void ft_cd(t_shell *shell, char **args);
