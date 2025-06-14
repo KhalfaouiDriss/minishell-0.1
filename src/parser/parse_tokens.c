@@ -91,7 +91,7 @@ t_cmd *parse_tokens(t_shell *shell)
                 token = token->next;
             }
             else if(token->type == REDIR_HEREDOC && token->next){
-                cmd->heredoc_fd = handle_heredoc(token->next->value);
+                cmd->heredoc_fd = handle_heredoc(token->next->value, shell);
                 token = token->next;
             }
              else if(token->type == REDIR_OUT && token->next){

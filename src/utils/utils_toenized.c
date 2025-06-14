@@ -102,21 +102,18 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 		return result;
 	}
 
-	// الحالة 1: فقط $ بدون متغيّر بعدها
 	if (str[*i] == '$' && (str[*i + 1] == '\0' || str[*i + 1] == ' '))
 	{
 		(*i)++;
 		return ft_strdup("$");
 	}
 
-	// الحالة 2: $$ → رقم الـ PID
 	if (str[*i] == '$' && str[*i + 1] == '$')
 	{
 		*i += 2;
-		return ft_itoa(getpid());
+		return ft_strdup("$$");
 	}
 
-	// الحالة 3: $? → آخر كود خروج
 	if (str[*i] == '$' && str[*i + 1] == '?')
 	{
 		*i += 2;
@@ -125,7 +122,6 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 		return ft_itoa(status);
 	}
 
-	// نمرّ لاستخراج اسم المتغيّر من بعد $
 	(*i)++;
 	start = *i;
 
@@ -135,15 +131,12 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	len = *i - start;
 	var_name = ft_substr(str, start, len);
 
-	// لو المتغيّر كان داخل ' ' نرجعو كما هو، بدون توسعة
 	if (quote == '\'')
 	{
 		char *result = ft_strjoin("$", var_name);
 		free(var_name);
 		return result;
 	}
-
-	// البحث عن المتغيّر داخل البيئة
 	while (env)
 	{
 		if (ft_strncmp(env->name, var_name, ft_strlen(env->name)) == 0
@@ -155,11 +148,9 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 		env = env->next;
 	}
 
-	// لو ما لقيناهش، نرجعو الاسم كما هو مع $ في البداية
 	if (!var_value)
 	{
 		char *unknown = NULL;
-		// char *unknown = ft_strjoin("$", var_name);
 		free(var_name);
 		return unknown;
 	}
@@ -172,7 +163,6 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 
 
 
-// تحويل نوع التوكن إلى سترينغ للعرض
 const char *token_type_to_str(int type)
 {
     switch (type)
@@ -198,14 +188,11 @@ const char *token_type_to_str(int type)
     }
 }
 
-// طباعة جميع التوكنات للديباغ
 void print_tokens(t_token *head)
 {
     while (head)
     {
         printf("Token: %s | Type: %s | Error type: %d | quote type : %d", head->value, token_type_to_str(head->type), head->error, head->quot_type);
-        // if (head->error)
-        //     printf(" | Error type: %d", head->error);
         printf("\n");
         head = head->next;
     }

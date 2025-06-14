@@ -238,7 +238,7 @@ int handle_option_token(const char *input, int *i, t_token **head)
 			add_token(head, new_token(val, 0, OPTION_INVA));
 			return 0;
 		}
-		while (input[*i] && !input[*i] == ' ' && !is_special(input[*i]))
+		while (input[*i] && !(input[*i] == ' ') && !is_special(input[*i]))
 			(*i)++;
 		val = ft_substr(input, start, *i - start);
 	}
@@ -451,8 +451,9 @@ int isAllSpace(char *str)
 	{
 		if (str[i] && str[i] != ' ')
 			return 0;
-		return 1;
+		i++;
 	}
+	return 1;
 }
 
 t_token *lexer_split_to_tokens(t_shell *shell)
@@ -498,7 +499,7 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 			if (str[i] == '\'' || str[i] == '"')
 			{
 				quote = str[i];
-				if ((quote == '"'))
+				if (quote == '"')
 					current_quote_type = D_QUOTE;
 				else
 					current_quote_type = S_QUOTE;
@@ -592,7 +593,7 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 			current_word = NULL;
 		}
 	}
-	// print_tokens(head);
 	correct_lexer(shell, &head);
+	print_tokens(head);
 	return head;
 }

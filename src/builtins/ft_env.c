@@ -15,8 +15,8 @@ void ft_env(t_env *env, int is_export)
         {
             if (env->value)
                 printf("%s=%s\n", env->name, env->value);
-            else
-                printf("%s\n", env->name);
+            // else
+            //     printf("%s\n", env->name);
         }
         env = env->next;
     }
