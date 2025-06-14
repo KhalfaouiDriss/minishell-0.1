@@ -121,6 +121,7 @@ void redirect_output_builtin(t_cmd *cmd, int append)
 //     close(pipe_fd[1]);
 //     return pipe_fd[0];
 // }
+
 int	handle_heredoc(char *delimiter, t_shell *shell)
 {
 	const char	*tmp_name = "/tmp/.heredoc_tmp";
@@ -148,7 +149,6 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
 				free(line);
 				break;
 			}
-
 			if (ft_strchr(line, '$'))
 			{
 				int i = 0;

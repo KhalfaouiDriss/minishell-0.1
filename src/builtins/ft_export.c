@@ -43,7 +43,10 @@ void ft_export(t_env **env, char **args)
         {
             if(!(args[i][0] >= 97 && args[i][0] <= 122) && !(args[i][0] >= 65 && args[i][0] <= 90) && args[i][0] != '_')
             {
-                printf("minishell: export: %s not a valid identifier\n", args[i]);
+                ft_putstr_fd("minishell: export: ", 2);
+                ft_putstr_fd(args[i], 2);
+                ft_putstr_fd(" not a valid identifier\n", 2);
+                // printf("minishell: export: %s not a valid identifier\n", args[i]);
                 i++;
                 continue;
             }
@@ -63,7 +66,9 @@ void ft_export(t_env **env, char **args)
             {
                 if(ft_strchr(key, '-'))
                 {
-                    printf("minishell: export: %s not a valid identifier\n", args[i]);
+                    ft_putstr_fd("minishell: export: ", 2);
+                    ft_putstr_fd(args[i], 2);
+                    ft_putstr_fd(" not a valid identifier\n", 2);
                     i++;
                     continue;
                 }
