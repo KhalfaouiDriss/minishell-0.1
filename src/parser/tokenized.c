@@ -140,7 +140,6 @@ int handle_quoted_token(const char *input, int *i, t_shell *shell)
 		add_token(head, new_token(final, type, error));
 
 	free(final);
-	// new
 	if (error)
 	{
 		char *err_str = ft_strdup("Error: Invalid option");
@@ -149,7 +148,6 @@ int handle_quoted_token(const char *input, int *i, t_shell *shell)
 		shell->exit_status = 258;
 		return (0);
 	}
-	//
 	return (1);
 }
 
@@ -407,7 +405,6 @@ void correct_lexer(t_shell *shell, t_token **token)
 
 		tmp = tmp->next;
 	}
-	// print_tokens(head);
 	free(tok);
 }
 
@@ -563,7 +560,6 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 					tmp_2 = shell->input;
 					shell->input = ft_strjoin(shell->input, tmp_3);
 					i = j;
-					// printf("----------- %s ---------\n", shell->input);
 					// current_word = strjoin_free(current_word, value);
 					free(tmp_2);
 					free(value);
