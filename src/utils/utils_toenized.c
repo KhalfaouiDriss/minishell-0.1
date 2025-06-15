@@ -1,12 +1,10 @@
 #include "../../include/minishell.h"
 
-// يتحقق مما إذا كان الحرف من الرموز الخاصة
 int is_special(char c)
 {
     return (c == '|' || c == '>' || c == '<');
 }
 
-// ينشئ توكن جديد بشكل آمن
 t_token *new_token(char *val, int type, int error_type)
 {
     t_token *t = (t_token *)malloc(sizeof(t_token));
@@ -32,7 +30,6 @@ t_token *new_token(char *val, int type, int error_type)
     return t;
 }
 
-// يضيف توكن إلى نهاية اللائحة المرتبطة
 void add_token(t_token **head, t_token *new)
 {
     if (!new || !new->value || new->value[0] == '\0')
@@ -68,7 +65,6 @@ char *find_env_node(t_env *env, char *key)
     {
         if (ft_strncmp(tmp->name, key, key_len) == 0 && tmp->name[key_len] == '\0')
         {
-            // printf("found %s\n", tmp->name);
             return tmp->value;
         }
         tmp = tmp->next;

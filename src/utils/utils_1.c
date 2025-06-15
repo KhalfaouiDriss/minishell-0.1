@@ -86,11 +86,7 @@ void free_all(t_shell *shell)
         free_cmds(shell->cmd_list);
         shell->cmd_list = NULL;
     }
-    // if (shell->env)
-    // {
-    //     free_env(shell->env);
-    //     shell->env = NULL;
-    // }
+
 }
 
 

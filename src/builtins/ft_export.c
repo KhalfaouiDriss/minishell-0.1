@@ -46,7 +46,6 @@ void ft_export(t_env **env, char **args)
                 ft_putstr_fd("minishell: export: ", 2);
                 ft_putstr_fd(args[i], 2);
                 ft_putstr_fd(" not a valid identifier\n", 2);
-                // printf("minishell: export: %s not a valid identifier\n", args[i]);
                 i++;
                 continue;
             }
