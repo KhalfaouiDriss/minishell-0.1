@@ -57,7 +57,7 @@ int handle_quoted_token(const char *input, int *i, t_shell *shell)
 			free(err_str);
 			free(segment);
 			free(final);
-			shell->exit_status = 258;
+			shell->exit_status = 2;
 			return (0);
 		}
 
@@ -114,7 +114,7 @@ int handle_quoted_token(const char *input, int *i, t_shell *shell)
 				free(err_str);
 				free(segment);
 				free(final);
-				shell->exit_status = 258;
+				shell->exit_status = 2;
 				return (0);
 			}
 			(*i)++;
@@ -145,7 +145,7 @@ int handle_quoted_token(const char *input, int *i, t_shell *shell)
 		char *err_str = ft_strdup("Error: Invalid option");
 		add_token(head, new_token(err_str, ERROR, error));
 		free(err_str);
-		shell->exit_status = 258;
+		shell->exit_status = 2;
 		return (0);
 	}
 	return (1);
@@ -297,6 +297,7 @@ void correct_lexer(t_shell *shell, t_token **token)
 	{
 		free(tmp->value);
 		tmp->value = ft_strdup("syntax error");
+		shell->exit_status = 2;
 		tmp->type = ERROR;
 		tmp->error = INPUT_INVA;
 		return;
@@ -310,7 +311,7 @@ void correct_lexer(t_shell *shell, t_token **token)
 			tmp->error = OPTION_INVA;
 			free(tmp->value);
 			tmp->value = ft_strdup("syntax error");
-			shell->exit_status = 258;
+			shell->exit_status = 2;
 			free(tok);
 			return;
 		}
@@ -322,6 +323,7 @@ void correct_lexer(t_shell *shell, t_token **token)
 				tmp->value = ft_strdup("syntax error");
 				tmp->type = ERROR;
 				tmp->error = INPUT_INVA;
+				shell->exit_status = 2;
 				free(tok);
 				return;
 			}
@@ -335,6 +337,7 @@ void correct_lexer(t_shell *shell, t_token **token)
 				tmp->value = ft_strdup("syntax error");
 				tmp->type = ERROR;
 				tmp->error = INPUT_INVA;
+				shell->exit_status = 2;
 				free(tok);
 				return;
 			}
@@ -349,6 +352,7 @@ void correct_lexer(t_shell *shell, t_token **token)
 				tmp->type = ERROR;
 				tmp->error = INPUT_INVA;
 				free(tok);
+				shell->exit_status = 2;
 				return;
 			}
 			tmp->type = REDIR_OUT;
@@ -362,6 +366,7 @@ void correct_lexer(t_shell *shell, t_token **token)
 				tmp->type = ERROR;
 				tmp->error = INPUT_INVA;
 				free(tok);
+				shell->exit_status = 2;
 				return;
 			}
 			tmp->type = REDIR_IN;
@@ -375,6 +380,7 @@ void correct_lexer(t_shell *shell, t_token **token)
 				tmp->type = ERROR;
 				tmp->error = INPUT_INVA;
 				free(tok);
+				shell->exit_status = 2;
 				return;
 			}
 			tmp->type = PIPE;
@@ -395,6 +401,7 @@ void correct_lexer(t_shell *shell, t_token **token)
 				tmp->value = ft_strdup("syntax error");
 				tmp->type = 0;
 				tmp->error = INPUT_INVA;
+				shell->exit_status = 2;
 			}
 		}
 		if (tmp->type != WORD)
@@ -469,6 +476,7 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 	int start = 0;
 	char *current_word = NULL;
 	int j;
+	char *value;
 
 	if (str[0] == '$' && (!str[1] || str[1] == ' '))
 	{
@@ -559,7 +567,6 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 					}
 				}
 			}
-
 			// -----------------------------------------------------
 			// else if (str[i] == '$')
 			// {

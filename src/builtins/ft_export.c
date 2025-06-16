@@ -25,16 +25,16 @@ void add_env_node(t_env **env, const char *key, const char *value)
     tmp->next = new_node;
 }
 
-void ft_export(t_env **env, char **args)
+void ft_export(t_shell *shell, char **args)
 {
     int i = 1;
     char *key;
-    t_env *tmp = *env;
+    t_env *tmp = shell->env;
     char *value;
 
     if(args[i] == NULL)
     {
-        ft_env(*env, 0);
+        ft_env(shell->env, 0);
         return;
     }
     else
@@ -46,6 +46,7 @@ void ft_export(t_env **env, char **args)
                 ft_putstr_fd("minishell: export: ", 2);
                 ft_putstr_fd(args[i], 2);
                 ft_putstr_fd(" not a valid identifier\n", 2);
+                shell->exit_status = 1;
                 i++;
                 continue;
             }
@@ -68,6 +69,7 @@ void ft_export(t_env **env, char **args)
                     ft_putstr_fd("minishell: export: ", 2);
                     ft_putstr_fd(args[i], 2);
                     ft_putstr_fd(" not a valid identifier\n", 2);
+                    shell->exit_status = 1;
                     i++;
                     continue;
                 }
@@ -83,7 +85,7 @@ void ft_export(t_env **env, char **args)
                     tmp = tmp->next;
                 }
                 if (!tmp)
-                    add_env_node(env, key, value);
+                    add_env_node(&(shell->env), key, value);
             }
             free(key);
             if(value)
