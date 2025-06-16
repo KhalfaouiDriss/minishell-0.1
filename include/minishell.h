@@ -118,7 +118,7 @@ void execute_pipeline(t_shell *shell, char **envp);
 void ft_echo(char **args);
 void ft_cd(t_shell *shell, char **args);
 void ft_pwd(t_shell *shell, char **args);
-void ft_export(t_env **env, char **args);
+void ft_export(t_shell *shell, char **args);
 void ft_unset(t_env **env, char **args);
 int ft_exit(t_shell *shell, char **args);
 void ft_env(t_env *env, int export);

@@ -36,8 +36,8 @@ int execute_builtin(t_shell *shell, char *cmd, char **args)
         return (0);
     }
     else if (ft_strncmp(cmd, "export", 6) == 0) {
-        ft_export(&(shell->env), args);
-        return (0);
+        ft_export(shell, args);
+        return (shell->exit_status);
     }
     else if (ft_strncmp(cmd, "unset", 5) == 0) {
         ft_unset(&(shell->env), args);
