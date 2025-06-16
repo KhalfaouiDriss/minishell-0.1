@@ -28,7 +28,7 @@ int execute_builtin(t_shell *shell, char *cmd, char **args)
     }
     else if (ft_strncmp(cmd, "cd", 3) == 0) {
         ft_cd(shell, args);
-        return (0);
+        return (shell->exit_status);
     }
     
     else if (ft_strncmp(cmd, "pwd", 4) == 0) {
@@ -50,7 +50,10 @@ int execute_builtin(t_shell *shell, char *cmd, char **args)
         if(!args[i])
             ft_env(shell->env, 1);
         else
-            printf("env: '%s': No such file or directory\n", args[i]);
+            write(2, "env: '",7);
+            write(2, &args[i],ft_strlen(args[i]));
+            write(2, "': No such file or directory\n",30);
+            // printf("env: '%s': No such file or directory\n", args[i]);
         return (0);
     }
     else if (ft_strncmp(cmd, "exit", 5) == 0) {
