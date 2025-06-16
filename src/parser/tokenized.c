@@ -305,7 +305,7 @@ void correct_lexer(t_shell *shell, t_token **token)
 
 	while (tmp)
 	{
-		if (ft_strlen(tmp->value) == 1 && tmp->value[0] == '-')
+		if (ft_strlen(tmp->value) == 1 && tmp->value[0] == '-' )
 		{
 			tmp->type = ERROR;
 			tmp->error = OPTION_INVA;
@@ -314,6 +314,11 @@ void correct_lexer(t_shell *shell, t_token **token)
 			shell->exit_status = 2;
 			free(tok);
 			return;
+		}
+		if(tmp->type == WORD)
+		{
+			tmp = tmp->next;
+			continue;
 		}
 		if (ft_strncmp(tmp->value, ">>", 2) == 0 && ft_strlen(tmp->value) == 2)
 		{
@@ -371,7 +376,7 @@ void correct_lexer(t_shell *shell, t_token **token)
 			}
 			tmp->type = REDIR_IN;
 		}
-		else if (ft_strncmp(tmp->value, "|", 1) == 0 && ft_strlen(tmp->value) == 1)
+		else if (ft_strncmp(tmp->value, "|", 1) == 0 && ft_strlen(shell->input) == 1)
 		{
 			if (tok && ft_strncmp(tmp->value, tok, 1) == 0)
 			{
@@ -395,7 +400,7 @@ void correct_lexer(t_shell *shell, t_token **token)
 		{
 			if (!ft_strncmp(tmp->value, "|", 1) || !ft_strncmp(tmp->value, ">", 1) ||
 				!ft_strncmp(tmp->value, "<<", 2) || !ft_strncmp(tmp->value, "<", 1) ||
-				!ft_strncmp(tmp->value, ">>", 2))
+				!ft_strncmp(tmp->value, ">>", 2) && tmp->type != WORD)
 			{
 				free(tmp->value);
 				tmp->value = ft_strdup("syntax error");
@@ -450,7 +455,6 @@ char *expand_variables_in_string(char *str, t_shell *shell, char qt)
 int isAllSpace(char *str)
 {
 	int i = 0;
-	// printf("check 2");
 	while (str[i])
 	{
 		if (str[i] && str[i] != ' ')
@@ -621,14 +625,14 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 			else
 				token_type = WORD;
 
-			t_tmp = new_token(current_word, token_type, 0);
+			t_tmp = new_token(current_word, WORD, 0);
 			t_tmp->quot_type = current_quote_type;
 			add_token(&head, t_tmp);
 			free(current_word);
 			current_word = NULL;
 		}
 	}
-	correct_lexer(shell, &head);
 	// print_tokens(head);
+	correct_lexer(shell, &head);
 	return head;
 }

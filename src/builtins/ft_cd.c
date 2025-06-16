@@ -45,12 +45,19 @@ void ft_cd(t_shell *shell, char **args)
 	char *oldpwd;
 	char *cwd;
 
+	if(args[2])
+	{
+		write(2, "too many arguments\n", 20);
+		shell->exit_status = 1;
+		return;
+	}
 	if (args[1] == NULL)
 	{
 		dir = get_env_value(shell->env, "HOME");
 		if (!dir)
 		{
-			printf("-bash: cd: HOME not set\n");
+			write(2, "-bash: cd: HOME not set\n", 25);
+			shell->exit_status = 1;
 			return;
 		}
 	}
@@ -61,12 +68,16 @@ void ft_cd(t_shell *shell, char **args)
 	if (!oldpwd)
 	{
 		perror("minishell");
+		shell->exit_status = 1;
 		return;
 	}
 
 	if (chdir(dir) == -1)
 	{
-		printf("-bash: cd: %s: No such file or directory\n", dir);
+		write(2, "-bash: cd: ", 42);
+		write(2, &dir, ft_strlen(dir));
+		write(2, ": No such file or directory\n", 29);
+		shell->exit_status = 1;
 		free(oldpwd);
 		return;
 	}
@@ -77,6 +88,7 @@ void ft_cd(t_shell *shell, char **args)
 	if (!cwd)
 	{
 		perror("getcwd");
+		shell->exit_status = 1;
 		return;
 	}
 	update_env_var(shell->env, "PWD", cwd);
