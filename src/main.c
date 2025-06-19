@@ -1,11 +1,11 @@
 #include "../include/minishell.h"
 
-int blocked = 0;
+int		blocked = 0;
 
 void	get_sig(int sig)
 {
 	if (blocked == 1)
-		return;
+		return ;
 	if (sig == SIGINT)
 	{
 		blocked = 2;
@@ -14,14 +14,23 @@ void	get_sig(int sig)
 		rl_on_new_line();
 		rl_redisplay();
 	}
+	// if (sig == 12)
+	// {
+	// 	// printf("llll");
+	// 	rl_replace_line("", 0);
+	// 	rl_on_new_line();
+	// 	rl_catch_signals = 0;
+	// 	rl_replace_line("", 0);
+	// 	rl_redisplay();
+	// }
 }
 
-void init_env(t_shell *shell, char **envp)
+void	init_env(t_shell *shell, char **envp)
 {
-	int i;
-	char **variable;
-	t_env *new_env;
-	t_env *last;
+	int		i;
+	char	**variable;
+	t_env	*new_env;
+	t_env	*last;
 
 	i = 0;
 	shell->env = NULL;
@@ -29,10 +38,10 @@ void init_env(t_shell *shell, char **envp)
 	{
 		variable = ft_split(envp[i], '=');
 		if (!variable)
-			return;
+			return ;
 		new_env = malloc(sizeof(t_env));
 		if (!new_env)
-			return;
+			return ;
 		new_env->name = ft_strdup(variable[0]);
 		new_env->value = ft_strdup(variable[1]);
 		new_env->next = NULL;
@@ -50,11 +59,11 @@ void init_env(t_shell *shell, char **envp)
 	}
 }
 
-int main(int ac, char **av, char **envp)
+int	main(int ac, char **av, char **envp)
 {
-	t_shell shell;
-	int exit_status;
-	char *pwd;
+	t_shell	shell;
+	int		exit_status;
+	char	*pwd;
 
 	shell.exit_status = 0;
 	(void)ac;
@@ -72,25 +81,28 @@ int main(int ac, char **av, char **envp)
 	init_env(&shell, envp);
 	while (1)
 	{
-		
+		if (shell.blocked == 12)
+		{
+			get_sig(12);
+		}
 		shell.input = readline("minishell-sendo-C47 $/~ ");
 		if (!shell.input)
 		{
 			printf("exit\n");
 			free_all(&shell);
 			free_env(shell.env);
-			break;
+			break ;
 		}
 		if (shell.input[0] != '\0')
 			add_history(shell.input);
-		if(blocked == 2)
+		if (blocked == 2)
 			shell.exit_status = 130;
 		shell.token = lexer_split_to_tokens(&shell);
 		shell.cmd_list = parse_tokens(&shell);
 		if (!shell.cmd_list)
 		{
 			free_all(&shell);
-			continue;
+			continue ;
 		}
 		blocked = 1;
 		if (shell.cmd_list)

@@ -136,13 +136,13 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
 	pid = fork();
 	if (pid == -1)
 		return (perror("fork"), close(tmp_fd), -1);
-
 	if (pid == 0)
 	{
 		char	*line;
 		char	*expanded;
 		while (1)
 		{
+			signal(SIGINT, SIG_DFL);
 			line = readline("> ");
 			if (!line || ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1) == 0)
 			{
@@ -199,7 +199,8 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
 
 	close(tmp_fd);
 	waitpid(pid, &status, 0);
-
+	if(WIFSIGNALED(status))
+		shell->blocked = 12;
 	tmp_fd = open(tmp_name, O_RDONLY);
 	unlink(tmp_name);
 	if (tmp_fd == -1)

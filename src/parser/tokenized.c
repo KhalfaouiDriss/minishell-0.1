@@ -1,7 +1,5 @@
 #include "../../include/minishell.h"
 
-int h = 0;
-
 char *strjoin_free(char *s1, char *s2)
 {
 	char *new_str;
@@ -302,15 +300,15 @@ void correct_lexer(t_shell *shell, t_token **token)
 		tmp->error = INPUT_INVA;
 		return;
 	}
-
 	while (tmp)
 	{
-		if (ft_strlen(tmp->value) == 1 && tmp->value[0] == '-' )
+		
+		if (ft_strlen(tmp->value) == 1 && tmp->value[0] == '-')
 		{
 			tmp->type = ERROR;
 			tmp->error = OPTION_INVA;
 			free(tmp->value);
-			tmp->value = ft_strdup("syntax error");
+			tmp->value = ft_strdup("syntax error 1");
 			shell->exit_status = 2;
 			free(tok);
 			return;
@@ -320,9 +318,13 @@ void correct_lexer(t_shell *shell, t_token **token)
 			tmp = tmp->next;
 			continue;
 		}
-		if (ft_strncmp(tmp->value, ">>", 2) == 0 && ft_strlen(tmp->value) == 2)
+		if ((ft_strncmp(tmp->value, ">>", 2) == 0 && ft_strlen(tmp->value) == 2)
+			|| (ft_strncmp(tmp->value, "<<", 2) == 0 && ft_strlen(tmp->value) == 2)
+			|| (ft_strncmp(tmp->value, ">", 1) == 0 && ft_strlen(tmp->value) == 1)
+			|| (ft_strncmp(tmp->value, "<", 1) == 0 && ft_strlen(tmp->value) == 1)
+			|| (ft_strncmp(tmp->value, "|", 1) == 0 && ft_strlen(tmp->value) == 1))
 		{
-			if (tok && ft_strncmp(tmp->value, tok, 2) == 0)
+			if (tok)
 			{
 				free(tmp->value);
 				tmp->value = ft_strdup("syntax error");
@@ -332,63 +334,23 @@ void correct_lexer(t_shell *shell, t_token **token)
 				free(tok);
 				return;
 			}
-			tmp->type = REDIR_APPEND;
-		}
-		else if (ft_strncmp(tmp->value, "<<", 2) == 0 && ft_strlen(tmp->value) == 2)
-		{
-			if (tok && ft_strncmp(tmp->value, tok, 2) == 0)
+			free(tok);
+			tok = ft_strdup(tmp->value);
+			if (ft_strncmp(tmp->value, ">>", 2) == 0)
+				tmp->type = REDIR_APPEND;
+			else if (ft_strncmp(tmp->value, "<<", 2) == 0)
+				tmp->type = REDIR_HEREDOC;
+			else if (ft_strncmp(tmp->value, ">", 1) == 0)
+				tmp->type = REDIR_OUT;
+			else if (ft_strncmp(tmp->value, "<", 1) == 0)
+				tmp->type = REDIR_IN;
+			else if (ft_strncmp(tmp->value, "|", 1) == 0)
+				tmp->type = PIPE;
+			if (tmp->next && tmp->next->type == WORD)
 			{
-				free(tmp->value);
-				tmp->value = ft_strdup("syntax error");
-				tmp->type = ERROR;
-				tmp->error = INPUT_INVA;
-				shell->exit_status = 2;
 				free(tok);
-				return;
+				tok = NULL;
 			}
-			tmp->type = REDIR_HEREDOC;
-		}
-		else if (ft_strncmp(tmp->value, ">", 1) == 0 && ft_strlen(tmp->value) == 1)
-		{
-			if (tok && ft_strncmp(tmp->value, tok, 1) == 0)
-			{
-				free(tmp->value);
-				tmp->value = ft_strdup("syntax error");
-				tmp->type = ERROR;
-				tmp->error = INPUT_INVA;
-				free(tok);
-				shell->exit_status = 2;
-				return;
-			}
-			tmp->type = REDIR_OUT;
-		}
-		else if (ft_strncmp(tmp->value, "<", 1) == 0 && ft_strlen(tmp->value) == 1)
-		{
-			if (tok && ft_strncmp(tmp->value, tok, 1) == 0)
-			{
-				free(tmp->value);
-				tmp->value = ft_strdup("syntax error");
-				tmp->type = ERROR;
-				tmp->error = INPUT_INVA;
-				free(tok);
-				shell->exit_status = 2;
-				return;
-			}
-			tmp->type = REDIR_IN;
-		}
-		else if (ft_strncmp(tmp->value, "|", 1) == 0 && ft_strlen(shell->input) == 1)
-		{
-			if (tok && ft_strncmp(tmp->value, tok, 1) == 0)
-			{
-				free(tmp->value);
-				tmp->value = ft_strdup("syntax error");
-				tmp->type = ERROR;
-				tmp->error = INPUT_INVA;
-				free(tok);
-				shell->exit_status = 2;
-				return;
-			}
-			tmp->type = PIPE;
 		}
 		else
 		{
@@ -396,24 +358,24 @@ void correct_lexer(t_shell *shell, t_token **token)
 			free(tok);
 			tok = NULL;
 		}
-		if (!tmp->next)
-		{
-			if (!ft_strncmp(tmp->value, "|", 1) || !ft_strncmp(tmp->value, ">", 1) ||
-				!ft_strncmp(tmp->value, "<<", 2) || !ft_strncmp(tmp->value, "<", 1) ||
-				!ft_strncmp(tmp->value, ">>", 2) && tmp->type != WORD)
-			{
-				free(tmp->value);
-				tmp->value = ft_strdup("syntax error");
-				tmp->type = 0;
-				tmp->error = INPUT_INVA;
-				shell->exit_status = 2;
-			}
-		}
-		if (tmp->type != WORD)
-		{
-			free(tok);
-			tok = ft_strdup(tmp->value);
-		}
+		// if (!tmp->next)
+		// {
+		// 	if (!ft_strncmp(tmp->value, "|", 1) || !ft_strncmp(tmp->value, ">", 1) ||
+		// 		!ft_strncmp(tmp->value, "<<", 2) || !ft_strncmp(tmp->value, "<", 1) ||
+		// 		!ft_strncmp(tmp->value, ">>", 2) && tmp->type != WORD)
+		// 	{
+		// 		free(tmp->value);
+		// 		tmp->value = ft_strdup("syntax error");
+		// 		tmp->type = 0;
+		// 		tmp->error = INPUT_INVA;
+		// 		shell->exit_status = 2;
+		// 	}
+		// }
+		// if (tmp->type != WORD)
+		// {
+		// 	free(tok);
+		// 	tok = ft_strdup(tmp->value);
+		// }
 
 		tmp = tmp->next;
 	}
@@ -541,11 +503,11 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 					free(current_word);
 					current_word = NULL;
 				}
-				if (str[i] == '|' && str[i + 1] == '|')
-				{
-					correct_lexer(shell, &head);
-					return head;
-				}
+				// if (str[i] == '|' && str[i + 1] == '|')
+				// {
+				// 	correct_lexer(shell, &head);
+				// 	return head;
+				// }
 				handle_special_token(str, &i, &head);
 			}
 			// -------------------------------------------------------
@@ -632,7 +594,7 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 			current_word = NULL;
 		}
 	}
-	// print_tokens(head);
+	print_tokens(head);
 	correct_lexer(shell, &head);
 	return head;
 }

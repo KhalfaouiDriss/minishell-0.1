@@ -35,7 +35,6 @@
 # define D_QUOTE       16
 # define S_QUOTE       17
 
-
 typedef struct s_error
 {
     char *invalaid_token;
@@ -83,6 +82,7 @@ typedef struct s_shell
     t_env *env;
     t_cmd *cmd_list;
     int exit_status;
+    int blocked;
 } t_shell;
 
 
@@ -105,6 +105,7 @@ void init_shell(t_shell *shell);
 void free_tokens(t_token *token);
 void free_all(t_shell *shell);
 t_token	*new_node(char *value);
+void	get_sig(int sig);
 
 t_cmd *parse_tokens(t_shell *shell);
 int count_args(t_token *token);
