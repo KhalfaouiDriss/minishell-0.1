@@ -106,8 +106,8 @@ void execute_pipeline(t_shell *shell, char **envp)
             free(path);
             exit(126);
         }
-        if (prev_pipe != -1)  
-            close(prev_pipe);
+        // if (prev_pipe != -1)  
+        //     close(prev_pipe);
         if (current->next)
         {
             close(fd[1]);         

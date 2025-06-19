@@ -90,7 +90,8 @@ t_cmd *parse_tokens(t_shell *shell)
                 cmd->infile = safe_strdup(token->next->value);
                 token = token->next;
             }
-            else if(token->type == REDIR_HEREDOC && token->next){
+            else if(token->type == REDIR_HEREDOC && token->next)
+            {
                 cmd->heredoc_fd = handle_heredoc(token->next->value, shell);
                 token = token->next;
             }

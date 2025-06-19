@@ -148,7 +148,7 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	{
 		char *unknown = NULL;
 		free(var_name);
-		return unknown;
+		return ft_strdup("$");
 	}
 	free(var_name);
 	return var_value;
