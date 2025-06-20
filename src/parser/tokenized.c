@@ -501,29 +501,6 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 				handle_special_token(str, &i, &head);
 			}
 			// -------------------------------------------------------
-			else if (str[i] == '$')
-			{
-				if (current_quote_type == S_QUOTE)
-				{
-					start = i;
-					i++;
-					while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
-						i++;
-					tmp = ft_substr(str, start, i - start);
-					current_word = strjoin_free(current_word, tmp);
-					free(tmp);
-				}
-				else
-				{
-					char *value = handle_variable_token(str, &i, shell, 0);
-					if (value)
-					{
-						current_word = strjoin_free(current_word, value);
-						free(value);
-					}
-				}
-			}
-			// -----------------------------------------------------
 			// else if (str[i] == '$')
 			// {
 			// 	if (current_quote_type == S_QUOTE)
@@ -538,26 +515,50 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 			// 	}
 			// 	else
 			// 	{
-			// 		j = i;
 			// 		char *value = handle_variable_token(str, &i, shell, 0);
-			// 		if(value)
+			// 		if (value)
 			// 		{
-			// 			tmp_2 = ft_substr(str, 0, j);
-			// 			tmp_3 = ft_substr(str, i, ft_strlen(str) - i);
-			// 			free(shell->input);
-			// 			shell->input = ft_strjoin(tmp_2, value);
-			// 			free(tmp_2);
-			// 			tmp_2 = shell->input;
-			// 			shell->input = ft_strjoin(shell->input, tmp_3);
-			// 			i = j;
-			// 			// current_word = strjoin_free(current_word, value);
-			// 			free(tmp_2);
+			// 			current_word = strjoin_free(current_word, value);
 			// 			free(value);
-			// 			str = shell->input;
-			// 			break;
 			// 		}
 			// 	}
 			// }
+			// -----------------------------------------------------
+			else if (str[i] == '$')
+			{
+				if (current_quote_type == S_QUOTE)
+				{
+					start = i;
+					i++;
+					while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
+						i++;
+					tmp = ft_substr(str, start, i - start);
+					current_word = strjoin_free(current_word, tmp);
+					free(tmp);
+				}
+				else
+				{
+					j = i;
+					char *value = handle_variable_token(str, &i, shell, 0);
+					if(value)
+					{
+						tmp_2 = ft_substr(str, 0, j);
+						tmp_3 = ft_substr(str, i, ft_strlen(str) - i);
+						free(shell->input);
+						shell->input = ft_strjoin(tmp_2, value);
+						free(tmp_2);
+						tmp_2 = shell->input;
+						shell->input = ft_strjoin(shell->input, tmp_3);
+						i = j;
+						// current_word = strjoin_free(current_word, value);
+						free(tmp_2);
+						free(value);
+						str = shell->input;
+						i = j;
+						// break;
+					}
+				}
+			}
 			else
 			{
 				start = i;
