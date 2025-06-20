@@ -544,7 +544,7 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 						if (ft_strncmp(value, "$", 1) == 0)
 						{
 							current_word = strjoin_free(current_word, value);
-							i++; 
+							// i++; 
 						}
 						else
 						{
