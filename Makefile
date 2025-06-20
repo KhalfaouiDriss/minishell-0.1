@@ -1,5 +1,5 @@
 NAME = minishell
-CC = cc -g3
+CC = cc -g
 LIBFT = lib/libft/libft.a
 MFLAGS = -lreadline
 

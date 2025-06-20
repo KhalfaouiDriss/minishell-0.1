@@ -28,7 +28,9 @@ void	get_sig(int sig)
 void	init_env(t_shell *shell, char **envp)
 {
 	int		i;
-	char	**variable;
+	char	*name;
+	char	*value;
+	char	*egl;
 	t_env	*new_env;
 	t_env	*last;
 
@@ -36,14 +38,19 @@ void	init_env(t_shell *shell, char **envp)
 	shell->env = NULL;
 	while (envp[i])
 	{
-		variable = ft_split(envp[i], '=');
-		if (!variable)
+		egl = ft_strchr(envp[i], '=');
+		if(egl)
+		{
+			name = ft_substr(envp[i], 0, ft_strlen(envp[i]) - ft_strlen(egl));
+			value = egl + 1;
+		}
+		if (!name)
 			return ;
 		new_env = malloc(sizeof(t_env));
 		if (!new_env)
 			return ;
-		new_env->name = ft_strdup(variable[0]);
-		new_env->value = ft_strdup(variable[1]);
+		new_env->name = ft_strdup(name);
+		new_env->value = ft_strdup(value);
 		new_env->next = NULL;
 		if (!shell->env)
 			shell->env = new_env;
@@ -54,7 +61,7 @@ void	init_env(t_shell *shell, char **envp)
 				last = last->next;
 			last->next = new_env;
 		}
-		free_split(variable);
+		free(name);
 		i++;
 	}
 }

@@ -50,9 +50,11 @@ int execute_builtin(t_shell *shell, char *cmd, char **args)
         if(!args[i])
             ft_env(shell->env, 1);
         else
-            write(2, "env: '",7);
-            write(2, &args[i],ft_strlen(args[i]));
-            write(2, "': No such file or directory\n",30);
+        {
+            ft_putstr_fd("env: '",2);
+            ft_putstr_fd(args[i], 2);
+            ft_putstr_fd("': No such file or directory\n", 2);
+        }
             // printf("env: '%s': No such file or directory\n", args[i]);
         return (0);
     }
