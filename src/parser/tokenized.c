@@ -538,25 +538,31 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 				}
 				else
 				{
-					j = i;
 					char *value = handle_variable_token(str, &i, shell, 0);
-					if(value)
+					if (value)
 					{
-						tmp_2 = ft_substr(str, 0, j);
-						tmp_3 = ft_substr(str, i, ft_strlen(str) - i);
-						free(shell->input);
-						shell->input = ft_strjoin(tmp_2, value);
-						free(tmp_2);
-						tmp_2 = shell->input;
-						shell->input = ft_strjoin(shell->input, tmp_3);
-						i = j;
-						// current_word = strjoin_free(current_word, value);
-						free(tmp_2);
-						free(value);
-						str = shell->input;
-						i = j;
-						// break;
+						if (ft_strncmp(value, "$", 1) == 0)
+						{
+							current_word = strjoin_free(current_word, value);
+							i++; 
+						}
+						else
+						{
+							tmp_2 = ft_substr(str, 0, j);
+							tmp_3 = ft_substr(str, i, ft_strlen(str) - i);
+							free(shell->input);
+							shell->input = ft_strjoin(tmp_2, value);
+							free(tmp_2);
+							tmp_2 = shell->input;
+							shell->input = ft_strjoin(shell->input, tmp_3);
+							free(tmp_2);
+							free(tmp_3);
+							free(value);
+							str = shell->input;
+							i = j;
+						}
 					}
+
 				}
 			}
 			else
