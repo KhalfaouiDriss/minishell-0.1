@@ -281,108 +281,96 @@ int ft_nodelen(t_token *head)
 }
 void correct_lexer(t_shell *shell, t_token **token)
 {
-	t_token *tmp;
-	char *tok = NULL;
-	t_token *head = *token;
+	t_token *tmp = *token;
+	char *last_operator = NULL;
 
-	if (!head)
-	{
+	if (!tmp)
 		return;
-	}
-	tmp = *token;
 
-	if(ft_strncmp(tmp->value, "|", 1) == 0)
+	// Check for pipe at the beginning
+	if (tmp->type == PIPE)
 	{
 		free(tmp->value);
-		tmp->value = ft_strdup("syntax error");
-		shell->exit_status = 2;
+		tmp->value = ft_strdup("mshell: syntax error near unexpected token `|'");
 		tmp->type = ERROR;
 		tmp->error = INPUT_INVA;
+		shell->exit_status = 2;
 		return;
 	}
+
 	while (tmp)
 	{
-		
-		if (ft_strlen(tmp->value) == 1 && tmp->value[0] == '-')
+		if (tmp->type == WORD)
 		{
-			tmp->type = ERROR;
-			tmp->error = OPTION_INVA;
-			free(tmp->value);
-			tmp->value = ft_strdup("syntax error 1");
-			shell->exit_status = 2;
-			free(tok);
-			return;
-		}
-		if(tmp->type == WORD)
-		{
+			free(last_operator);
+			last_operator = NULL;
 			tmp = tmp->next;
 			continue;
 		}
-		if ((ft_strncmp(tmp->value, ">>", 2) == 0 && ft_strlen(tmp->value) == 2)
-			|| (ft_strncmp(tmp->value, "<<", 2) == 0 && ft_strlen(tmp->value) == 2)
-			|| (ft_strncmp(tmp->value, ">", 1) == 0 && ft_strlen(tmp->value) == 1)
-			|| (ft_strncmp(tmp->value, "<", 1) == 0 && ft_strlen(tmp->value) == 1)
-			|| (ft_strncmp(tmp->value, "|", 1) == 0 && ft_strlen(tmp->value) == 1))
+
+		// Check for redirections and pipes
+		if (tmp->type == REDIR_OUT || tmp->type == REDIR_IN ||
+			tmp->type == REDIR_APPEND || tmp->type == REDIR_HEREDOC || tmp->type == PIPE)
 		{
-			if (tok)
+			if (last_operator)
 			{
-				
+				// Two operators in a row (e.g., >> >>, | |)
 				free(tmp->value);
-				tmp->value = ft_strdup("syntax error");
+				tmp->value = ft_strdup("mshell: syntax error near unexpected token");
 				tmp->type = ERROR;
 				tmp->error = INPUT_INVA;
 				shell->exit_status = 2;
-				free(tok);
+				free(last_operator);
 				return;
 			}
-			free(tok);
-			tok = ft_strdup(tmp->value);
-			if (ft_strncmp(tmp->value, ">>", 2) == 0)
-				tmp->type = REDIR_APPEND;
-			else if (ft_strncmp(tmp->value, "<<", 2) == 0)
-				tmp->type = REDIR_HEREDOC;
-			else if (ft_strncmp(tmp->value, ">", 1) == 0)
-				tmp->type = REDIR_OUT;
-			else if (ft_strncmp(tmp->value, "<", 1) == 0)
-				tmp->type = REDIR_IN;
-			else if (ft_strncmp(tmp->value, "|", 1) == 0)
-				tmp->type = PIPE;
-			if (tmp->next && tmp->next->type == WORD)
+
+			// Save this operator to check the next token
+			free(last_operator);
+			last_operator = ft_strdup(tmp->value);
+
+			// Check if next token exists and is a WORD
+			if (tmp->next == NULL || tmp->next->type != WORD)
 			{
-				free(tok);
-				tok = NULL;
+				free(tmp->value);
+				tmp->value = ft_strdup("mshell: syntax error near unexpected token (newline)");
+				tmp->type = ERROR;
+				tmp->error = INPUT_INVA;
+				shell->exit_status = 2;
+				free(last_operator);
+				return;
 			}
 		}
 		else
 		{
-			tmp->type = WORD;
-			free(tok);
-			tok = NULL;
-		}
-		printf("here\n");
-		if (!tmp->next)
-		{
-			if (!ft_strncmp(tmp->value, "|", 1) || !ft_strncmp(tmp->value, ">", 1) ||
-				!ft_strncmp(tmp->value, "<<", 2) || !ft_strncmp(tmp->value, "<", 1) ||
-				!ft_strncmp(tmp->value, ">>", 2) && tmp->type != WORD)
-			{
-				free(tmp->value);
-				tmp->value = ft_strdup("mshell : syntax error near unexpected token `newline'");
-				tmp->type = 0;
-				tmp->error = INPUT_INVA;
-				shell->exit_status = 2;
-			}
-		}
-		if (tmp->type != WORD)
-		{
-			free(tok);
-			tok = ft_strdup(tmp->value);
+			// Unknown token type: consider as error
+			tmp->type = ERROR;
+			tmp->error = INPUT_INVA;
+			shell->exit_status = 2;
 		}
 
 		tmp = tmp->next;
 	}
-	free(tok);
+
+	// Check if last token is operator (no word after)
+	if (last_operator)
+	{
+		t_token *last = *token;
+		while (last->next)
+			last = last->next;
+
+		if (last->type != WORD)
+		{
+			free(last->value);
+			last->value = ft_strdup("mshell: syntax error near unexpected end of input");
+			last->type = ERROR;
+			last->error = INPUT_INVA;
+			shell->exit_status = 2;
+		}
+	}
+
+	free(last_operator);
 }
+
 
 int is_space(char c)
 {
@@ -596,7 +584,7 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 			current_word = NULL;
 		}
 	}
-	print_tokens(head);
 	correct_lexer(shell, &head);
+	// print_tokens(head);
 	return head;
 }
