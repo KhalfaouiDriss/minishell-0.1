@@ -82,7 +82,7 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
     if(ft_isdigit(str[*i + 1]))
     {
         *i += 2;
-        return ft_strdup(" ");
+        return ft_strdup("");
     }
     
 	if (*i > 0 && (str[*i - 1] == '\\'))
@@ -98,6 +98,16 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 		return result;
 	}
 
+    // if(!ft_isalpha(str[*i+1]) && !ft_isdigit(str[*i+1]))
+    // {
+    //     while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
+	// 		(*i)++;
+	// 	len = *i - start;
+	// 	var_name = ft_substr(str, start, len);
+	// 	char *result = ft_strjoin("$", var_name);
+	// 	free(var_name);
+	// 	return result;
+    // }
 	if (str[*i] == '$' && (str[*i + 1] == '\0' || str[*i + 1] == ' '))
 	{
 		(*i)++;
@@ -144,7 +154,14 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 		env = env->next;
 	}
 
-	if (!var_value)
+	if (!var_value && ft_isalpha(var_name[0]))
+	{
+		char *unknown = NULL;
+		free(var_name);
+		// return ft_strdup("");
+        return NULL;
+	}
+    if (!var_value)
 	{
 		char *unknown = NULL;
 		free(var_name);

@@ -326,6 +326,7 @@ void correct_lexer(t_shell *shell, t_token **token)
 		{
 			if (tok)
 			{
+				
 				free(tmp->value);
 				tmp->value = ft_strdup("syntax error");
 				tmp->type = ERROR;
@@ -358,24 +359,25 @@ void correct_lexer(t_shell *shell, t_token **token)
 			free(tok);
 			tok = NULL;
 		}
-		// if (!tmp->next)
-		// {
-		// 	if (!ft_strncmp(tmp->value, "|", 1) || !ft_strncmp(tmp->value, ">", 1) ||
-		// 		!ft_strncmp(tmp->value, "<<", 2) || !ft_strncmp(tmp->value, "<", 1) ||
-		// 		!ft_strncmp(tmp->value, ">>", 2) && tmp->type != WORD)
-		// 	{
-		// 		free(tmp->value);
-		// 		tmp->value = ft_strdup("syntax error");
-		// 		tmp->type = 0;
-		// 		tmp->error = INPUT_INVA;
-		// 		shell->exit_status = 2;
-		// 	}
-		// }
-		// if (tmp->type != WORD)
-		// {
-		// 	free(tok);
-		// 	tok = ft_strdup(tmp->value);
-		// }
+		printf("here\n");
+		if (!tmp->next)
+		{
+			if (!ft_strncmp(tmp->value, "|", 1) || !ft_strncmp(tmp->value, ">", 1) ||
+				!ft_strncmp(tmp->value, "<<", 2) || !ft_strncmp(tmp->value, "<", 1) ||
+				!ft_strncmp(tmp->value, ">>", 2) && tmp->type != WORD)
+			{
+				free(tmp->value);
+				tmp->value = ft_strdup("mshell : syntax error near unexpected token `newline'");
+				tmp->type = 0;
+				tmp->error = INPUT_INVA;
+				shell->exit_status = 2;
+			}
+		}
+		if (tmp->type != WORD)
+		{
+			free(tok);
+			tok = ft_strdup(tmp->value);
+		}
 
 		tmp = tmp->next;
 	}
