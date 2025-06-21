@@ -49,12 +49,15 @@ void execute_pipeline(t_shell *shell, char **envp)
     {
         if (is_builtin(current->args[0]) && current->next == NULL)
         {
+            int in = dup(0);
             int out = dup(1);
             if (current->infile)
                 redirect_input(current->infile, current);
             if (current->outfile)
                 redirect_output_builtin(current, current->append);
             shell->exit_status = execute_builtin(shell, current->args[0], current->args);
+            dup2(in, 0);
+            close(in);
             dup2(out, 1);
             close(out);            
             return ;
@@ -102,7 +105,8 @@ void execute_pipeline(t_shell *shell, char **envp)
                 close(current->outfile_fd);
             }
             execve(path, current->args, envp);
-            write(2, "minishell: execve failed\n", 26);
+            write(2, path, ft_strlen(path));
+            write(2, ": Is a directory \n", 19);
             free(path);
             exit(126);
         }
