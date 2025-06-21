@@ -89,7 +89,7 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 		*i += 2;
 		int status = shell->exit_status;
 		shell->exit_status = 0;
-		return ft_itoa(0);
+		return ft_itoa(status);
 	}
 
     // if(!str[*i + 1] || str[*i + 1] == ' ')
