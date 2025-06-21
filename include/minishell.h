@@ -112,7 +112,7 @@ int count_args(t_token *token);
 char *safe_strdup(char *s);
 void free_cmds(t_cmd *cmds);
 void free_env(t_env *env);
-void redirect_input(char *file, t_cmd *cmd);
+int redirect_input(char *file, t_cmd *cmd);
 void redirect_output(t_cmd *cmd, int append);
 int handle_heredoc(char *delimiter, t_shell *shell);
 void execute_pipeline(t_shell *shell, char **envp);
