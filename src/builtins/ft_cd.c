@@ -1,25 +1,26 @@
 #include "../../include/minishell.h"
 
-char *get_env_value(t_env *env, char *name)
+char *get_env_value(t_env *env, const char *name)
 {
 	while (env)
 	{
-		if (ft_strncmp(env->name, name, ft_strlen(name) + 1) == 0)
+		if (ft_strncmp(env->name, name, ft_strlen(name)) == 0)
 			return env->value;
 		env = env->next;
 	}
 	return NULL;
 }
 
-void update_env_var(t_env *env, char *name, char *value)
+void update_env_var(t_env *env, const char *name, const char *value)
 {
 	t_env *tmp = env;
+
 	while (tmp)
 	{
-		if (ft_strncmp(env->name, name, ft_strlen(name) + 1) == 0)
+		if (ft_strncmp(tmp->name, name, ft_strlen(name)) == 0)
 		{
 			free(tmp->value);
-			tmp->value = ft_strdup(value);
+			tmp->value = value ? ft_strdup(value) : NULL;
 			return;
 		}
 		tmp = tmp->next;
@@ -28,55 +29,63 @@ void update_env_var(t_env *env, char *name, char *value)
 	t_env *new_var = malloc(sizeof(t_env));
 	if (!new_var)
 		return;
+
 	new_var->name = ft_strdup(name);
-	new_var->value = ft_strdup(value);
+	new_var->value = value ? ft_strdup(value) : NULL;
 	new_var->next = NULL;
 
 	tmp = env;
-	while (tmp && tmp->next)
+	if (!tmp)
+		return; 
+	while (tmp->next)
 		tmp = tmp->next;
-	if (tmp)
-		tmp->next = new_var;
+	tmp->next = new_var;
 }
 
 void ft_cd(t_shell *shell, char **args)
 {
-	const char *dir;
+	const char *target_dir;
 	char *oldpwd;
-	char *cwd;
+	char *newpwd;
 
-	if(args[2])
+	if (args[2])
 	{
-		write(2, "too many arguments\n", 20);
+		write(2, "cd: too many arguments\n", 24);
 		shell->exit_status = 1;
 		return;
 	}
-	if (args[1] == NULL)
+
+	if (!args[1])
 	{
-		dir = get_env_value(shell->env, "HOME");
-		if (!dir)
+		target_dir = get_env_value(shell->env, "HOME");
+		if (!target_dir)
 		{
-			write(2, "-bash: cd: HOME not set\n", 25);
+			write(2, "cd: HOME not set\n", 17);
 			shell->exit_status = 1;
 			return;
 		}
 	}
 	else
-		dir = args[1];
+		target_dir = args[1];
 
 	oldpwd = getcwd(NULL, 0);
 	if (!oldpwd)
 	{
-		perror("minishell");
+		perror("cd: getcwd");
+		free_split(args);
+		args[0] = "cd";
+		args[1] = "HOME";
+		ft_cd(shell, args);
 		shell->exit_status = 1;
 		return;
 	}
 
-	if (chdir(dir) == -1)
+	if (chdir(target_dir) == -1)
 	{
-		write(2, "-bash: cd: ", 42);
-		write(2, &dir, ft_strlen(dir));
+		write(2, "cd: ", 4);
+		write(2, target_dir, ft_strlen(target_dir));
 		write(2, ": No such file or directory\n", 29);
+		
 		shell->exit_status = 1;
 		free(oldpwd);
 		return;
@@ -84,13 +93,16 @@ void ft_cd(t_shell *shell, char **args)
 
 	update_env_var(shell->env, "OLDPWD", oldpwd);
 	free(oldpwd);
-	cwd = getcwd(NULL, 0);
-	if (!cwd)
+
+	newpwd = getcwd(NULL, 0);
+	if (!newpwd)
 	{
-		perror("getcwd");
+		perror("cd: getcwd after chdir");
 		shell->exit_status = 1;
 		return;
 	}
-	update_env_var(shell->env, "PWD", cwd);
-	free(cwd);
+	update_env_var(shell->env, "PWD", newpwd);
+	free(newpwd);
+
+	shell->exit_status = 0;
 }
