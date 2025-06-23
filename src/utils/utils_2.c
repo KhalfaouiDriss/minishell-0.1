@@ -6,18 +6,21 @@ void error_exit(char *msg)
     return ;
 }
 
-void redirect_input(char *file, t_cmd *cmd)
+int redirect_input(char *file, t_cmd *cmd)
 {
     int fd;
     fd = open(file, O_RDONLY);
     if (fd < 0){
         perror("open infile");
         if(!is_builtin(cmd->args[0]))
-            exit(1);
+		exit(1);
+		return 1;
     }
     dup2(fd, 0);
     close(fd);
+	return 0;
 }
+
 
 void redirect_output(t_cmd *cmd, int append)
 {
