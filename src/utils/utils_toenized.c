@@ -82,7 +82,7 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
     if(ft_isdigit(str[*i + 1]))
     {
         *i += 2;
-        return ft_strdup("");
+        return NULL;
     }
     if (str[*i] == '$' && str[*i + 1] == '?')
 	{
