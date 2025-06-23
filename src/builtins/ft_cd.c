@@ -74,8 +74,8 @@ void ft_cd(t_shell *shell, char **args)
 
 	if (chdir(dir) == -1)
 	{
-		write(2, "-bash: cd: ", 42);
-		write(2, &dir, ft_strlen(dir));
+		write(2, "cd: ", 5);
+		write(2, dir, ft_strlen(dir));
 		write(2, ": No such file or directory\n", 29);
 		shell->exit_status = 1;
 		free(oldpwd);

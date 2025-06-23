@@ -36,6 +36,29 @@ char *find_command_path(char *cmd, t_env *envp)
 	free_split(paths);
 	return NULL;
 }
+static void	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
+{
+	int	in;
+	int	out;
+
+	in = dup(0);
+	out = dup(1);
+	if (cmd->infile)
+	{
+		if (redirect_input(cmd->infile, cmd))
+		{
+			shell->exit_status = 1;
+			return ;
+		}
+	}
+	if (cmd->outfile)
+		redirect_output_builtin(cmd, cmd->append);
+	shell->exit_status = execute_builtin(shell, cmd->args[0], cmd->args);
+	dup2(in, 0);
+	close(in);
+	dup2(out, 1);
+	close(out);
+}
 
 void execute_pipeline(t_shell *shell, char **envp)
 {
@@ -48,28 +71,10 @@ void execute_pipeline(t_shell *shell, char **envp)
     while (current && !current->c_flag)
     {
         if (is_builtin(current->args[0]) && current->next == NULL)
-        {
-            int in = dup(0);
-            int out = dup(1);
-            if (current->infile){
-                if(redirect_input(current->infile, current)){
-                    shell->exit_status = 1;
-                    return ;
-                }
-            }
-            if (current->outfile)
-                redirect_output_builtin(current, current->append);
-            shell->exit_status = execute_builtin(shell, current->args[0], current->args);
-            dup2(in, 0);
-            close(in);
-            dup2(out, 1);
-            close(out);            
-            return ;
-        }
+            return handle_builtin_redirs(current, shell);
         
         if (current->next && pipe(fd) < 0)
         {
-
             perror("pipe error");
             exit(1);
         }
@@ -79,18 +84,19 @@ void execute_pipeline(t_shell *shell, char **envp)
             if (current->next)
                 dup2(fd[1], 1);
             if (prev_pipe != -1)
+            {
                 dup2(prev_pipe, 0);
-            if (prev_pipe != -1)
                 close(prev_pipe);
-            if (current->heredoc_fd > 2)
+            }
+            if (current->heredoc_fd)
             {
                 dup2(current->heredoc_fd, 0);
                 close(current->heredoc_fd);
             }
-            if (current->infile)
-                redirect_input(current->infile, current);
             if (!current->args[0] || current->args[0][0] == '\0')
                 exit(0);
+            if (current->infile)
+                redirect_input(current->infile, current);
             if(is_builtin(current->args[0]))
             {
                 execute_builtin(shell, current->args[0], current->args);

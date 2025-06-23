@@ -6,6 +6,13 @@ void ft_pwd(t_shell *shell, char **args)
 
     (void)args;
 
+    if(args[1] && args[1][0] == '-' && args[1][1] != '\0'){
+        write(2, &args[1][0], 1);
+        write(2, &args[1][1], 1);
+        write(2, " : invalid option\n", 18);
+        shell->exit_status = 2;
+        return ;
+    }
     dir = getcwd(NULL, 0);
     if (!dir)
     {
