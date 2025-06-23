@@ -51,8 +51,12 @@ void execute_pipeline(t_shell *shell, char **envp)
         {
             int in = dup(0);
             int out = dup(1);
-            if (current->infile)
-                redirect_input(current->infile, current);
+            if (current->infile){
+                if(redirect_input(current->infile, current)){
+                    shell->exit_status = 1;
+                    return ;
+                }
+            }
             if (current->outfile)
                 redirect_output_builtin(current, current->append);
             shell->exit_status = execute_builtin(shell, current->args[0], current->args);
