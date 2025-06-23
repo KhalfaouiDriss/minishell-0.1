@@ -89,9 +89,7 @@ int	main(int ac, char **av, char **envp)
 	while (1)
 	{
 		if (shell.blocked == 12)
-		{
 			get_sig(12);
-		}
 		shell.input = readline("minishell-sendo-C47 $/~ ");
 		if (!shell.input)
 		{
