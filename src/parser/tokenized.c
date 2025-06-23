@@ -431,7 +431,7 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 	char *tmp_3;
 	int start = 0;
 	char *current_word = NULL;
-	int j;
+	int j = 0;
 	char *value;
 
 	if (str[0] == '$' && (!str[1] || str[1] == ' '))
@@ -501,8 +501,32 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 				handle_special_token(str, &i, &head);
 			}
 			// -------------------------------------------------------
-			else if (str[i] == '$')
+				// else if (str[i] == '$')
+				// {
+				// 	if (current_quote_type == S_QUOTE)
+				// 	{
+				// 		start = i;
+				// 		i++;
+				// 		while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
+				// 			i++;
+				// 		tmp = ft_substr(str, start, i - start);
+				// 		current_word = strjoin_free(current_word, tmp);
+				// 		free(tmp);
+				// 	}
+				// 	else
+				// 	{
+				// 		char *value = handle_variable_token(str, &i, shell, 0);
+				// 		if (value)
+				// 		{
+				// 			current_word = strjoin_free(current_word, value);
+				// 			free(value);
+				// 		}
+				// 	}
+				// }
+			// -----------------------------------------------------
+			else if (str[i] == '$' && str[i + 1] != '.')
 			{
+				j = i;
 				if (current_quote_type == S_QUOTE)
 				{
 					start = i;
@@ -518,53 +542,30 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 					char *value = handle_variable_token(str, &i, shell, 0);
 					if (value)
 					{
-						current_word = strjoin_free(current_word, value);
-						free(value);
+						// if (ft_strncmp(value, "$", 2) == 0)
+						// {
+						// 	current_word = strjoin_free(current_word, value);
+						// 	i++; 
+						// }
+						// else
+						// {
+							tmp_2 = ft_substr(str, 0, j);
+							tmp_3 = ft_substr(str, i, ft_strlen(str) - i);
+							free(shell->input);
+							shell->input = ft_strjoin(tmp_2, value);
+							free(tmp_2);
+							tmp_2 = shell->input;
+							shell->input = ft_strjoin(shell->input, tmp_3);
+							free(tmp_2);
+							free(tmp_3);
+							free(value);
+							str = shell->input;
+							i = j;
+						}
 					}
-				}
-			}
-			// -----------------------------------------------------
-			// else if (str[i] == '$')
-			// {
-			// 	if (current_quote_type == S_QUOTE)
-			// 	{
-			// 		start = i;
-			// 		i++;
-			// 		while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
-			// 			i++;
-			// 		tmp = ft_substr(str, start, i - start);
-			// 		current_word = strjoin_free(current_word, tmp);
-			// 		free(tmp);
-			// 	}
-			// 	else
-			// 	{
-			// 		char *value = handle_variable_token(str, &i, shell, 0);
-			// 		if (value)
-			// 		{
-			// 			// if (ft_strncmp(value, "$", 2) == 0)
-			// 			// {
-			// 			// 	current_word = strjoin_free(current_word, value);
-			// 			// 	i++; 
-			// 			// }
-			// 			// else
-			// 			// {
-			// 				tmp_2 = ft_substr(str, 0, j);
-			// 				tmp_3 = ft_substr(str, i, ft_strlen(str) - i);
-			// 				free(shell->input);
-			// 				shell->input = ft_strjoin(tmp_2, value);
-			// 				free(tmp_2);
-			// 				tmp_2 = shell->input;
-			// 				shell->input = ft_strjoin(shell->input, tmp_3);
-			// 				free(tmp_2);
-			// 				free(tmp_3);
-			// 				free(value);
-			// 				str = shell->input;
-			// 				i = j;
-			// 			}
-			// 		}
 
-			// 	// }
-			// }
+				// }
+			}
 			else
 			{
 				start = i;
@@ -592,6 +593,6 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 		}
 	}
 	correct_lexer(shell, &head);
-	// print_tokens(head);
+	print_tokens(head);
 	return head;
 }
