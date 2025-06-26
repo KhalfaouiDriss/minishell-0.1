@@ -114,6 +114,7 @@ int	main(int ac, char **av, char **envp)
 			execute_pipeline(&shell, envp);
 		blocked = 0;
 		free_all(&shell);
+		usleep(500);
 	}
 	return (0);
 }

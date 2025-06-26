@@ -60,81 +60,100 @@ static void	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 	close(out);
 }
 
-void execute_pipeline(t_shell *shell, char **envp)
+static void	print_not_found_and_exit(t_cmd *cmd)
 {
-    int fd[2];
-    int prev_pipe = -1;
-    int pid;
-    t_cmd *current = shell->cmd_list;
-    if(current->c_flag)
-        shell->exit_status = 1;
-    while (current && !current->c_flag)
-    {
-        if (is_builtin(current->args[0]) && current->next == NULL)
-            return handle_builtin_redirs(current, shell);
-        
-        if (current->next && pipe(fd) < 0)
-        {
-            perror("pipe error");
-            exit(1);
+	write(2, cmd->args[0], ft_strlen(cmd->args[0]));
+	write(2, ": command not found\n", 21);
+	exit(127);
+}
+
+static void	handle_child(t_cmd *cmd, t_shell *shell, char **envp, int prev_pipe, int *fd)
+{
+	char	*path;
+
+	if (cmd->next)
+		dup2(fd[1], 1);
+	if (prev_pipe != -1)
+	{
+		dup2(prev_pipe, 0);
+		close(prev_pipe);
+	}
+	if (cmd->heredoc_fd)
+	{
+		dup2(cmd->heredoc_fd, 0);
+		close(cmd->heredoc_fd);
+	}
+	if (cmd->infile)
+		redirect_input(cmd->infile, cmd);
+	if (!cmd->args[0] || cmd->args[0][0] == '\0')
+		exit(0);
+	if (is_builtin(cmd->args[0]))
+		exit(execute_builtin(shell, cmd->args[0], cmd->args));
+	path = find_command_path(cmd->args[0], shell->env);
+	if (!path)
+		print_not_found_and_exit(cmd);
+	if (cmd->outfile_fd)
+	{
+		dup2(cmd->outfile_fd, 1);
+		close(cmd->outfile_fd);
+	}
+	execve(path, cmd->args, envp);
+	perror(cmd->args[0]);
+	free(path);
+	if (ft_strncmp(cmd->args[0], ".", 2) == 0)
+		exit(2);
+	exit(126);
+}
+
+static void	exec_loop(t_shell *shell, char **envp)
+{
+	int		fd[2];
+	int		prev_pipe;
+	int		pid;
+	t_cmd	*cmd;
+
+	cmd = shell->cmd_list;
+	prev_pipe = -1;
+	while (cmd && !cmd->c_flag)
+	{
+		if (is_builtin(cmd->args[0]) && !cmd->next)
+			return (handle_builtin_redirs(cmd, shell), (void)0);
+		if (cmd->next && pipe(fd) == -1)
+			return (perror("pipe error"), exit(1), (void)0);
+		pid = fork();
+		if (pid == 0)
+			handle_child(cmd, shell, envp, prev_pipe, fd);
+		if (prev_pipe != -1)
+			close(prev_pipe);
+		if (cmd->next){
+			close(fd[1]);
+	        prev_pipe = fd[0];
         }
-        pid = fork();
-        if (pid == 0)
-        {
-            if (current->next)
-                dup2(fd[1], 1);
-            if (prev_pipe != -1)
-            {
-                dup2(prev_pipe, 0);
-                close(prev_pipe);
-            }
-            if (current->heredoc_fd)
-            {
-                dup2(current->heredoc_fd, 0);
-                close(current->heredoc_fd);
-            }
-            if (!current->args[0] || current->args[0][0] == '\0')
-                exit(0);
-            if (current->infile)
-                redirect_input(current->infile, current);
-            if(is_builtin(current->args[0]))
-            {
-                execute_builtin(shell, current->args[0], current->args);
-                exit(0);
-            } 
-            char *path = find_command_path(current->args[0], shell->env);
-            if (!path)
-            {
-                write(2, current->args[0], ft_strlen(current->args[0]));
-                write(2, ": command not found\n", 21);
-                exit(127);
-            }
-            if (current->outfile_fd)
-            {
-                dup2(current->outfile_fd, 1);
-                close(current->outfile_fd);
-            }
-            execve(path, current->args, envp);
-            write(2, path, ft_strlen(path));
-            write(2, ": Is a directory \n", 19);
-            free(path);
-            exit(126);
-        }
-        if (prev_pipe != -1)  
-            close(prev_pipe);
-        if (current->next)
-        {
-            close(fd[1]);         
-            prev_pipe = fd[0];   
-        }
-        current = current->next;
-    }
-    int status;
-    while (waitpid(pid, &status, 0) > 0)
-    {
-        if (WIFSIGNALED(status))
-            write(1, "\n", 1);
-    }
-    if (WIFEXITED(status))
-        shell->exit_status = WEXITSTATUS(status);
+        cmd = cmd->next;
+	}
+	wait_all(pid, shell);
+}
+
+void	wait_all(int last_pid, t_shell *shell)
+{
+	int	status;
+	int	pid;
+
+	while ((pid = waitpid(-1, &status, 0)) > 0)
+	{
+		if (WIFSIGNALED(status))
+			write(1, "\n", 1);
+		if (pid == last_pid && WIFEXITED(status))
+			shell->exit_status = WEXITSTATUS(status);
+	}
+}
+
+void	execute_pipeline(t_shell *shell, char **envp)
+{
+	if (shell->cmd_list && shell->cmd_list->c_flag)
+	{
+		shell->exit_status = 1;
+		return ;
+	}
+	exec_loop(shell, envp);
 }
