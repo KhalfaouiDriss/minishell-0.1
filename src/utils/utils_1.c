@@ -26,6 +26,7 @@ void init_shell(t_shell *shell)
     shell->exit_status = 0;
     shell->env = NULL;
     shell->input = NULL;
+    shell->pip_count = 0;
 }
 
 void free_tokens(t_token *tokens)

@@ -65,6 +65,7 @@ static void	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 	else if ((*token)->type == REDIR_HEREDOC && (*token)->next)
 	{
 		cmd->heredoc_fd = handle_heredoc((*token)->next->value, shell);
+		
 		(*token) = (*token)->next;
 	}
 	else if ((*token)->type == REDIR_OUT && (*token)->next)
@@ -119,7 +120,11 @@ t_cmd	*parse_tokens(t_shell *shell)
 	while (token)
 	{
 		if (!token->type)
-			return (printf("%s\n", token->value), NULL);
+		{
+			ft_putstr_fd(token->value, 2);
+			printf("\n");
+			return (NULL);
+		}
 		token = token->next;
 	}
 	token = shell->token;

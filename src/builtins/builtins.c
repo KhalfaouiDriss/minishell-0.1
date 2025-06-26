@@ -24,6 +24,9 @@ int execute_builtin(t_shell *shell, char *cmd, char **args)
     int i = 0;
     if (ft_strncmp(cmd, "echo", 5) == 0) {
         ft_echo(args);
+        shell->pip_count--;
+        if(!shell->pip_count)
+            shell->exit_status = 0;
         return (0);
     }
     else if (ft_strncmp(cmd, "cd", 3) == 0) {
