@@ -83,6 +83,7 @@ typedef struct s_shell
     t_cmd *cmd_list;
     int exit_status;
     int blocked;
+    int pip_count;
 } t_shell;
 
 

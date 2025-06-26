@@ -45,6 +45,13 @@ void redirect_output_builtin(t_cmd *cmd, int append)
     }
     dup2(fd, 1);
 }
+void hand(int sig)
+{
+	if (sig == SIGINT)
+	{
+		exit(0);
+	}
+}
 
 int	handle_heredoc(char *delimiter, t_shell *shell)
 {
@@ -66,7 +73,8 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
 		char	*expanded;
 		while (1)
 		{
-			signal(SIGINT, SIG_DFL);
+			signal(SIGINT, hand);
+			// signal(SIGINT, SIG_DFL);
 			line = readline("> ");
 			if (!line || ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1) == 0)
 			{
@@ -86,7 +94,6 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
                             var = handle_variable_token(line, &i, shell, '\'');
                         else
                             var = handle_variable_token(line, &i, shell, 0);
-                        // printf("->> %s/n", var);
 						if (var)
 						{
                             if (ft_strncmp(var, delimiter, ft_strlen(delimiter) + 1) == 0 && !line[i])
@@ -120,7 +127,6 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
 		close(tmp_fd);
 		exit(0);
 	}
-
 	close(tmp_fd);
 	waitpid(pid, &status, 0);
 	if(WIFSIGNALED(status))

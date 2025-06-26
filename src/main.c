@@ -14,14 +14,13 @@ void	get_sig(int sig)
 		rl_on_new_line();
 		rl_redisplay();
 	}
-	// if (sig == 12)
+	// else if (sig == SIGUSR1)
 	// {
-	// 	// printf("llll");
+	// 	blocked = 2;
+	// 	write(1, "\n", 1);
 	// 	rl_replace_line("", 0);
 	// 	rl_on_new_line();
-	// 	rl_catch_signals = 0;
-	// 	rl_replace_line("", 0);
-	// 	rl_redisplay();
+	// 	// rl_redisplay();
 	// }
 }
 
@@ -86,11 +85,12 @@ int	main(int ac, char **av, char **envp)
 	}
 	free(pwd);
 	init_env(&shell, envp);
+	shell.exit_status = 0;
 	while (1)
 	{
 		if (shell.blocked == 12)
 			get_sig(12);
-		shell.input = readline("minishell-sendo-C47 $/~ ");
+		shell.input = readline("➜ Minishell $/~ ");
 		if (!shell.input)
 		{
 			printf("exit\n");

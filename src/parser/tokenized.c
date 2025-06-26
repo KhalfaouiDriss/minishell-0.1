@@ -332,7 +332,7 @@ void correct_lexer(t_shell *shell, t_token **token)
 			if (tmp->next == NULL || tmp->next->type != WORD)
 			{
 				free(tmp->value);
-				tmp->value = ft_strdup("mshell: syntax error near unexpected token (newline)");
+				tmp->value = ft_strdup("mshell: syntax error near unexpected token");
 				tmp->type = ERROR;
 				tmp->error = INPUT_INVA;
 				shell->exit_status = 2;
@@ -416,6 +416,22 @@ int isAllSpace(char *str)
 	return 1;
 }
 
+int pips_coount(char *input)
+{
+	int i;
+	int j;
+
+	i = 0;
+	j = 0;
+	while(input[i])
+	{
+		if(input[i] == '|')
+			j++;
+		i++;	
+	}
+	return j;
+}
+
 t_token *lexer_split_to_tokens(t_shell *shell)
 {
 	int i = 0;
@@ -434,6 +450,7 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 	int j = 0;
 	char *value;
 
+	shell->pip_count = pips_coount(shell->input);
 	if (str[0] == '$' && (!str[1] || str[1] == ' '))
 	{
 		add_token(&head, new_token("minishell: '$' command not found", 0, NOT_FOUND));
@@ -542,13 +559,14 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 					char *value = handle_variable_token(str, &i, shell, 0);
 					if (value)
 					{
-						// if (ft_strncmp(value, "$", 2) == 0)
-						// {
-						// 	current_word = strjoin_free(current_word, value);
-						// 	i++; 
-						// }
-						// else
-						// {
+						if (ft_strncmp(value, "$", 1) == 0)
+						{
+							current_word = strjoin_free(current_word, value);
+							free(value);
+							i++; 
+						}
+						else
+						{
 							tmp_2 = ft_substr(str, 0, j);
 							tmp_3 = ft_substr(str, i, ft_strlen(str) - i);
 							free(shell->input);
@@ -564,7 +582,7 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 						}
 					}
 
-				// }
+				}
 			}
 			else
 			{
@@ -593,6 +611,6 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 		}
 	}
 	correct_lexer(shell, &head);
-	print_tokens(head);
+	// print_tokens(head);
 	return head;
 }
