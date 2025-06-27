@@ -97,6 +97,22 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
     //     (*i)++;
     //     return ft_strdup("$");
     // }
+
+    if (str[*i] == '$' && (str[*i + 1] == '\0' || str[*i + 1] == ' '))
+	{
+		(*i)++;
+		return ft_strdup("$");
+	}
+
+	if (str[*i] == '$' && str[*i + 1] == '$')
+	{
+		*i += 2;
+		return ft_strdup("$$");
+	}
+
+    if(!ft_isalnum(str[*i + 1]))
+        return (ft_strdup("$"));
+
 	if (*i > 0 && (str[*i - 1] == '\\'))
 	{
 		(*i)++;
@@ -120,17 +136,7 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	// 	free(var_name);
 	// 	return result;
     // }
-	if (str[*i] == '$' && (str[*i + 1] == '\0' || str[*i + 1] == ' '))
-	{
-		(*i)++;
-		return ft_strdup("$");
-	}
 
-	if (str[*i] == '$' && str[*i + 1] == '$')
-	{
-		*i += 2;
-		return ft_strdup("$$");
-	}
 
 	
 	(*i)++;
