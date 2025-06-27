@@ -142,7 +142,19 @@ void	wait_all(int last_pid, t_shell *shell)
 	while ((pid = waitpid(-1, &status, 0)) > 0)
 	{
 		if (WIFSIGNALED(status))
-			write(1, "\n", 1);
+        {
+        int sig = WTERMSIG(status);
+        if (sig == SIGQUIT)
+        {
+            shell->exit_status = 131;
+            ft_putstr_fd("Quit (core dumped)\n", 1);
+        }
+        else if (sig == SIGINT)
+        {
+            shell->exit_status = 130;
+            ft_putchar_fd('\n', 1);
+        }
+    }
 		if (pid == last_pid && WIFEXITED(status))
 			shell->exit_status = WEXITSTATUS(status);
 	}
