@@ -69,6 +69,7 @@ static void	print_not_found_and_exit(t_cmd *cmd)
 
 static void	handle_child(t_cmd *cmd, t_shell *shell, char **envp, int prev_pipe, int *fd)
 {
+    signal(SIGQUIT, SIG_DFL);
 	char	*path;
 
 	if (cmd->next)
@@ -141,18 +142,17 @@ void	wait_all(int last_pid, t_shell *shell)
 
 	while ((pid = waitpid(-1, &status, 0)) > 0)
 	{
-		if (WIFSIGNALED(status))
+		if (WIFSIGNALED(status)){
+            int sig = WTERMSIG(status);
+            if (sig == SIGQUIT)
+            {
+                shell->exit_status = 128 + sig;
+                ft_putstr_fd("Quit (core dumped)\n", 2);
+            }
+            else if (sig == SIGINT)
         {
-        int sig = WTERMSIG(status);
-        if (sig == SIGQUIT)
-        {
-            shell->exit_status = 131;
-            ft_putstr_fd("Quit (core dumped)\n", 1);
-        }
-        else if (sig == SIGINT)
-        {
-            shell->exit_status = 130;
-            ft_putchar_fd('\n', 1);
+            shell->exit_status = 128 + sig;
+            ft_putchar_fd('\n', 2);
         }
     }
 		if (pid == last_pid && WIFEXITED(status))
