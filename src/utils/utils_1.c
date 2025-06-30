@@ -1,21 +1,5 @@
 #include "../../include/minishell.h"
 
-void	free_split(char **lst)
-{
-	int	i;
-
-	i = 0;
-	if (!lst)
-		return ;
-	while (lst[i])
-	{
-		free(lst[i]);
-		i++;
-	}
-	free(lst);
-}
-
-
 void init_shell(t_shell *shell)
 {
     shell->arg_count = 0;
@@ -29,76 +13,43 @@ void init_shell(t_shell *shell)
     shell->pip_count = 0;
 }
 
-void free_tokens(t_token *tokens)
+char *strjoin_free(char *s1, char *s2)
 {
-    t_token *tmp;
+	char *new_str;
 
-    while (tokens)
-    {
-        tmp = tokens->next;
-        if (tokens->value)
-            free(tokens->value);
-        free(tokens);
-        tokens = tmp;
-    }
+	if (!s1 && !s2)
+		return NULL;
+	if (!s1)
+		return strdup(s2);
+	if (!s2)
+		return strdup(s1);
+	new_str = ft_strjoin(s1, s2);
+	free(s1);
+	return new_str;
 }
 
-void free_env(t_env *env)
+int ft_nodelen(t_token *head)
 {
-    t_env *tmp;
+	int i;
+	t_token *tmp;
 
-    while (env)
-    {
-        tmp = env->next;
-        if (env->name)
-            free(env->name);
-        if (env->value)
-            free(env->value);
-        free(env);
-        env = tmp;
-    }
+	tmp = head;
+	i = 0;
+	while (tmp)
+	{
+		i++;
+		tmp = tmp->next;
+	}
+	return i;
 }
 
-
-void free_all(t_shell *shell)
+int is_space(char c)
 {
-    if (!shell)
-        return;
-
-    if (shell->input)
-    {
-        free(shell->input);
-        shell->input = NULL;
-    }
-
-    if (shell->token)
-    {
-        free_tokens(shell->token);
-        shell->token = NULL;
-    }
-
-    if (shell->args)
-    {
-        free_split(shell->args);
-        shell->args = NULL;
-    }
-    if (shell->cmd_list)
-    {
-        free_cmds(shell->cmd_list);
-        shell->cmd_list = NULL;
-    }
-
+	return (c == ' ' || c == '\t' || c == '\n');
 }
 
 
-t_token	*new_node(char *value)
+int is_special(char c)
 {
-	t_token	*new;
-
-	new = malloc(sizeof(*new));
-	if (!new)
-		return (NULL);
-    new->value = value;
-	new->next = NULL;
-	return (new);
+    return (c == '|' || c == '>' || c == '<');
 }

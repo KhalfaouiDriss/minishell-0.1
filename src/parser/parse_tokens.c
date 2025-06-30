@@ -23,27 +23,6 @@ char	*safe_strdup(char *s)
 	return (ft_strdup(s));
 }
 
-void	free_cmds(t_cmd *cmds)
-{
-	t_cmd	*current;
-	t_cmd	*next;
-	int		i;
-
-	current = cmds;
-	while (current)
-	{
-		next = current->next;
-		i = 0;
-		while (current->args[i])
-			free(current->args[i++]);
-		free(current->args);
-		free(current->infile);
-		free(current->outfile);
-		free(current);
-		current = next;
-	}
-}
-
 void	init_str(t_cmd *cmd)
 {
 	cmd->infile = NULL;
