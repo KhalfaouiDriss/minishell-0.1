@@ -10,6 +10,7 @@ int	main(int ac, char **av, char **envp)
 	init_shell(&shell);
 	init_env(&shell, envp);
 	signal(SIGINT, get_sig);
+	signal(SIGTSTP, SIG_IGN); 
 	signal(SIGQUIT, SIG_IGN);
 
 	while (1)
@@ -42,6 +43,7 @@ int	main(int ac, char **av, char **envp)
 		global_state(1);
 		execute_pipeline(&shell, envp);
 		free_all(&shell, 0);
+		usleep(500);
 	}
 	return 0;
 }

@@ -79,7 +79,7 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, char **envp, int prev_pipe,
 		dup2(prev_pipe, 0);
 		close(prev_pipe);
 	}
-	if (cmd->heredoc_fd)
+	if (cmd->heredoc_fd != -1)
 	{
 		dup2(cmd->heredoc_fd, 0);
 		close(cmd->heredoc_fd);
@@ -142,21 +142,22 @@ void	wait_all(int last_pid, t_shell *shell)
 
 	while ((pid = waitpid(-1, &status, 0)) > 0)
 	{
-		if (WIFSIGNALED(status)){
-            int sig = WTERMSIG(status);
-            if (sig == SIGQUIT)
-            {
-                shell->exit_status = 128 + sig;
-                ft_putstr_fd("Quit (core dumped)\n", 2);
-            }
-            else if (sig == SIGINT)
-        {
-            shell->exit_status = 128 + sig;
-            ft_putchar_fd('\n', 2);
-        }
-    }
-		if (pid == last_pid && WIFEXITED(status))
+	if (pid == last_pid)
+	{
+		if (WIFEXITED(status))
 			shell->exit_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			shell->exit_status = 128 + WTERMSIG(status);
+	}
+
+	if (WIFSIGNALED(status))
+	{
+		int sig = WTERMSIG(status);
+		if (sig == SIGQUIT && pid == last_pid)
+			ft_putstr_fd("Quit (core dumped)\n", 2);
+		else if (sig == SIGINT && pid == last_pid)
+			ft_putchar_fd('\n', 2);
+	}
 	}
 }
 

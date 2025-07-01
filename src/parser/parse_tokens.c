@@ -32,6 +32,7 @@ void	init_str(t_cmd *cmd)
 	cmd->append = 0;
 	cmd->outfile_fd = 0;
 	cmd->c_flag = 0;
+	cmd->heredoc_fd = -1;
 }
 
 static void	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
