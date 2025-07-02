@@ -119,10 +119,10 @@ static void	exec_loop(t_shell *shell, char **envp)
 
 	cmd = shell->cmd_list;
 	prev_pipe = -1;
+	if (is_builtin(cmd->args[0]) && !cmd->next)
+			return (handle_builtin_redirs(cmd, shell), (void)0);
 	while (cmd && !cmd->c_flag)
 	{
-		if (is_builtin(cmd->args[0]) && !cmd->next)
-			return (handle_builtin_redirs(cmd, shell), (void)0);
 		if (cmd->next && pipe(fd) == -1)
 			return (perror("pipe error"), exit(1), (void)0);
 		pid = fork();
