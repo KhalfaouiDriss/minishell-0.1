@@ -142,7 +142,6 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
 	int			status;
 
 	tmp_fd = open(tmp, O_CREAT | O_WRONLY | O_TRUNC, 0600);
-	printf("here doc is %s\n", tmp);
 	if (tmp_fd == -1)
 		return (perror("open"), -1);
 	pid = fork();
