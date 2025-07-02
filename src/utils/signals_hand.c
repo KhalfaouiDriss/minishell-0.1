@@ -17,6 +17,9 @@ void get_sig(int sig)
 
 	if (state == 1)
 		return;
+		
+	if (sig == SIGINT)
+		global_state(2);
 	if(global_state(-1) != 3)
 	{
 		write(1, "\n", 1);
@@ -24,7 +27,4 @@ void get_sig(int sig)
 		rl_on_new_line();
 		rl_redisplay();
 	}
-
-	if (sig == SIGINT)
-		global_state(2);
 }

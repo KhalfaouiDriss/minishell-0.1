@@ -17,12 +17,7 @@ void main_loop(t_shell *shell, char **envp)
 			add_history(shell->input);
 
 		if (global_state(-1) == 2)
-		{
 			shell->exit_status = 130;
-			free(shell->input);
-			continue;
-		}
-
 		shell->token = lexer_split_to_tokens(shell);
 		shell->cmd_list = parse_tokens(shell);
 		if (!shell->cmd_list)
@@ -33,7 +28,6 @@ void main_loop(t_shell *shell, char **envp)
 		global_state(1);
 		execute_pipeline(shell, envp);
 		// free_all(shell, 0);
-		usleep(500);
 	}
 	return;
 }

@@ -72,13 +72,17 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, char **envp, int prev_pipe,
     signal(SIGQUIT, SIG_DFL);
 	char	*path;
 
-	if (cmd->next)
+	if (cmd->next){
 		dup2(fd[1], 1);
+		close(fd[1]);
+	}
 	if (prev_pipe != -1)
 	{
 		dup2(prev_pipe, 0);
 		close(prev_pipe);
 	}
+	else
+		close(fd[0]);
 	if (cmd->heredoc_fd != -1)
 	{
 		dup2(cmd->heredoc_fd, 0);
@@ -130,6 +134,8 @@ static void	exec_loop(t_shell *shell, char **envp)
 			close(fd[1]);
 	        prev_pipe = fd[0];
         }
+		else
+			close(fd[0]);
         cmd = cmd->next;
 	}
 	wait_all(pid, shell);

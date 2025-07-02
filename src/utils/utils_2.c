@@ -117,14 +117,32 @@ static void	run_heredoc_loop(int tmp_fd, char *delimiter, t_shell *shell)
 	}
 }
 
+char *gen_random(){
+	char *tmp;
+	tmp = malloc(6);
+	int i = 0;
+	int fd = open("/dev/random", O_RDONLY);
+	while(i < 5){
+		read(fd, &tmp[i],1);
+		if (tmp[i] >= 32 && tmp[i] <= 126 && tmp[i] != '/')
+			i++;
+	}
+	tmp[i] = '\0';
+	return tmp;
+	
+}
+
 int	handle_heredoc(char *delimiter, t_shell *shell)
 {
-	const char	*tmp = "/tmp/.heredoc_tmp";
+	char	*tmp = "/tmp/.heredoc_tmp";
+	char *tmp2 = gen_random();
+	tmp = ft_strjoin(tmp, tmp2);
 	int			tmp_fd;
 	pid_t		pid;
 	int			status;
 
 	tmp_fd = open(tmp, O_CREAT | O_WRONLY | O_TRUNC, 0600);
+	printf("here doc is %s\n", tmp);
 	if (tmp_fd == -1)
 		return (perror("open"), -1);
 	pid = fork();
@@ -143,7 +161,7 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
 	if (WIFEXITED(status))
 		shell->exit_status = WEXITSTATUS(status);
 	tmp_fd = open(tmp, O_RDONLY);
-	unlink(tmp);
+	// unlink(tmp);
 	if (tmp_fd == -1)
 		perror("open heredoc read");
 	return (tmp_fd);

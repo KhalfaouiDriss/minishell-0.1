@@ -45,7 +45,6 @@ static void	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 	else if ((*token)->type == REDIR_HEREDOC && (*token)->next)
 	{
 		cmd->heredoc_fd = handle_heredoc((*token)->next->value, shell);
-		
 		(*token) = (*token)->next;
 	}
 	else if ((*token)->type == REDIR_OUT && (*token)->next)
