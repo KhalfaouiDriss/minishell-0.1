@@ -41,6 +41,7 @@ static void	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 	{
 		if(!(*token)->next->ebag){
 			write(2,"ambiguous redirect\n", 20);
+			shell->ebag_final = 0;
 			return ;
 		}
 		cmd->infile = safe_strdup((*token)->next->value);
@@ -56,6 +57,7 @@ static void	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 		cmd->outfile = safe_strdup((*token)->next->value);
 		if(!(*token)->next->ebag){
 			write(2,"ambiguous redirect\n", 20);
+			shell->ebag_final = 0;
 			return ;
 		}
 		redirect_output(cmd, 0);
@@ -67,6 +69,7 @@ static void	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 		cmd->outfile = safe_strdup((*token)->next->value);
 		if(!(*token)->next->ebag){
 			write(2,"ambiguous redirect\n", 20);
+			shell->ebag_final = 0;
 			return ;
 		}
 		redirect_output(cmd, 1);

@@ -122,7 +122,7 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 		return ft_strdup("$");
 	}
 	shell->ebag = check_embag(var_value);
-	shell->ebag_final = check_embag(var_value);
+	// shell->ebag_final = check_embag(var_value);
 	free(var_name);
 	return var_value;
 }
