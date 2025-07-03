@@ -8,14 +8,14 @@ int check_embag(char *var_value)
 	int i;
 
 	if(!var_value)
-		return 1;
+		return 0;
 	value = ft_split(var_value, ' ');
 	i = 0;
 	while (value[i])
 		i++;
 	if(i > 0)
-		return 1;
-	return 0;
+		return 0;
+	return 1;
 }
 
 char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)

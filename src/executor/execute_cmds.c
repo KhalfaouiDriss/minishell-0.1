@@ -171,9 +171,14 @@ void	wait_all(int last_pid, t_shell *shell)
 
 void	execute_pipeline(t_shell *shell, char **envp)
 {
-	if (shell->cmd_list && shell->cmd_list->c_flag)
+	if ((shell->cmd_list && shell->cmd_list->c_flag))
 	{
 		shell->exit_status = 1;
+		return ;
+	}
+	if(!shell->ebag){
+		shell->exit_status = 1;
+		shell->ebag = 1;
 		return ;
 	}
 	exec_loop(shell, envp);
