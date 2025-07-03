@@ -93,11 +93,20 @@ static void	write_expanded_line(char *line, t_shell *shell, int tmp_fd)
 	write(tmp_fd, "\n", 1);
 }
 
+void seg_hand(int sig)
+{
+	write(1, "\n", 1);
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	rl_redisplay();
+	exit(130);
+}
+
 static void	run_heredoc_loop(int tmp_fd, char *delimiter, t_shell *shell)
 {
 	char	*line;
 
-	signal(SIGINT, SIG_DFL);
+	signal(SIGINT, seg_hand);
 	while (1)
 	{
 		line = readline("> ");
@@ -144,6 +153,7 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
 	tmp_fd = open(tmp, O_CREAT | O_WRONLY | O_TRUNC, 0600);
 	if (tmp_fd == -1)
 		return (perror("open"), -1);
+	signal(SIGINT, SIG_IGN);
 	pid = fork();
 	if (pid == -1)
 		return (perror("fork"), close(tmp_fd), -1);
@@ -155,10 +165,9 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
 	}
 	close(tmp_fd);
 	waitpid(pid, &status, 0);
-	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-		shell->exit_status = 130;
 	if (WIFEXITED(status))
 		shell->exit_status = WEXITSTATUS(status);
+	signal(SIGINT, get_sig);
 	tmp_fd = open(tmp, O_RDONLY);
 	// unlink(tmp);
 	if (tmp_fd == -1)

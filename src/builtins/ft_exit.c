@@ -8,6 +8,8 @@ int ft_exit(t_shell *shell, char **args)
         write(2, "too many arguments\n", 20);
         exit(1);
     }
+    if(!args[1])
+        exit(shell->exit_status);
     
     if (args[1])
         exit_code = ft_atoi(args[1]);
