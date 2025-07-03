@@ -23,6 +23,7 @@ void main_loop(t_shell *shell, char **envp)
 		if (!shell->cmd_list)
 		{
 			// free_all(shell, 0);
+			continue;
 		}
 		global_state(1);
 		execute_pipeline(shell, envp);

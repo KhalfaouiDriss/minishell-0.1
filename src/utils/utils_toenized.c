@@ -1,7 +1,5 @@
 #include "../../include/minishell.h"
 
-
-
 int check_embag(char *var_value)
 {
 	char **value;
@@ -124,6 +122,7 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 		return ft_strdup("$");
 	}
 	shell->ebag = check_embag(var_value);
+	shell->ebag_final = check_embag(var_value);
 	free(var_name);
 	return var_value;
 }
@@ -161,7 +160,7 @@ void print_tokens(t_token *head)
 {
     while (head)
     {
-        printf("Token: %s | Type: %s | Error type: %d | quote type : %d", head->value, token_type_to_str(head->type), head->error, head->quot_type);
+        printf("Token: %s | Type: %s | Error type: %d | quote type : %d | ebag : %d", head->value, token_type_to_str(head->type), head->error, head->quot_type, head->ebag);
         printf("\n");
         head = head->next;
     }

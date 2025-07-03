@@ -39,9 +39,11 @@ static void	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 {
 	if ((*token)->type == REDIR_IN && (*token)->next)
 	{
-		cmd->infile = safe_strdup((*token)->next->value);
-		if(!shell->ebag)
+		if(!(*token)->next->ebag){
 			write(2,"ambiguous redirect\n", 20);
+			return ;
+		}
+		cmd->infile = safe_strdup((*token)->next->value);
 		(*token) = (*token)->next;
 	}
 	else if ((*token)->type == REDIR_HEREDOC && (*token)->next)
@@ -52,19 +54,23 @@ static void	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 	else if ((*token)->type == REDIR_OUT && (*token)->next)
 	{
 		cmd->outfile = safe_strdup((*token)->next->value);
+		if(!(*token)->next->ebag){
+			write(2,"ambiguous redirect\n", 20);
+			return ;
+		}
 		redirect_output(cmd, 0);
 		cmd->append = 0;
-		if(!shell->ebag)
-			write(2,"ambiguous redirect\n", 20);
 		(*token) = (*token)->next;
 	}
 	else if ((*token)->type == REDIR_APPEND && (*token)->next)
 	{
 		cmd->outfile = safe_strdup((*token)->next->value);
+		if(!(*token)->next->ebag){
+			write(2,"ambiguous redirect\n", 20);
+			return ;
+		}
 		redirect_output(cmd, 1);
 		cmd->append = 1;
-		if(!shell->ebag)
-			write(2,"ambiguous redirect\n", 20);
 		(*token) = (*token)->next;
 	}
 }

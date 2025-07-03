@@ -12,7 +12,7 @@ t_token	*new_node(char *value)
 	return (new);
 }
 
-t_token *new_token(char *val, int type, int error_type)
+t_token *new_token(int *ebag ,char *val, int type, int error_type)
 {
     t_token *t = (t_token *)malloc(sizeof(t_token));
     if (!t)
@@ -30,10 +30,11 @@ t_token *new_token(char *val, int type, int error_type)
     {
         t->value = NULL;
     }
-
+    t->ebag = *ebag;
     t->type = type;
     t->error = error_type;
     t->next = NULL;
+    *ebag = 1;
     return t;
 }
 

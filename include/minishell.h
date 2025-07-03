@@ -49,6 +49,7 @@ typedef struct s_token
     struct s_token *next;
     struct s_token *prev;
     int error;
+    int ebag;
 } t_token;
 
 typedef struct s_cmd
@@ -85,6 +86,7 @@ typedef struct s_shell
     int blocked;
     int pip_count;
     int ebag;
+    int ebag_final;
 } t_shell;
 
 typedef struct s_lexer_state
@@ -104,8 +106,8 @@ typedef struct s_lexer_state
 // tokenized 
 t_token	*lexer_split_to_tokens(t_shell *shell);
 char *handle_variable_token(char *str, int *i, t_shell *shell, char qte);
-int	handle_option_token(const char *input, int *i, t_token **head);
-void	handle_special_token(const char *input, int *i, t_token **head);
+int	handle_option_token(t_shell *shell, const char *input, int *i, t_token **head);
+void	handle_special_token(t_shell *shell, const char *input, int *i, t_token **head);
 
 // tokenized Utils
 void print_tokens(t_token *head);
@@ -135,7 +137,7 @@ void free_all(t_shell *shell, int enve);
 
 // linkd_list_utils
 void add_token(t_token **head, t_token *new);
-t_token *new_token(char *val, int type, int error_type);
+t_token *new_token(int *ebag, char *val, int type, int error_type);
 t_token	*new_node(char *value);
 char *find_env_node(t_env *env, char *key);
 

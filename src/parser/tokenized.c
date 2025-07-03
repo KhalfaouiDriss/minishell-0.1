@@ -6,7 +6,7 @@ void handle_invalid_option(t_shell *shell, t_token **head)
 {
 	char *err_str = ft_strdup("Error: Invalid option");
 
-	add_token(head, new_token(err_str, ERROR, OPTION_INVA));
+	add_token(head, new_token(&(shell->ebag), err_str, ERROR, OPTION_INVA));
 	free(err_str);
 	shell->exit_status = 2;
 }
@@ -29,7 +29,7 @@ void handle_unmatched_quote(t_shell *shell, char *segment, char *final)
 	t_token **head = &(shell->token);
 	char *err_str = ft_strdup("Error: Unmatched quote");
 
-	add_token(head, new_token(err_str, ERROR, QUETS_INVA));
+	add_token(head, new_token(&(shell->ebag), err_str, ERROR, QUETS_INVA));
 	free(err_str);
 	free(segment);
 	free(final);
@@ -118,7 +118,7 @@ int handle_quoted_token(const char *input, int *i, t_shell *shell)
 	}
 	detect_token_type(input, final, &type, &error);
 	if (final)
-		add_token(head, new_token(final, type, error));
+		add_token(head, new_token(&(shell->ebag), final, type, error));
 	free(final);
 	if (error)
 	{
@@ -130,7 +130,7 @@ int handle_quoted_token(const char *input, int *i, t_shell *shell)
 
 // ================================================================
 
-void handle_special_token(const char *input, int *i, t_token **head)
+void handle_special_token(t_shell *shell, const char *input, int *i, t_token **head)
 {
 	int start;
 	int type;
@@ -145,7 +145,7 @@ void handle_special_token(const char *input, int *i, t_token **head)
 	{
 		(*i)++;
 		val = ft_substr(input, start, *i - start);
-		add_token(head, new_token(val, ERROR, 0));
+		add_token(head, new_token(&(shell->ebag), val, ERROR, 0));
 		free(val);
 		return;
 	}
@@ -162,11 +162,11 @@ void handle_special_token(const char *input, int *i, t_token **head)
 		type = REDIR_OUT;
 	else
 		type = ERROR;
-	add_token(head, new_token(val, type, 0));
+	add_token(head, new_token(&(shell->ebag), val, type, 0));
 	free(val);
 }
 
-int handle_option_token(const char *input, int *i, t_token **head)
+int handle_option_token(t_shell *shell, const char *input, int *i, t_token **head)
 {
 	int start;
 	int opt_start;
@@ -186,14 +186,14 @@ int handle_option_token(const char *input, int *i, t_token **head)
 		if (!input[*i])
 		{
 			val = ft_substr(input, start, *i);
-			add_token(head, new_token(val, ERROR, QUETS_INVA));
+			add_token(head, new_token(&(shell->ebag) , val, ERROR, QUETS_INVA));
 			free(val);
 			return (0);
 		}
 		if (input[*i] == ' ')
 		{
 			val = ft_substr(input, start, *i);
-			add_token(head, new_token(val, ERROR, OPTION_INVA));
+			add_token(head, new_token(&(shell->ebag) , val, ERROR, OPTION_INVA));
 			free(val);
 			return (0);
 		}
@@ -212,7 +212,7 @@ int handle_option_token(const char *input, int *i, t_token **head)
 		opt_start = *i;
 		if (input[*i + 1] == ' ')
 		{
-			add_token(head, new_token(val, 0, OPTION_INVA));
+			add_token(head, new_token(&(shell->ebag) , val, 0, OPTION_INVA));
 			return 0;
 		}
 		while (input[*i] && !(input[*i] == ' ') && !is_special(input[*i]))
@@ -221,13 +221,13 @@ int handle_option_token(const char *input, int *i, t_token **head)
 	}
 	if (val)
 	{
-		add_token(head, new_token(val, OPTION, 0));
+		add_token(head, new_token(&(shell->ebag) , val, OPTION, 0));
 		free(val);
 	}
 	return (1);
 }
 
-void handle_word_token(const char *input, int *i, t_token **head)
+void handle_word_token(t_shell *shell, const char *input, int *i, t_token **head)
 {
 	int start = *i;
 	char *buffer = malloc(ft_strlen(input) + 1);
@@ -242,7 +242,7 @@ void handle_word_token(const char *input, int *i, t_token **head)
 	buffer[j] = '\0';
 
 	if (j > 0)
-		add_token(head, new_token(buffer, WORD, 0));
+		add_token(head, new_token(&(shell->ebag) , buffer, WORD, 0));
 	free(buffer);
 }
 
@@ -392,7 +392,7 @@ int pips_coount(char *input)
 // =================================================================
 
 
-void finalize_current_word(t_lexer_state *state)
+void finalize_current_word(t_shell *shell ,t_lexer_state *state)
 {
 	if (state->current_word)
 	{
@@ -403,7 +403,7 @@ void finalize_current_word(t_lexer_state *state)
 		else
 			state->token_type = WORD;
 
-		state->t_tmp = new_token(state->current_word, WORD, 0);
+		state->t_tmp = new_token(&(shell->ebag) , state->current_word, WORD, 0);
 		state->t_tmp->quot_type = state->current_quote_type;
 		add_token(&state->head, state->t_tmp);
 		free(state->current_word);
@@ -481,13 +481,13 @@ void handle_special_token_case(t_shell *shell, t_lexer_state *state)
 {
 	if (state->current_word)
 	{
-		state->t_tmp = new_token(state->current_word, WORD, 0);
+		state->t_tmp = new_token(&(shell->ebag), state->current_word, WORD, 0);
 		state->t_tmp->quot_type = state->current_quote_type;
 		add_token(&state->head, state->t_tmp);
 		free(state->current_word);
 		state->current_word = NULL;
 	}
-	handle_special_token(state->str, &state->i, &state->head);
+	handle_special_token(shell, state->str, &state->i, &state->head);
 }
 
 
@@ -495,7 +495,7 @@ void handle_special_token_case(t_shell *shell, t_lexer_state *state)
 
 void handle_invalid_quote(t_shell *shell, t_lexer_state *state)
 {
-	add_token(&state->head, new_token("Invalid quote", 0, QUETS_INVA));
+	add_token(&state->head, new_token(&(shell->ebag), "Invalid quote", 0, QUETS_INVA));
 	shell->exit_status = 258;
 	free(state->current_word);
 }
@@ -548,7 +548,6 @@ void process_token_loop(t_shell *shell, t_lexer_state *state)
 		state->i++;
 	if (state->str[state->i] == '\0')
 		return;
-
 	state->start = state->i;
 	while (state->str[state->i] && !is_space(state->str[state->i]))
 	{
@@ -561,7 +560,7 @@ void process_token_loop(t_shell *shell, t_lexer_state *state)
 		else
 			handle_normal_word(state);
 	}
-	finalize_current_word(state);
+	finalize_current_word(shell, state);
 }
 
 
@@ -569,7 +568,7 @@ int check_initial_dollar_error(t_shell *shell, t_lexer_state *state)
 {
 	if (state->str[0] == '$' && (!state->str[1] || state->str[1] == ' '))
 	{
-		add_token(&state->head, new_token("minishell: '$' command not found", 0, NOT_FOUND));
+		add_token(&state->head, new_token(&(shell->ebag), "minishell: '$' command not found", 0, NOT_FOUND));
 		shell->exit_status = 127;
 		return 1;
 	}
@@ -602,5 +601,6 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 	while (state.str[state.i])
 		process_token_loop(shell, &state);
 	correct_lexer(shell, &state.head);
+	// print_tokens(state.head);
 	return state.head;
 }
