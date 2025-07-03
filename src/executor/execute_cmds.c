@@ -36,7 +36,8 @@ char *find_command_path(char *cmd, t_env *envp)
 	free_split(paths);
 	return NULL;
 }
-static void	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
+
+static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 {
 	int	in;
 	int	out;
@@ -48,7 +49,7 @@ static void	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 		if (redirect_input(cmd->infile, cmd))
 		{
 			shell->exit_status = 1;
-			return ;
+			return shell->exit_status;
 		}
 	}
 	if (cmd->outfile)
@@ -58,6 +59,7 @@ static void	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 	close(in);
 	dup2(out, 1);
 	close(out);
+	return shell->exit_status;
 }
 
 static void	print_not_found_and_exit(t_cmd *cmd)
@@ -88,12 +90,12 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, char **envp, int prev_pipe,
 		dup2(cmd->heredoc_fd, 0);
 		close(cmd->heredoc_fd);
 	}
+	if (is_builtin(cmd->args[0]))
+		exit(handle_builtin_redirs(cmd, shell));
 	if (cmd->infile)
 		redirect_input(cmd->infile, cmd);
 	if (!cmd->args[0] || cmd->args[0][0] == '\0')
 		exit(0);
-	if (is_builtin(cmd->args[0]))
-		exit(execute_builtin(shell, cmd->args[0], cmd->args));
 	path = find_command_path(cmd->args[0], shell->env);
 	if (!path)
 		print_not_found_and_exit(cmd);
