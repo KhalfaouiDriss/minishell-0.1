@@ -280,8 +280,26 @@ void correct_lexer(t_shell *shell, t_token **token)
 		{
 			if (last_operator)
 			{
+				if ((tmp->type == PIPE && ft_strncmp(last_operator, "|", 1) == 0) ||
+					(tmp->type != PIPE && strncmp(last_operator, "|", 1) != 0))
+				{
+					free(tmp->value);
+					tmp->value = ft_strdup("mshell: syntax error near unexpected token");
+					tmp->type = ERROR;
+					tmp->error = INPUT_INVA;
+					shell->exit_status = 2;
+					free(last_operator);
+					return;
+				}
+			}
+
+			free(last_operator);
+			last_operator = ft_strdup(tmp->value);
+
+			if (tmp->next == NULL)
+			{
 				free(tmp->value);
-				tmp->value = ft_strdup("mshell: syntax error near unexpected token");
+				tmp->value = ft_strdup("mshell: syntax error near unexpected end of input");
 				tmp->type = ERROR;
 				tmp->error = INPUT_INVA;
 				shell->exit_status = 2;
@@ -289,15 +307,15 @@ void correct_lexer(t_shell *shell, t_token **token)
 				return;
 			}
 
-			free(last_operator);
-			last_operator = ft_strdup(tmp->value);
-
-			if (tmp->next == NULL || tmp->next->type != WORD)
+			if (tmp->type != PIPE &&
+				(tmp->next->type == REDIR_OUT || tmp->next->type == REDIR_IN ||
+				 tmp->next->type == REDIR_APPEND || tmp->next->type == REDIR_HEREDOC ||
+				 tmp->next->type == PIPE))
 			{
-				free(tmp->value);
-				tmp->value = ft_strdup("mshell: syntax error near unexpected token");
-				tmp->type = ERROR;
-				tmp->error = INPUT_INVA;
+				free(tmp->next->value);
+				tmp->next->value = ft_strdup("mshell: syntax error near unexpected token");
+				tmp->next->type = ERROR;
+				tmp->next->error = INPUT_INVA;
 				shell->exit_status = 2;
 				free(last_operator);
 				return;
@@ -313,24 +331,9 @@ void correct_lexer(t_shell *shell, t_token **token)
 		tmp = tmp->next;
 	}
 
-	if (last_operator)
-	{
-		t_token *last = *token;
-		while (last->next)
-			last = last->next;
-
-		if (last->type != WORD)
-		{
-			free(last->value);
-			last->value = ft_strdup("mshell: syntax error near unexpected end of input");
-			last->type = ERROR;
-			last->error = INPUT_INVA;
-			shell->exit_status = 2;
-		}
-	}
-
 	free(last_operator);
 }
+
 
 
 
