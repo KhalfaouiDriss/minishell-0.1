@@ -84,6 +84,7 @@ typedef struct s_shell
     int exit_status;
     int blocked;
     int pip_count;
+    int ebag;
 } t_shell;
 
 typedef struct s_lexer_state

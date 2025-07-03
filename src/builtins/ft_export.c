@@ -61,6 +61,7 @@ void ft_export(t_shell *shell, char **args)
             {
                 key = ft_strdup(args[i]);
                 value = NULL;
+                break;
             }
             if (key)
             {

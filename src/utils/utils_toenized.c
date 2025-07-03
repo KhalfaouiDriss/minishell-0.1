@@ -2,7 +2,21 @@
 
 
 
+int check_embag(char *var_value)
+{
+	char **value;
+	int i;
 
+	if(!var_value)
+		return 1;
+	value = ft_split(var_value, ' ');
+	i = 0;
+	while (value[i])
+		i++;
+	if(i > 0)
+		return 1;
+	return 0;
+}
 
 char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 {
@@ -101,7 +115,6 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	{
 		char *unknown = NULL;
 		free(var_name);
-		// return ft_strdup("");
         return NULL;
 	}
     if (!var_value)
@@ -110,6 +123,7 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 		free(var_name);
 		return ft_strdup("$");
 	}
+	shell->ebag = check_embag(var_value);
 	free(var_name);
 	return var_value;
 }
