@@ -113,7 +113,7 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, char **envp, int prev_pipe,
 	exit(126);
 }
 
-static void	exec_loop(t_shell *shell, char **envp)
+static void	exec_loop(t_shell *shell, char **envp, int n)
 {
 	int		fd[2];
 	int		prev_pipe;
@@ -122,9 +122,11 @@ static void	exec_loop(t_shell *shell, char **envp)
 
 	cmd = shell->cmd_list;
 	prev_pipe = -1;
+	if (n == 1)
+		cmd = cmd->next;
 	if (is_builtin(cmd->args[0]) && !cmd->next)
 			return (handle_builtin_redirs(cmd, shell), (void)0);
-	while (cmd && !cmd->c_flag)
+	while (cmd)
 	{
 		if (cmd->next && pipe(fd) == -1)
 			return (perror("pipe error"), gc_free_all(), (void)0);
@@ -170,16 +172,19 @@ void	wait_all(int last_pid, t_shell *shell)
 
 void	execute_pipeline(t_shell *shell, char **envp)
 {
+	int n =0;
 	if (shell->cmd_list && shell->cmd_list->c_flag)
 	{
 		shell->exit_status = 1;
-		gc_free_all();
-		return ;
+		if(!shell->cmd_list->next){
+			n = 1;
+			return ;
+		}
 	}
 	if(!shell->ebag_final){
 		shell->exit_status = 1;
 		shell->ebag_final = 1;
 		return ;
 	}
-	exec_loop(shell, envp);
+	exec_loop(shell, envp, n);
 }
