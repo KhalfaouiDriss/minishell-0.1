@@ -16,30 +16,6 @@ int check_embag(char *var_value)
 	return 1;
 }
 
-
-
-t_token *get_last_token(t_shell *shell)
-{
-	t_token *tmp;
-
-	// tmp = shell->token;
-	// while (tmp->next)
-	// 	tmp = tmp->next;
-	
-	return NULL;
-	// return tmp;
-}
-
-int is_redire(char *symbol)
-{
-	if(!ft_strncmp(symbol, ">>", 2) || !ft_strncmp(symbol, ">", 2) || !ft_strncmp(symbol, "<<", 2) ||
-		!ft_strncmp(symbol, "<", 2))
-	{
-		return 1;
-	}
-	return 0;
-}
-
 char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 {
 	int		start, len;
@@ -78,9 +54,21 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 		return ft_strdup("$$");
 	}
 
-    if(!ft_isalnum(str[*i + 1]))
-        return (ft_strdup("$"));
-
+	if((str[*i + 1] == '\'' && str[*i + 2] == '\'') || (str[*i + 1] == '"' && str[*i + 2] == '"'))
+    {
+		(*i) += 3;
+	    return (ft_strdup(""));
+	}
+	if((str[*i + 1] == '\'' && str[*i + 2] != '\'') || (str[*i + 1] == '"' && str[*i + 2] != '"'))
+    {
+		(*i)++;
+	    return NULL;
+	}
+	if(!ft_isalnum(str[*i + 1]))
+    {
+		return (ft_strdup("$"));
+	}
+	
 	if (*i > 0 && (str[*i - 1] == '\\'))
 	{
 		(*i)++;
@@ -131,10 +119,16 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 		}
 		env = env->next;
 	}
-
+	if (!var_value && !var_name && ft_isalpha(var_name[0]))
+	{
+		char *unknown = NULL;
+		return ft_strdup("");
+			// free(var_name);
+	}
 	if (!var_value && ft_isalpha(var_name[0]))
 	{
 		char *unknown = NULL;
+		shell->ebag = 0;
 		if(shell->is_heredoc_delimiter)
 		{
 			shell->is_heredoc_delimiter = 0;
@@ -147,7 +141,7 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	{
 		char *unknown = NULL;
 		free(var_name);
-		return "$";
+		return ft_strdup("$");
 	}
 	shell->ebag = check_embag(var_value);
 	// shell->ebag_final = check_embag(var_value);
