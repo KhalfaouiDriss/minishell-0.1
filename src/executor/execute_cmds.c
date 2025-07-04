@@ -59,6 +59,7 @@ static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 	close(in);
 	dup2(out, 1);
 	close(out);
+	gc_free_all();
 	return shell->exit_status;
 }
 
@@ -89,12 +90,15 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, char **envp, int prev_pipe,
 		dup2(cmd->heredoc_fd, 0);
 		close(cmd->heredoc_fd);
 	}
-	if (is_builtin(cmd->args[0]))
+	if (is_builtin(cmd->args[0])){
 		exit(handle_builtin_redirs(cmd, shell));
+	}
 	if (cmd->infile)
 		redirect_input(cmd->infile, cmd);
-	if (!cmd->args[0] || cmd->args[0][0] == '\0')
+	if (!cmd->args[0] || cmd->args[0][0] == '\0'){
+		gc_free_all();
 		exit(0);
+	}
 	path = find_command_path(cmd->args[0], shell->env);
 	if (!path)
 		print_not_found_and_exit(cmd);

@@ -8,8 +8,10 @@ int	redirect_input(char *file, t_cmd *cmd)
 	if (fd < 0)
 	{
 		perror("open infile");
-		if (!is_builtin(cmd->args[0]))
+		if (!is_builtin(cmd->args[0])){
+			gc_free_all();
 			exit(1);
+		}
 		return (1);
 	}
 	dup2(fd, 0);

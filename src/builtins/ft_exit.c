@@ -12,8 +12,9 @@ int ft_exit(t_shell *shell, char **args)
     }
     
     if(args[2]){
-        write(2, "exit", 5);
+        write(2, "exit\n", 6);
         write(2, "too many arguments\n", 20);
+        return 1;
     }
     printf("exit\n");
     if(exit_code == -1)

@@ -59,7 +59,6 @@ int execute_builtin(t_shell *shell, char *cmd, char **args)
             ft_putstr_fd("': No such file or directory\n", 2);
             shell->exit_status = 126;
         }
-            // printf("env: '%s': No such file or directory\n", args[i]);
         return (shell->exit_status);
     }
     else if (ft_strncmp(cmd, "exit", 5) == 0) {
