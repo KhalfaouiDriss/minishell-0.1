@@ -128,7 +128,7 @@ static void	run_heredoc_loop(int tmp_fd, char *delimiter, t_shell *shell)
 
 char *gen_random(){
 	char *tmp;
-	tmp = malloc(6);
+	tmp = ft_malloc(6);
 	int i = 0;
 	int fd = open("/dev/random", O_RDONLY);
 	while(i < 5){
@@ -161,6 +161,7 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
 	{
 		run_heredoc_loop(tmp_fd, delimiter, shell);
 		close(tmp_fd);
+		gc_free_all();
 		exit(0);
 	}
 	close(tmp_fd);
@@ -169,7 +170,6 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
 		shell->exit_status = WEXITSTATUS(status);
 	signal(SIGINT, get_sig);
 	tmp_fd = open(tmp, O_RDONLY);
-	// unlink(tmp);
 	if (tmp_fd == -1)
 		perror("open heredoc read");
 	return (tmp_fd);

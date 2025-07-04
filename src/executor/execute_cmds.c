@@ -23,7 +23,7 @@ char *find_command_path(char *cmd, t_env *envp)
 	while (paths[i])
 	{
 		int total_size = ft_strlen(paths[i]) + ft_strlen(cmd) + 2;
-		full_path = malloc(total_size);
+		full_path = ft_malloc(total_size);
         ft_strlcpy(full_path, paths[i], total_size);
         ft_strlcat(full_path, "/", total_size);
         ft_strlcat(full_path, cmd, total_size);
@@ -66,6 +66,7 @@ static void	print_not_found_and_exit(t_cmd *cmd)
 {
 	write(2, cmd->args[0], ft_strlen(cmd->args[0]));
 	write(2, ": command not found\n", 21);
+	gc_free_all();
 	exit(127);
 }
 
@@ -83,8 +84,6 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, char **envp, int prev_pipe,
 		dup2(prev_pipe, 0);
 		close(prev_pipe);
 	}
-	else
-		close(fd[0]);
 	if (cmd->heredoc_fd != -1)
 	{
 		dup2(cmd->heredoc_fd, 0);
@@ -106,9 +105,7 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, char **envp, int prev_pipe,
 	}
 	execve(path, cmd->args, envp);
 	perror(cmd->args[0]);
-	free(path);
-	if (ft_strncmp(cmd->args[0], ".", 2) == 0)
-		exit(2);
+	gc_free_all();
 	exit(126);
 }
 
@@ -126,7 +123,7 @@ static void	exec_loop(t_shell *shell, char **envp)
 	while (cmd && !cmd->c_flag)
 	{
 		if (cmd->next && pipe(fd) == -1)
-			return (perror("pipe error"), exit(1), (void)0);
+			return (perror("pipe error"), gc_free_all(), (void)0);
 		pid = fork();
 		if (pid == 0)
 			handle_child(cmd, shell, envp, prev_pipe, fd);
@@ -136,8 +133,6 @@ static void	exec_loop(t_shell *shell, char **envp)
 			close(fd[1]);
 	        prev_pipe = fd[0];
         }
-		else
-			close(fd[0]);
         cmd = cmd->next;
 	}
 	wait_all(pid, shell);
@@ -174,6 +169,7 @@ void	execute_pipeline(t_shell *shell, char **envp)
 	if (shell->cmd_list && shell->cmd_list->c_flag)
 	{
 		shell->exit_status = 1;
+		gc_free_all();
 		return ;
 	}
 	if(!shell->ebag_final){

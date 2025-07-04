@@ -19,14 +19,13 @@ void update_env_var(t_env *env, const char *name, const char *value)
 	{
 		if (ft_strncmp(tmp->name, name, ft_strlen(name)) == 0)
 		{
-			free(tmp->value);
 			tmp->value = value ? ft_strdup(value) : NULL;
 			return;
 		}
 		tmp = tmp->next;
 	}
 
-	t_env *new_var = malloc(sizeof(t_env));
+	t_env *new_var = ft_malloc(sizeof(t_env));
 	if (!new_var)
 		return;
 

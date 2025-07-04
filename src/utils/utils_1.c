@@ -12,6 +12,8 @@ void init_shell(t_shell *shell)
     shell->input = NULL;
     shell->pip_count = 0;
 	shell->is_heredoc_delimiter = 0;
+	shell->ebag = -1;
+	shell->ebag_final = -1;
 }
 
 char *strjoin_free(char *s1, char *s2)
@@ -21,11 +23,10 @@ char *strjoin_free(char *s1, char *s2)
 	if (!s1 && !s2)
 		return NULL;
 	if (!s1)
-		return strdup(s2);
+		return ft_strdup(s2);
 	if (!s2)
-		return strdup(s1);
+		return ft_strdup(s1);
 	new_str = ft_strjoin(s1, s2);
-	free(s1);
 	return new_str;
 }
 

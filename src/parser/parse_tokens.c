@@ -25,6 +25,7 @@ char	*safe_strdup(char *s)
 
 void	init_str(t_cmd *cmd)
 {
+	cmd->args = NULL;
 	cmd->infile = NULL;
 	cmd->outfile = NULL;
 	cmd->next = NULL;
@@ -84,12 +85,12 @@ static t_cmd	*parse_command(t_token **token, t_shell *shell)
 	int		arg_count;
 	int		i;
 
-	cmd = malloc(sizeof(t_cmd));
+	cmd = ft_malloc(sizeof(t_cmd));
 	if (!cmd)
 		return (NULL);
 	init_str(cmd);
 	arg_count = count_args(*token);
-	cmd->args = malloc((arg_count + 1) * sizeof(char *));
+	cmd->args = ft_malloc((arg_count + 1) * sizeof(char *));
 	i = 0;
 	while (*token && (*token)->type != PIPE)
 	{

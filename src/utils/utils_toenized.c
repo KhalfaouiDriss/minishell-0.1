@@ -78,7 +78,6 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 		len = *i - start;
 		var_name = ft_substr(str, start, len);
 		char *result = ft_strjoin("$", var_name);
-		free(var_name);
 		return result;
 	}
 
@@ -105,7 +104,6 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	if (quote == '\'')
 	{
 		char *result = ft_strjoin("$", var_name);
-		free(var_name);
 		return result;
 	}
 	while (env)
@@ -140,12 +138,10 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
     if (!var_value)
 	{
 		char *unknown = NULL;
-		free(var_name);
 		return ft_strdup("$");
 	}
 	shell->ebag = check_embag(var_value);
 	// shell->ebag_final = check_embag(var_value);
-	free(var_name);
 	return var_value;
 }
 

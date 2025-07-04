@@ -9,9 +9,9 @@ void main_loop(t_shell *shell, char **envp)
 		shell->input = readline("➜ Minishell $/~ ");
 		if (!shell->input)
 		{
+			gc_free_all();
 			printf("exit\n");
-			// free_all(shell, 1);
-			break;
+			exit(shell->exit_status);
 		}
 		if (shell->input[0])
 			add_history(shell->input);
@@ -21,13 +21,9 @@ void main_loop(t_shell *shell, char **envp)
 		shell->token = lexer_split_to_tokens(shell);
 		shell->cmd_list = parse_tokens(shell);
 		if (!shell->cmd_list)
-		{
-			// free_all(shell, 0);
 			continue;
-		}
 		global_state(1);
 		execute_pipeline(shell, envp);
-		// free_all(shell, 0);
 	}
 	return;
 }

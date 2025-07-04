@@ -2,7 +2,7 @@
 
 void	add_env(t_shell *shell, char *name, char *value)
 {
-	t_env	*new_env = malloc(sizeof(t_env));
+	t_env	*new_env = ft_malloc(sizeof(t_env));
 	t_env	*last;
 
 	if (!new_env)
@@ -39,7 +39,6 @@ void	process_env_variable(t_shell *shell, char *env_str)
 		return ;
 
 	add_env(shell, name, value);
-	free(name);
 }
 
 void	init_env(t_shell *shell, char **envp)

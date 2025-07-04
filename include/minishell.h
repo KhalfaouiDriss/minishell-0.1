@@ -104,6 +104,20 @@ typedef struct s_lexer_state
     
 }	t_lexer_state;
 
+// galbege_collecter
+
+typedef struct s_mlc {
+    void *ptr;
+    struct s_mlc *next;
+} t_mlc;
+
+typedef struct s_gc
+{
+    t_mlc  *head;
+}   t_gc;
+
+void *ft_malloc(size_t size);
+void gc_free_all(void);
 
 // tokenized 
 t_token	*lexer_split_to_tokens(t_shell *shell);

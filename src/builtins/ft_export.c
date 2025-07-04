@@ -2,7 +2,7 @@
 
 void add_env_node(t_env **env, const char *key, const char *value)
 {
-    t_env *new_node = malloc(sizeof(t_env));
+    t_env *new_node = ft_malloc(sizeof(t_env));
     t_env *tmp;
     
     if (!new_node)
@@ -79,7 +79,6 @@ void ft_export(t_shell *shell, char **args)
                     if (ft_strncmp(tmp->name, key, ft_strlen(key) + 1) == 0)
                     {
                         if(value)
-                        free(tmp->value);      
                         tmp->value = ft_strdup(value);
                         break;
                     }
@@ -88,9 +87,6 @@ void ft_export(t_shell *shell, char **args)
                 if (!tmp)
                     add_env_node(&(shell->env), key, value);
             }
-            free(key);
-            if(value)
-                free(value);
             i++;
         }
     }

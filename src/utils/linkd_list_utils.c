@@ -4,7 +4,7 @@ t_token	*new_node(char *value)
 {
 	t_token	*new;
 
-	new = malloc(sizeof(*new));
+	new = ft_malloc(sizeof(*new));
 	if (!new)
 		return (NULL);
     new->value = value;
@@ -14,17 +14,14 @@ t_token	*new_node(char *value)
 
 t_token *new_token(int *ebag ,char *val, int type, int error_type)
 {
-    t_token *t = (t_token *)malloc(sizeof(t_token));
+    t_token *t = (t_token *)ft_malloc(sizeof(t_token));
     if (!t)
         return NULL;
     if (val)
     {
-        t->value = strdup(val);
+        t->value = ft_strdup(val);
         if (!t->value)
-        {
-            free(t);
             return NULL;
-        }
     }
     else
     {
@@ -42,11 +39,7 @@ void add_token(t_token **head, t_token *new)
 {
     if (!new || !new->value || new->value[0] == '\0')
     {
-        if (new)
-        {
-            free(new->value);
-            free(new);
-        }
+        
         return;
     }
 
