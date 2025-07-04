@@ -155,7 +155,10 @@ void handle_special_token(t_shell *shell, const char *input, int *i, t_token **h
 	else if (ft_strncmp(val, ">>", 2) == 0)
 		type = REDIR_APPEND;
 	else if (ft_strncmp(val, "<<", 2) == 0)
+	{
 		type = REDIR_HEREDOC;
+		shell->is_heredoc_delimiter = 1;
+	}
 	else if (ft_strncmp(val, "<", 1) == 0)
 		type = REDIR_IN;
 	else if (ft_strncmp(val, ">", 1) == 0)
@@ -604,6 +607,6 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 	while (state.str[state.i])
 		process_token_loop(shell, &state);
 	correct_lexer(shell, &state.head);
-	// print_tokens(state.head);
+	print_tokens(state.head);
 	return state.head;
 }

@@ -87,6 +87,7 @@ typedef struct s_shell
     int pip_count;
     int ebag;
     int ebag_final;
+    int is_heredoc_delimiter;
 } t_shell;
 
 typedef struct s_lexer_state
@@ -100,6 +101,7 @@ typedef struct s_lexer_state
 	char *current_word;
 	t_token *t_tmp;
 	t_token *head;
+    
 }	t_lexer_state;
 
 

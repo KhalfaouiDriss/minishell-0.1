@@ -11,6 +11,7 @@ void init_shell(t_shell *shell)
     shell->env = NULL;
     shell->input = NULL;
     shell->pip_count = 0;
+	shell->is_heredoc_delimiter = 0;
 }
 
 char *strjoin_free(char *s1, char *s2)
