@@ -119,6 +119,7 @@ typedef struct s_gc
 
 void *ft_malloc(size_t size);
 void gc_free_all(void);
+t_gc *get_gc(void);
 
 // tokenized 
 t_token	*lexer_split_to_tokens(t_shell *shell);

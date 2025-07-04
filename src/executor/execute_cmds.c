@@ -52,9 +52,9 @@ static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 			return shell->exit_status;
 		}
 	}
+	shell->exit_status = execute_builtin(shell, cmd->args[0], cmd->args);
 	if (cmd->outfile)
 		redirect_output_builtin(cmd, cmd->append);
-	shell->exit_status = execute_builtin(shell, cmd->args[0], cmd->args);
 	dup2(in, 0);
 	close(in);
 	dup2(out, 1);

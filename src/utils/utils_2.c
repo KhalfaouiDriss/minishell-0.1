@@ -43,7 +43,7 @@ void	redirect_output_builtin(t_cmd *cmd, int append)
 		fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	else
 		fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd < 0)
+	if (fd < 0 && cmd->c_flag == 1)
 	{
 		perror("open outfile");
 		cmd->c_flag = 1;
