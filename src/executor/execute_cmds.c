@@ -59,7 +59,6 @@ static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 	close(in);
 	dup2(out, 1);
 	close(out);
-	gc_free_all();
 	return shell->exit_status;
 }
 
@@ -184,7 +183,10 @@ void	execute_pipeline(t_shell *shell, char **envp)
 	if(!shell->ebag_final){
 		shell->exit_status = 1;
 		shell->ebag_final = 1;
-		return ;
+		if(!shell->cmd_list->next){
+			n = 1;
+			return ;
+		}
 	}
 	exec_loop(shell, envp, n);
 }

@@ -63,6 +63,7 @@ typedef struct s_cmd
     int heredoc_fd;
     int c_flag;
     int fd_builtin;
+    int flag_amb;
     struct s_cmd *next;
 } t_cmd;
 
