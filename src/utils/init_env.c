@@ -41,6 +41,32 @@ void	process_env_variable(t_shell *shell, char *env_str)
 	add_env(shell, name, value);
 }
 
+void init_new_env(t_shell *shell)
+{
+	int i;
+	t_env *tmp;
+	char *temp1;
+	char *temp2;
+
+	i = 0;
+	tmp = shell->env;
+	while (tmp)
+	{
+		temp1 = ft_strjoin(tmp->name, "=");
+		if(tmp->value)
+		{
+			temp2 = ft_strjoin(temp1, tmp->value);
+			shell->new_env[i] = ft_strdup(temp2);
+		}
+		else
+			shell->new_env[i] = ft_strdup(temp1);
+		
+		i++;
+		tmp = tmp->next;
+	}
+	shell->new_env[i] = NULL;
+	
+}
 void	init_env(t_shell *shell, char **envp)
 {
 	int	i = 0;
@@ -51,4 +77,6 @@ void	init_env(t_shell *shell, char **envp)
 		process_env_variable(shell, envp[i]);
 		i++;
 	}
+	shell->new_env = ft_malloc((sizeof(char *) * i));
+	init_new_env(shell);
 }

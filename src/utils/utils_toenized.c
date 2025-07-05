@@ -130,6 +130,7 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 		if(shell->is_heredoc_delimiter)
 		{
 			shell->is_heredoc_delimiter = 0;
+			(*i)--;
 			return ft_strjoin("$", var_name);
 		}
 		return ft_strdup("");

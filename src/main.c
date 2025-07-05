@@ -9,7 +9,7 @@ void main_loop(t_shell *shell, char **envp)
 		shell->input = readline("➜ Minishell $/~ ");
 		if (!shell->input)
 		{
-			gc_free_all();
+			// gc_free_all();
 			printf("exit\n");
 			exit(shell->exit_status);
 		}
@@ -32,6 +32,7 @@ int	main(int ac, char **av, char **envp)
 {
 	t_shell shell;
 	char *pwd;
+	int i = 0;
 
 	(void)ac;
 	(void)av;

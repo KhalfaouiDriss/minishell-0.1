@@ -89,6 +89,7 @@ typedef struct s_shell
     int ebag;
     int ebag_final;
     int is_heredoc_delimiter;
+    char **new_env;
 } t_shell;
 
 typedef struct s_lexer_state
@@ -143,6 +144,7 @@ int is_special(char c);
 void	add_env(t_shell *shell, char *name, char *value);
 void	process_env_variable(t_shell *shell, char *env_str);
 void	init_env(t_shell *shell, char **envp);
+void init_new_env(t_shell *shell);
 
 // signals_hand.c
 int global_state(int set);

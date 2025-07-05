@@ -109,7 +109,8 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, char **envp, int prev_pipe,
 		dup2(cmd->outfile_fd, 1);
 		close(cmd->outfile_fd);
 	}
-	execve(path, cmd->args, envp);
+	// execve(path, cmd->args, envp);
+	execve(path, cmd->args, shell->new_env);
 	perror(cmd->args[0]);
 	gc_free_all();
 	exit(126);
