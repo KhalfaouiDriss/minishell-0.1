@@ -1,5 +1,19 @@
 #include "../../include/minishell.h"
 
+int check_ambgouos(t_shell *shell)
+{
+	t_cmd *tmp=shell->cmd_list;
+	while(tmp){
+		if(tmp->flag_amb == 1){
+			shell->exit_status = 1;
+			write(2,"ambiguous redirect\n", 20);
+			return 1;
+		}
+		tmp = tmp->next;
+	}
+	return 0;
+}
+
 char *find_command_path(char *cmd, t_env *envp)
 {
 	char **paths = NULL;
@@ -52,14 +66,13 @@ static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 			return shell->exit_status;
 		}
 	}
-	shell->exit_status = execute_builtin(shell, cmd->args[0], cmd->args);
 	if (cmd->outfile)
 		redirect_output_builtin(cmd, cmd->append);
+	shell->exit_status = execute_builtin(shell, cmd->args[0], cmd->args);
 	dup2(in, 0);
 	close(in);
 	dup2(out, 1);
 	close(out);
-	gc_free_all();
 	return shell->exit_status;
 }
 
@@ -74,7 +87,7 @@ static void	print_not_found_and_exit(t_cmd *cmd)
 	exit(127);
 }
 
-static void	handle_child(t_cmd *cmd, t_shell *shell, char **envp, int prev_pipe, int *fd)
+static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 {
     signal(SIGQUIT, SIG_DFL);
 	char	*path;
@@ -118,7 +131,7 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, char **envp, int prev_pipe,
 	exit(126);
 }
 
-static void	exec_loop(t_shell *shell, char **envp, int n)
+static void	exec_loop(t_shell *shell, int n)
 {
 	int		fd[2];
 	int		prev_pipe;
@@ -137,7 +150,7 @@ static void	exec_loop(t_shell *shell, char **envp, int n)
 			return (perror("pipe error"), gc_free_all(), (void)0);
 		pid = fork();
 		if (pid == 0)
-			handle_child(cmd, shell, envp, prev_pipe, fd);
+			handle_child(cmd, shell, prev_pipe, fd);
 		if (prev_pipe != -1)
 			close(prev_pipe);
 		if (cmd->next){
@@ -175,24 +188,19 @@ void	wait_all(int last_pid, t_shell *shell)
 	}
 }
 
-void	execute_pipeline(t_shell *shell, char **envp)
+
+void	execute_pipeline(t_shell *shell)
 {
-	int n =0;
+	int n = 0;
+	if(check_ambgouos(shell))
+		return ;
 	if (shell->cmd_list && shell->cmd_list->c_flag)
 	{
 		shell->exit_status = 1;
 		if(!shell->cmd_list->next){
-			n = 1;
 			return ;
 		}
+		n = 1;
 	}
-	if(!shell->ebag_final){
-		shell->exit_status = 1;
-		shell->ebag_final = 1;
-		if(!shell->cmd_list->next){
-			n = 1;
-			return ;
-		}
-	}
-	exec_loop(shell, envp, n);
+	exec_loop(shell, n);
 }

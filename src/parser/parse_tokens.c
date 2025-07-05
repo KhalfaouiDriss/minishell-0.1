@@ -2,9 +2,8 @@
 
 int	count_args(t_token *token)
 {
-	int	i;
+	int	i = 0;
 
-	i = 0;
 	while (token && token->type != PIPE)
 	{
 		if (token->type == OPTION || token->type == WORD)
@@ -37,65 +36,62 @@ void	init_str(t_cmd *cmd)
 	cmd->heredoc_fd = -1;
 }
 
+static void	handle_ambiguous(t_token **token, t_cmd *cmd, t_shell *shell)
+{
+	shell->ebag_final = 0;
+	cmd->flag_amb = 1;
+	*token = (*token)->next;
+}
+
 static void	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 {
-	if ((*token)->type == REDIR_IN && (*token)->next && cmd->flag_amb == 0)
+	t_token *next;
+
+	next = (*token)->next;
+	if (!next)
+		return;
+
+	if ((*token)->type == REDIR_IN)
 	{
-		if(!(*token)->next->ebag){
-			write(2,"ambiguous redirect\n", 20);
-			shell->ebag_final = 0;
-			cmd->flag_amb = 1;
-			(*token) = (*token)->next;
-			return ;
-		}
-		cmd->infile = safe_strdup((*token)->next->value);
-		(*token) = (*token)->next;
+		if (!next->ebag)
+			return handle_ambiguous(token, cmd, shell);
+		cmd->infile = safe_strdup(next->value);
 	}
-	else if ((*token)->type == REDIR_HEREDOC && (*token)->next)
+	else if ((*token)->type == REDIR_HEREDOC)
 	{
-		cmd->heredoc_fd = handle_heredoc((*token)->next->value, shell);
-		(*token) = (*token)->next;
+		cmd->heredoc_fd = handle_heredoc(next->value, shell);
 	}
-	else if ((*token)->type == REDIR_OUT && (*token)->next && cmd->flag_amb == 0)
+	else if ((*token)->type == REDIR_OUT)
 	{
-		if(!(*token)->next->ebag){
-			write(2,"ambiguous redirect\n", 20);
-			shell->ebag_final = 0;
-			cmd->flag_amb = 1;
-			(*token) = (*token)->next;
-			return ;
-		}
-		cmd->outfile = safe_strdup((*token)->next->value);
-		redirect_output(cmd, 0);
+		if(!next->ebag)
+			handle_ambiguous(token, cmd, shell);
+		cmd->outfile = safe_strdup(next->value);
 		cmd->append = 0;
-		(*token) = (*token)->next;
+		if(next->ebag)
+			redirect_output(cmd, 0);
 	}
-	else if ((*token)->type == REDIR_APPEND && (*token)->next && cmd->flag_amb == 0)
+	else if ((*token)->type == REDIR_APPEND)
 	{
-		if(!(*token)->next->ebag){
-			write(2,"ambiguous redirect\n", 20);
-			shell->ebag_final = 0;
-			cmd->flag_amb = 1;
-			(*token) = (*token)->next;
-			return ;
-		}
-		cmd->outfile = safe_strdup((*token)->next->value);
-		redirect_output(cmd, 1);
+		if (!next->ebag)
+			handle_ambiguous(token, cmd, shell);
+		cmd->outfile = safe_strdup(next->value);
 		cmd->append = 1;
-		(*token) = (*token)->next;
+		if(next->ebag)
+			redirect_output(cmd, 1);
 	}
+	*token = next;
 }
 
 static t_cmd	*parse_command(t_token **token, t_shell *shell)
 {
 	t_cmd	*cmd;
-	int		arg_count;
-	int		i;
+	int		arg_count, i;
 
 	cmd = ft_malloc(sizeof(t_cmd));
 	if (!cmd)
 		return (NULL);
 	init_str(cmd);
+
 	arg_count = count_args(*token);
 	cmd->args = ft_malloc((arg_count + 1) * sizeof(char *));
 	i = 0;
@@ -105,7 +101,8 @@ static t_cmd	*parse_command(t_token **token, t_shell *shell)
 			cmd->args[i++] = safe_strdup((*token)->value);
 		else
 			parse_redirections(token, cmd, shell);
-		(*token) = (*token)->next;
+		if (*token)
+			*token = (*token)->next;
 	}
 	cmd->args[i] = NULL;
 	return (cmd);
@@ -113,12 +110,11 @@ static t_cmd	*parse_command(t_token **token, t_shell *shell)
 
 t_cmd	*parse_tokens(t_shell *shell)
 {
-	t_cmd	*head;
-	t_cmd	*last;
+	t_cmd	*head = NULL;
+	t_cmd	*last = NULL;
 	t_cmd	*cmd;
-	t_token	*token;
+	t_token	*token = shell->token;
 
-	token = shell->token;
 	while (token)
 	{
 		if (!token->type)
@@ -130,8 +126,7 @@ t_cmd	*parse_tokens(t_shell *shell)
 		token = token->next;
 	}
 	token = shell->token;
-	head = NULL;
-	last = NULL;
+
 	while (token)
 	{
 		cmd = parse_command(&token, shell);

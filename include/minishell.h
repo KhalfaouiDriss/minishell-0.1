@@ -169,7 +169,7 @@ char *safe_strdup(char *s);
 int redirect_input(char *file, t_cmd *cmd);
 void redirect_output(t_cmd *cmd, int append);
 int handle_heredoc(char *delimiter, t_shell *shell);
-void execute_pipeline(t_shell *shell, char **envp);
+void execute_pipeline(t_shell *shell);
 void	wait_all(int last_pid, t_shell *shell);
 void ft_echo(char **args);
 void ft_cd(t_shell *shell, char **args);
