@@ -24,7 +24,7 @@ void main_loop(t_shell *shell, char **envp)
 		if (!shell->cmd_list)
 			continue;
 		global_state(1);
-		execute_pipeline(shell, envp);
+		execute_pipeline(shell);
 	}
 	return;
 }

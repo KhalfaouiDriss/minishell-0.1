@@ -5,15 +5,15 @@ void add_env_node(t_shell *shell, t_env **env, char *key, char *value)
     t_env *new_node = ft_malloc(sizeof(t_env));
     t_env *tmp;
     int i;
-    
+
     if (!new_node)
         return;
     new_node->name = ft_strdup(key);
     new_node->value = NULL;
-    if(value)
+    if (value)
         new_node->value = ft_strdup(value);
     new_node->next = NULL;
-    
+
     if (*env == NULL)
     {
         *env = new_node;
@@ -27,7 +27,7 @@ void add_env_node(t_shell *shell, t_env **env, char *key, char *value)
         i++;
     }
     tmp->next = new_node;
-    // free_split(shell->new_env);
+
     shell->new_env = ft_malloc(sizeof(char *) * (i + 2));
     init_new_env(shell);
 }
@@ -36,10 +36,10 @@ void ft_export(t_shell *shell, char **args)
 {
     int i = 1;
     char *key;
-    t_env *tmp = shell->env;
+    t_env *tmp;
     char *value;
 
-    if(args[i] == NULL)
+    if (args[i] == NULL)
     {
         ft_env(shell->env, 0);
         return;
@@ -48,7 +48,7 @@ void ft_export(t_shell *shell, char **args)
     {
         while (args[i])
         {
-            if(!(args[i][0] >= 97 && args[i][0] <= 122) && !(args[i][0] >= 65 && args[i][0] <= 90) && args[i][0] != '_')
+            if (!(args[i][0] >= 'a' && args[i][0] <= 'z') && !(args[i][0] >= 'A' && args[i][0] <= 'Z') && args[i][0] != '_')
             {
                 ft_putstr_fd("minishell: export: ", 2);
                 ft_putstr_fd(args[i], 2);
@@ -58,7 +58,7 @@ void ft_export(t_shell *shell, char **args)
                 continue;
             }
             char *equal_sign = ft_strchr(args[i], '=');
-            if(equal_sign)
+            if (equal_sign)
             {
                 int key_len = equal_sign - args[i];
                 key = ft_substr(args[i], 0, key_len);
@@ -67,12 +67,12 @@ void ft_export(t_shell *shell, char **args)
             else
             {
                 key = ft_strdup(args[i]);
-                // printf("key : %s\n", args[i]);
                 value = NULL;
             }
+
             if (key)
             {
-                if(ft_strchr(key, '-'))
+                if (ft_strchr(key, '-'))
                 {
                     ft_putstr_fd("minishell: export: ", 2);
                     ft_putstr_fd(args[i], 2);
@@ -81,16 +81,21 @@ void ft_export(t_shell *shell, char **args)
                     i++;
                     continue;
                 }
+
+                tmp = shell->env;
                 while (tmp)
                 {
                     if (ft_strncmp(tmp->name, key, ft_strlen(key) + 1) == 0)
                     {
-                        if(value)
+                        if (value)
+                        {
                             tmp->value = ft_strdup(value);
+                        }
                         break;
                     }
                     tmp = tmp->next;
                 }
+
                 if (!tmp)
                     add_env_node(shell, &(shell->env), key, value);
             }
