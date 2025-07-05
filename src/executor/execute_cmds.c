@@ -64,7 +64,10 @@ static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 
 static void	print_not_found_and_exit(t_cmd *cmd)
 {
-	write(2, cmd->args[0], ft_strlen(cmd->args[0]));
+	ft_putstr_fd("'", 2);
+	if(!(cmd->args[0][0] == '\n' && ft_strlen(cmd->args[0]) == 1))
+		write(2, cmd->args[0], ft_strlen(cmd->args[0]));
+	ft_putstr_fd("'", 2);
 	write(2, ": command not found\n", 21);
 	gc_free_all();
 	exit(127);

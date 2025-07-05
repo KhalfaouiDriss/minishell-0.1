@@ -107,6 +107,8 @@ typedef struct s_lexer_state
 
 // galbege_collecter
 
+// ptr -> list
+
 typedef struct s_mlc {
     void *ptr;
     struct s_mlc *next;

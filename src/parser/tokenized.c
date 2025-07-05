@@ -495,7 +495,12 @@ void handle_quotes(t_shell *shell, t_lexer_state *state)
 		return;
 	}
 	tmp = ft_substr(state->str, state->start, state->i - state->start);
-	if (quote == '\'' && tmp[0] != '$')
+	if(state->start == state->i && state->str[state->i])
+	{
+		if(!state->current_word)
+			state->current_word = ft_strdup("\n");
+	}
+	else if (quote == '\'' && tmp[0] != '$')
 		state->current_word = strjoin_free(state->current_word, tmp);
 	else
 	{
