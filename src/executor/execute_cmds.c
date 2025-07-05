@@ -59,6 +59,7 @@ static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 	close(in);
 	dup2(out, 1);
 	close(out);
+	gc_free_all();
 	return shell->exit_status;
 }
 
@@ -81,6 +82,7 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, char **envp, int prev_pipe,
 	if (cmd->next){
 		dup2(fd[1], 1);
 		close(fd[1]);
+		close(fd[0]);
 	}
 	if (prev_pipe != -1)
 	{

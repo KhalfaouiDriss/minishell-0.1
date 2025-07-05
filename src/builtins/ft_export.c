@@ -28,7 +28,7 @@ void add_env_node(t_shell *shell, t_env **env, char *key, char *value)
     }
     tmp->next = new_node;
     // free_split(shell->new_env);
-    shell->new_env = malloc(sizeof(char *) * (i + 1));
+    shell->new_env = ft_malloc(sizeof(char *) * (i + 2));
     init_new_env(shell);
 }
 
@@ -67,9 +67,8 @@ void ft_export(t_shell *shell, char **args)
             else
             {
                 key = ft_strdup(args[i]);
-                printf("key : %s\n", args[i]);
+                // printf("key : %s\n", args[i]);
                 value = NULL;
-                // break;
             }
             if (key)
             {

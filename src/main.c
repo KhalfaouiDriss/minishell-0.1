@@ -9,7 +9,8 @@ void main_loop(t_shell *shell, char **envp)
 		shell->input = readline("➜ Minishell $/~ ");
 		if (!shell->input)
 		{
-			// gc_free_all();
+			gc_free_all();
+			// free_split(shell->new_env);
 			printf("exit\n");
 			exit(shell->exit_status);
 		}

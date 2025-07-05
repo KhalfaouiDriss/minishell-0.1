@@ -1,0 +1,9 @@
+a
+include
+lib
+Makefile
+minishell
+rdr
+readline.supp
+src
+test.supp

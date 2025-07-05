@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 08:40:18 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/05 15:38:16 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/05 17:05:37 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*ft_strjoin(const char *s1, const char *s2)
 		return (NULL);
 	lens1 = ft_strlen(s1);
 	lens2 = ft_strlen(s2);
-	res = malloc(lens1 + lens2 + 1);
+	res = ft_malloc(lens1 + lens2 + 1);
 	if (!res)
 		return (NULL);
 	ft_strlcpy(res, s1, ft_strlen(s1) + 1);
