@@ -68,7 +68,7 @@ static void	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 		cmd->outfile = safe_strdup(next->value);
 		cmd->append = 0;
 		if(next->ebag)
-			redirect_output(cmd, 0);
+			redirect_output(shell,cmd, 0);
 	}
 	else if ((*token)->type == REDIR_APPEND)
 	{
@@ -77,7 +77,7 @@ static void	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 		cmd->outfile = safe_strdup(next->value);
 		cmd->append = 1;
 		if(next->ebag)
-			redirect_output(cmd, 1);
+			redirect_output(shell, cmd, 1);
 	}
 	*token = next;
 }

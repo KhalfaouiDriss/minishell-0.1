@@ -19,7 +19,7 @@ int	redirect_input(char *file, t_cmd *cmd)
 	return (0);
 }
 
-void	redirect_output(t_cmd *cmd, int append)
+void	redirect_output(t_shell *shell,t_cmd *cmd, int append)
 {
 	int	fd;
 
@@ -30,7 +30,9 @@ void	redirect_output(t_cmd *cmd, int append)
 	if (fd < 0)
 	{
 		perror("open outfile");
+		shell->exit_status = 1;
 		cmd->c_flag = 1;
+
 	}
 	cmd->outfile_fd = fd;
 }

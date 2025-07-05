@@ -167,7 +167,7 @@ t_cmd *parse_tokens(t_shell *shell);
 int count_args(t_token *token);
 char *safe_strdup(char *s);
 int redirect_input(char *file, t_cmd *cmd);
-void redirect_output(t_cmd *cmd, int append);
+void redirect_output(t_shell *shell, t_cmd *cmd, int append);
 int handle_heredoc(char *delimiter, t_shell *shell);
 void execute_pipeline(t_shell *shell);
 void	wait_all(int last_pid, t_shell *shell);

@@ -53,6 +53,8 @@ char *find_command_path(char *cmd, t_env *envp)
 
 static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 {
+	if(cmd->c_flag  == 1)
+		return 1;
 	int	in;
 	int	out;
 
@@ -92,6 +94,8 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
     signal(SIGQUIT, SIG_DFL);
 	char	*path;
 
+	if(cmd->c_flag == 1)
+		exit(1);
 	if (cmd->next){
 		dup2(fd[1], 1);
 		close(fd[1]);
@@ -194,13 +198,5 @@ void	execute_pipeline(t_shell *shell)
 	int n = 0;
 	if(check_ambgouos(shell))
 		return ;
-	if (shell->cmd_list && shell->cmd_list->c_flag)
-	{
-		shell->exit_status = 1;
-		if(!shell->cmd_list->next){
-			return ;
-		}
-		n = 1;
-	}
 	exec_loop(shell, n);
 }
