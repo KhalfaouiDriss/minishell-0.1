@@ -32,8 +32,11 @@ void	redirect_output(t_shell *shell,t_cmd *cmd, int append)
 		perror("open outfile");
 		shell->exit_status = 1;
 		cmd->c_flag = 1;
+		return ;
 
 	}
+	if(cmd->outfile_fd > 2)
+		close(cmd->outfile_fd);
 	cmd->outfile_fd = fd;
 }
 
@@ -48,8 +51,10 @@ void	redirect_output_builtin(t_cmd *cmd, int append)
 	if (fd < 0 && cmd->c_flag == 1)
 	{
 		perror("open outfile");
+		return ;
 	}
 	dup2(fd, 1);
+	close(fd);
 }
 
 void	hand(int sig)

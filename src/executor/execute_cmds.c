@@ -89,6 +89,21 @@ static void	print_not_found_and_exit(t_cmd *cmd)
 	exit(127);
 }
 
+void close_parent_fds(t_cmd *cmd)
+{
+	if (cmd->outfile_fd > 2)
+	{
+		close(cmd->outfile_fd);
+		cmd->outfile_fd = -1;
+	}
+
+	if (cmd->heredoc_fd > 2)
+	{
+		close(cmd->heredoc_fd);
+		cmd->heredoc_fd = -1;
+	}
+}
+
 static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 {
     signal(SIGQUIT, SIG_DFL);
@@ -153,6 +168,8 @@ static void	exec_loop(t_shell *shell)
 		pid = fork();
 		if (pid == 0)
 			handle_child(cmd, shell, prev_pipe, fd);
+		else
+			close_parent_fds(cmd);
 		if (prev_pipe != -1)
 			close(prev_pipe);
 		if (cmd->next){
