@@ -8,10 +8,8 @@ int	redirect_input(char *file, t_cmd *cmd)
 	if (fd < 0)
 	{
 		perror("open infile");
-		if (!is_builtin(cmd->args[0])){
-			gc_free_all();
+		if (!is_builtin(cmd->args[0]))
 			exit(1);
-		}
 		return (1);
 	}
 	dup2(fd, 0);
@@ -38,23 +36,6 @@ void	redirect_output(t_shell *shell,t_cmd *cmd, int append)
 	if(cmd->outfile_fd > 2)
 		close(cmd->outfile_fd);
 	cmd->outfile_fd = fd;
-}
-
-void	redirect_output_builtin(t_cmd *cmd, int append)
-{
-	int	fd;
-
-	if (append)
-		fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	else
-		fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd < 0 && cmd->c_flag == 1)
-	{
-		perror("open outfile");
-		return ;
-	}
-	dup2(fd, 1);
-	close(fd);
 }
 
 void	hand(int sig)

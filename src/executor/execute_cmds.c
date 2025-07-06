@@ -25,6 +25,7 @@ char *find_command_path(char *cmd, t_env *envp)
 	{
 		if (access(cmd, X_OK) == 0)
 			return ft_strdup(cmd);
+		
 		return NULL;
 	}
 
@@ -55,8 +56,8 @@ static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 {
 	if(cmd->c_flag  == 1)
 		return shell->exit_status;
-	int	in;
-	int	out;
+	int	in = -1;
+	int	out = -1;
 
 	in = dup(0);
 	out = dup(1);
@@ -65,11 +66,18 @@ static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 		if (redirect_input(cmd->infile, cmd))
 		{
 			shell->exit_status = 1;
+			if(in != -1)
+				close(in);
+			if(out != -1)
+				close(out);
 			return shell->exit_status;
 		}
 	}
-	if (cmd->outfile)
-		redirect_output_builtin(cmd, cmd->append);
+	if (cmd->outfile_fd)
+	{
+		dup2(cmd->outfile_fd, 1);
+		close(cmd->outfile_fd);
+	}
 	shell->exit_status = execute_builtin(shell, cmd->args[0], cmd->args);
 	dup2(in, 0);
 	close(in);
