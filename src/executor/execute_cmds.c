@@ -54,7 +54,7 @@ char *find_command_path(char *cmd, t_env *envp)
 static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 {
 	if(cmd->c_flag  == 1)
-		return 1;
+		return shell->exit_status;
 	int	in;
 	int	out;
 
@@ -94,7 +94,7 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
     signal(SIGQUIT, SIG_DFL);
 	char	*path;
 
-	if(cmd->c_flag == 1)
+	if (cmd->c_flag == 1 || cmd->flag_amb == 1)
 		exit(1);
 	if (cmd->next){
 		dup2(fd[1], 1);
@@ -135,7 +135,7 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 	exit(126);
 }
 
-static void	exec_loop(t_shell *shell, int n)
+static void	exec_loop(t_shell *shell)
 {
 	int		fd[2];
 	int		prev_pipe;
@@ -144,8 +144,6 @@ static void	exec_loop(t_shell *shell, int n)
 
 	cmd = shell->cmd_list;
 	prev_pipe = -1;
-	if (n == 1)
-		cmd = cmd->next;
 	if (is_builtin(cmd->args[0]) && !cmd->next)
 			return (handle_builtin_redirs(cmd, shell), (void)0);
 	while (cmd)
@@ -195,8 +193,6 @@ void	wait_all(int last_pid, t_shell *shell)
 
 void	execute_pipeline(t_shell *shell)
 {
-	int n = 0;
-	if(check_ambgouos(shell))
-		return ;
-	exec_loop(shell, n);
+	check_ambgouos(shell);
+	exec_loop(shell);
 }

@@ -48,7 +48,6 @@ void	redirect_output_builtin(t_cmd *cmd, int append)
 	if (fd < 0 && cmd->c_flag == 1)
 	{
 		perror("open outfile");
-		cmd->c_flag = 1;
 	}
 	dup2(fd, 1);
 }
