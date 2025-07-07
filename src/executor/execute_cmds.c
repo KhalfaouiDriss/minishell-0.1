@@ -56,6 +56,8 @@ static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 {
 	if(cmd->c_flag  == 1)
 		return shell->exit_status;
+	if(cmd->flag_amb == 1)
+		return shell->exit_status;
 	int	in = -1;
 	int	out = -1;
 
