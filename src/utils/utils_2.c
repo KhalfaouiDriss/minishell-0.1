@@ -36,11 +36,6 @@ void	redirect_output(t_shell *shell,t_cmd *cmd, int append)
 	cmd->outfile_fd = fd;
 }
 
-void	hand(int sig)
-{
-	if (sig == SIGINT)
-		exit(130);
-}
 
 static int	check_delimiter(char *line, char *delimiter)
 {
@@ -153,8 +148,10 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
 	}
 	close(tmp_fd);
 	waitpid(pid, &status, 0);
-	if (WIFEXITED(status))
+	if (WIFEXITED(status)){
 		shell->exit_status = WEXITSTATUS(status);
+		return (-1);
+	}
 	signal(SIGINT, get_sig);
 	tmp_fd = open(tmp, O_RDONLY);
 	if (tmp_fd == -1)

@@ -64,6 +64,7 @@ typedef struct s_cmd
     int c_flag;
     int fd_builtin;
     int flag_amb;
+    int fod_flag;
     struct s_cmd *next;
 } t_cmd;
 

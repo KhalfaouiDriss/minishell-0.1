@@ -1,18 +1,5 @@
 #include "../../include/minishell.h"
 
-int check_ambgouos(t_shell *shell)
-{
-	t_cmd *tmp=shell->cmd_list;
-	while(tmp){
-		if(tmp->flag_amb == 1){
-			shell->exit_status = 1;
-			write(2,"ambiguous redirect\n", 20);
-			return 1;
-		}
-		tmp = tmp->next;
-	}
-	return 0;
-}
 
 char *find_command_path(char *cmd, t_env *envp)
 {
@@ -54,10 +41,9 @@ char *find_command_path(char *cmd, t_env *envp)
 
 static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 {
-	if(cmd->c_flag  == 1)
+	if(cmd->c_flag  == 1 || cmd->flag_amb == 1 ||cmd->fod_flag ==1)
 		return shell->exit_status;
-	if(cmd->flag_amb == 1)
-		return shell->exit_status;
+	
 	int	in = -1;
 	int	out = -1;
 
@@ -118,8 +104,11 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
     signal(SIGQUIT, SIG_DFL);
 	char	*path;
 
-	if (cmd->c_flag == 1 || cmd->flag_amb == 1)
+	if(cmd->args[0] == NULL)
+		exit(0);
+	if (cmd->c_flag == 1 || cmd->flag_amb == 1 || cmd->fod_flag == 1)
 		exit(1);
+
 	if (cmd->next){
 		dup2(fd[1], 1);
 		close(fd[1]);
@@ -221,6 +210,5 @@ void	wait_all(int last_pid, t_shell *shell)
 
 void	execute_pipeline(t_shell *shell)
 {
-	check_ambgouos(shell);
 	exec_loop(shell);
 }
