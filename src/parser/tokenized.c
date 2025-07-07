@@ -499,11 +499,11 @@ void handle_quotes(t_shell *shell, t_lexer_state *state)
 	{
 		if(!state->current_word)
 		{
-			if(state->i == 1)
+			if((state->i == 1 && ft_strlen(state->str) == 2) || !state->str[state->i + 1] || state->str[state->i + 1] == ' ')
+			{
 				shell->not_found = 1;
-			else
-				shell->not_found = 1;
-			state->current_word = ft_strdup("''");
+				state->current_word = ft_strdup("''");
+			}
 		}
 	}
 	else if (quote == '\'' && tmp[0] != '$')

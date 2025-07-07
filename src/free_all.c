@@ -29,8 +29,9 @@ void gc_free_all(void)
     while (gc->head)
     {
         tmp = gc->head;
+        // printf("gc : %s\n", (char *)tmp->ptr);
         gc->head = gc->head->next;
-        free(tmp->ptr);
-        free(tmp);
+        // free(tmp->ptr);
+        // free(tmp);
     }
 }

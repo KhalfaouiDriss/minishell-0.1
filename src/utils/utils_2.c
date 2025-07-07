@@ -33,8 +33,6 @@ void	redirect_output(t_shell *shell,t_cmd *cmd, int append)
 		return ;
 
 	}
-	if(cmd->outfile_fd > 2)
-		close(cmd->outfile_fd);
 	cmd->outfile_fd = fd;
 }
 
