@@ -86,13 +86,12 @@ static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 	return shell->exit_status;
 }
 
-static void	print_not_found_and_exit(t_cmd *cmd)
+static void	print_not_found_and_exit(t_cmd *cmd, t_shell *shell)
 {
-	ft_putstr_fd("'", 2);
-	if(!(cmd->args[0][0] == '\n' && ft_strlen(cmd->args[0]) == 1))
-		write(2, cmd->args[0], ft_strlen(cmd->args[0]));
-	ft_putstr_fd("'", 2);
+	write(2, cmd->args[0], ft_strlen(cmd->args[0]));
 	write(2, ": command not found\n", 21);
+	if(shell->not_found)
+		shell->not_found = 0;
 	gc_free_all();
 	exit(127);
 }
@@ -145,7 +144,9 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 	}
 	path = find_command_path(cmd->args[0], shell->env);
 	if (!path)
-		print_not_found_and_exit(cmd);
+	{
+		print_not_found_and_exit(cmd, shell);
+	}
 	if (cmd->outfile_fd)
 	{
 		dup2(cmd->outfile_fd, 1);

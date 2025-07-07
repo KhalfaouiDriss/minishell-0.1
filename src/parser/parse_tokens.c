@@ -67,8 +67,10 @@ static void	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 			handle_ambiguous(token, cmd, shell);
 		cmd->outfile = safe_strdup(next->value);
 		cmd->append = 0;
-		if(next->ebag)
+		if(next->ebag && !shell->not_found)
 			redirect_output(shell,cmd, 0);
+		else
+			return;
 	}
 	else if ((*token)->type == REDIR_APPEND)
 	{

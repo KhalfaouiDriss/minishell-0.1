@@ -90,6 +90,7 @@ typedef struct s_shell
     int ebag_final;
     int is_heredoc_delimiter;
     char **new_env;
+    int not_found;
 } t_shell;
 
 typedef struct s_lexer_state

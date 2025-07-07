@@ -35,6 +35,7 @@ int	main(int ac, char **av, char **envp)
 	char *pwd;
 	int i = 0;
 
+	shell.not_found = 0;
 	(void)ac;
 	(void)av;
 	init_shell(&shell);
