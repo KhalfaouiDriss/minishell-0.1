@@ -70,21 +70,28 @@ void ft_cd(t_shell *shell, char **args)
 	oldpwd = getcwd(NULL, 0);
 	if (!oldpwd)
 	{
-		perror("cd: getcwd");
-		free_split(args);
-		args[0] = "cd";
-		args[1] = "HOME";
-		ft_cd(shell, args);
-		shell->exit_status = 1;
-		return;
-	}
+		char *fallback = get_env_value(shell->env, "PWD");
+		int attempts = 10;
 
+		if(chdir(fallback) == -1 && attempts--)
+		{
+			char *tmp = fallback;
+			fallback = ft_strjoin(tmp, "/..");
+			free(tmp);
+		}
+
+		if (fallback)
+		{
+			update_env_var(shell->env, "PWD", fallback);
+			free(fallback);
+		}
+
+	}
 	if (chdir(target_dir) == -1)
 	{
 		write(2, "cd: ", 4);
 		write(2, target_dir, ft_strlen(target_dir));
 		write(2, ": No such file or directory\n", 29);
-		
 		shell->exit_status = 1;
 		free(oldpwd);
 		return;
