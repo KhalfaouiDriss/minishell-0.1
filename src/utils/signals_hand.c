@@ -4,7 +4,7 @@
 
 int global_state(int set)
 {
-	static int state = 0;
+	static int state;
 
 	if (set != -1)
 		state = set;
@@ -28,11 +28,8 @@ void get_sig(int sig)
 		rl_on_new_line();
 		rl_redisplay();
 	}
-	else if(state == 3)
-	{
-		write(1, "\n", 1);
-		rl_replace_line("", 0);
-		rl_on_new_line();
-		rl_redisplay();
-	}
+	if(state  == 4)
+		exit(130);
+
+
 }

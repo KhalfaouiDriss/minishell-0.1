@@ -127,6 +127,7 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 		dup2(cmd->heredoc_fd, 0);
 		close(cmd->heredoc_fd);
 	}
+
 	if (is_builtin(cmd->args[0])){
 		exit(handle_builtin_redirs(cmd, shell));
 	}
@@ -146,7 +147,6 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 		dup2(cmd->outfile_fd, 1);
 		close(cmd->outfile_fd);
 	}
-	// execve(path, cmd->args, envp);
 	execve(path, cmd->args, shell->new_env);
 	perror(cmd->args[0]);
 	gc_free_all();

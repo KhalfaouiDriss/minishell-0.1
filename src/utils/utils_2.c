@@ -75,23 +75,20 @@ static void	write_expanded_line(char *line, t_shell *shell, int tmp_fd)
 	write(tmp_fd, "\n", 1);
 }
 
-void seg_hand(int sig)
-{
-	write(1, "\n", 1);
-	rl_replace_line("", 0);
-	rl_on_new_line();
-	rl_redisplay();
-	exit(130);
+void handel_sig(int sig){
+	write(1,"\n",1);
+	exit(2);
 }
 
 static void	run_heredoc_loop(int tmp_fd, char *delimiter, t_shell *shell)
 {
 	char	*line;
-
-	signal(SIGINT, seg_hand);
+	signal(SIGINT,handel_sig);
 	while (1)
 	{
 		line = readline("> ");
+		if(line == NULL)
+			exit(1);
 		if (check_delimiter(line, delimiter))
 		{
 			free(line);
@@ -135,24 +132,27 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
 	tmp_fd = open(tmp, O_CREAT | O_WRONLY | O_TRUNC, 0600);
 	if (tmp_fd == -1)
 		return (perror("open"), -1);
-	signal(SIGINT, SIG_IGN);
+	signal(SIGINT,SIG_IGN);
 	pid = fork();
 	if (pid == -1)
-		return (perror("fork"), close(tmp_fd), -1);
+		return (perror("fork"), close(tmp_fd), signal(SIGINT,get_sig), -1);
 	if (pid == 0)
 	{
 		run_heredoc_loop(tmp_fd, delimiter, shell);
 		close(tmp_fd);
-		gc_free_all();
-		exit(0);
+		exit(shell->exit_status);
 	}
 	close(tmp_fd);
 	waitpid(pid, &status, 0);
-	if (WIFEXITED(status)){
-		shell->exit_status = WEXITSTATUS(status);
-		return (-1);
+	if(WIFEXITED(status))
+	{
+		if (WEXITSTATUS(status) == 2)
+		{
+			shell->exit_status = 130;
+			return signal(SIGINT,get_sig), -1;
+		}
 	}
-	signal(SIGINT, SIG_DFL);
+	signal(SIGINT,get_sig);
 	tmp_fd = open(tmp, O_RDONLY);
 	if (tmp_fd == -1)
 		perror("open heredoc read");
