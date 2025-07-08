@@ -45,54 +45,47 @@ static void	handle_ambiguous(t_token **token, t_cmd *cmd, t_shell *shell)
 	*token = (*token)->next;
 }
 
+
 static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 {
-	int n = 0;
-	t_token *next;
-
-	next = (*token)->next;
+	t_token *next = (*token)->next;
 	if (!next)
 		return 0;
 
 	if (((*token)->type == REDIR_OUT || (*token)->type == REDIR_IN || (*token)->type == REDIR_APPEND) &&
-	(*token)->next && ft_strncmp((*token)->next->value,"''",3) == 0)
+		ft_strncmp(next->value, "''", 3) == 0)
 	{
 		write(2, "minishell: : No such file or directory\n", 39);
 		shell->exit_status = 1;
 		cmd->fod_flag = 1;
 		cmd->args[0] = NULL;
-		return 0;
+		return -1; // error
 	}
-	if ((*token)->type == REDIR_IN)
+
+	if (((*token)->type == REDIR_OUT || (*token)->type == REDIR_IN || (*token)->type == REDIR_APPEND || (*token)->type == REDIR_HEREDOC)
+		&& !next->ebag)
 	{
-		if (!next->ebag)
-			return handle_ambiguous(token, cmd, shell), 0;
-		cmd->infile = safe_strdup(next->value);
+		handle_ambiguous(token, cmd, shell);
+		return -1;
 	}
+
+	if ((*token)->type == REDIR_IN)
+		cmd->infile = safe_strdup(next->value);
 	else if ((*token)->type == REDIR_HEREDOC)
 	{
+		cmd->heredoc = safe_strdup(next->value);
 		cmd->heredoc_fd = handle_heredoc(next->value, shell);
 		if (cmd->heredoc_fd == -1)
 			return -1;
-
 	}
 	else if ((*token)->type == REDIR_OUT)
 	{
-		if(!next->ebag){
-			handle_ambiguous(token, cmd, shell);
-			return 0;
-		}
 		cmd->outfile = safe_strdup(next->value);
-		redirect_output(shell,cmd, 0);
+		redirect_output(shell, cmd, 0);
 		cmd->append = 0;
-
 	}
 	else if ((*token)->type == REDIR_APPEND)
 	{
-		if(!next->ebag){
-			handle_ambiguous(token, cmd, shell);
-			return 0;
-		}
 		cmd->outfile = safe_strdup(next->value);
 		redirect_output(shell, cmd, 1);
 		cmd->append = 1;
@@ -128,7 +121,13 @@ static t_cmd	*parse_command(t_token **token, t_shell *shell)
 		}
 		else
 		{
-			if ((parse_redirections(token, cmd, shell)) == -1)
+			if (parse_redirections(token, cmd, shell) == -1 && cmd->heredoc == NULL)
+			{
+				while (*token && (*token)->type != PIPE)
+					*token = (*token)->next;
+				break;
+			}
+			else
 				return NULL;
 		}
 		if (*token)

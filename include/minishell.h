@@ -59,7 +59,7 @@ typedef struct s_cmd
     char *outfile;      
     int outfile_fd;
     int append;
-    int heredoc;
+    char *heredoc;
     int heredoc_fd;
     int c_flag;
     int fd_builtin;

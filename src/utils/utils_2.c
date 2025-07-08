@@ -75,7 +75,8 @@ static void	write_expanded_line(char *line, t_shell *shell, int tmp_fd)
 	write(tmp_fd, "\n", 1);
 }
 
-void handel_sig(int sig){
+void handel_sig(int sig)
+{
 	write(1,"\n",1);
 	exit(2);
 }
@@ -120,42 +121,62 @@ char *gen_random(){
 	
 }
 
+static int	open_heredoc_file(char **path)
+{
+	char	*base;
+	char	*rand;
+
+	base = "/tmp/.heredoc_tmp";
+	rand = gen_random();
+	*path = ft_strjoin(base, rand);
+	return (open(*path, O_CREAT | O_WRONLY | O_TRUNC, 0600));
+}
+
+static void	handle_fork_child(int fd, char *delimiter, t_shell *shell)
+{
+	run_heredoc_loop(fd, delimiter, shell);
+	close(fd);
+	exit(shell->exit_status);
+}
+
+static int	check_exit_status(int status, t_shell *shell)
+{
+	if (WIFEXITED(status) && WEXITSTATUS(status) == 2)
+	{
+		shell->exit_status = 130;
+		signal(SIGINT, get_sig);
+		return (-1);
+	}
+	return (0);
+}
+
 int	handle_heredoc(char *delimiter, t_shell *shell)
 {
-	char	*tmp = "/tmp/.heredoc_tmp";
-	char *tmp2 = gen_random();
-	tmp = ft_strjoin(tmp, tmp2);
-	int			tmp_fd;
-	pid_t		pid;
-	int			status;
+	char	*path;
+	int		tmp_fd;
+	pid_t	pid;
+	int		status;
 
-	tmp_fd = open(tmp, O_CREAT | O_WRONLY | O_TRUNC, 0600);
+	tmp_fd = open_heredoc_file(&path);
 	if (tmp_fd == -1)
 		return (perror("open"), -1);
-	signal(SIGINT,SIG_IGN);
+	signal(SIGINT, SIG_IGN);
 	pid = fork();
 	if (pid == -1)
-		return (perror("fork"), close(tmp_fd), signal(SIGINT,get_sig), -1);
-	if (pid == 0)
 	{
-		run_heredoc_loop(tmp_fd, delimiter, shell);
+		signal(SIGINT, get_sig);
 		close(tmp_fd);
-		exit(shell->exit_status);
+		return (perror("fork"), -1);
 	}
+	if (pid == 0)
+		handle_fork_child(tmp_fd, delimiter, shell);
 	close(tmp_fd);
 	waitpid(pid, &status, 0);
-	if(WIFEXITED(status))
-	{
-		if (WEXITSTATUS(status) == 2)
-		{
-			shell->exit_status = 130;
-			return signal(SIGINT,get_sig), -1;
-		}
-	}
-	signal(SIGINT,get_sig);
-	tmp_fd = open(tmp, O_RDONLY);
+	if (check_exit_status(status, shell) == -1)
+		return (-1);
+	signal(SIGINT, get_sig);
+	tmp_fd = open(path, O_RDONLY);
 	if (tmp_fd == -1)
 		perror("open heredoc read");
 	return (tmp_fd);
 }
-
