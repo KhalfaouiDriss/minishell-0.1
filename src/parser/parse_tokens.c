@@ -41,6 +41,7 @@ static void	handle_ambiguous(t_token **token, t_cmd *cmd, t_shell *shell)
 {
 	shell->ebag_final = 0;
 	cmd->flag_amb = 1;
+	shell->exit_status = 1;
 	write(2,"ambiguous redirect\n", 20);
 	*token = (*token)->next;
 }
