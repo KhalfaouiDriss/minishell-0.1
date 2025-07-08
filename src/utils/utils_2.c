@@ -152,7 +152,7 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
 		shell->exit_status = WEXITSTATUS(status);
 		return (-1);
 	}
-	signal(SIGINT, get_sig);
+	signal(SIGINT, SIG_DFL);
 	tmp_fd = open(tmp, O_RDONLY);
 	if (tmp_fd == -1)
 		perror("open heredoc read");

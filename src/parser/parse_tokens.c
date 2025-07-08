@@ -70,7 +70,6 @@ static void	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 	}
 	else if ((*token)->type == REDIR_HEREDOC)
 	{
-		global_state(3);
 		cmd->heredoc_fd = handle_heredoc(next->value, shell);
 	}
 	else if ((*token)->type == REDIR_OUT)
@@ -112,7 +111,17 @@ static t_cmd	*parse_command(t_token **token, t_shell *shell)
 	while (*token && (*token)->type != PIPE)
 	{
 		if ((*token)->type == WORD || (*token)->type == OPTION)
-			cmd->args[i++] = safe_strdup((*token)->value);
+		{
+			if(ft_strncmp((*token)->value, "''", 3) == 0)
+			{
+				if(cmd->args[0] == NULL)
+					cmd->args[i++] = safe_strdup((*token)->value);
+				else
+					cmd->args[i++] = safe_strdup("\0");
+			}
+			else
+				cmd->args[i++] = safe_strdup((*token)->value);
+		}
 		else
 			parse_redirections(token, cmd, shell);
 		if (*token)

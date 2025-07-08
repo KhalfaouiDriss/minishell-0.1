@@ -1,6 +1,5 @@
 #include "../../include/minishell.h"
 
-
 char *find_command_path(char *cmd, t_env *envp)
 {
 	char **paths = NULL;
@@ -10,9 +9,9 @@ char *find_command_path(char *cmd, t_env *envp)
 
 	if (ft_strchr(cmd, '/'))
 	{
-		if (access(cmd, X_OK) == 0)
+		struct stat sb;
+		if (access(cmd, X_OK) == 0 && stat(cmd, &sb) == 0 && !S_ISDIR(sb.st_mode))
 			return ft_strdup(cmd);
-		
 		return NULL;
 	}
 
@@ -26,18 +25,22 @@ char *find_command_path(char *cmd, t_env *envp)
 	{
 		int total_size = ft_strlen(paths[i]) + ft_strlen(cmd) + 2;
 		full_path = ft_malloc(total_size);
-        ft_strlcpy(full_path, paths[i], total_size);
-        ft_strlcat(full_path, "/", total_size);
-        ft_strlcat(full_path, cmd, total_size);
-        if(access(full_path , X_OK) == 0){
-            free_split(paths);
-            return full_path;
-        }
+		ft_strlcpy(full_path, paths[i], total_size);
+		ft_strlcat(full_path, "/", total_size);
+		ft_strlcat(full_path, cmd, total_size);
+
+		struct stat sb;
+		if (access(full_path, X_OK) == 0 && stat(full_path, &sb) == 0 && !S_ISDIR(sb.st_mode))
+		{
+			free_split(paths);
+			return full_path;
+		}
 		i++;
 	}
 	free_split(paths);
 	return NULL;
 }
+
 
 static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 {
@@ -206,7 +209,6 @@ void	wait_all(int last_pid, t_shell *shell)
 	}
 	}
 }
-
 
 void	execute_pipeline(t_shell *shell)
 {
