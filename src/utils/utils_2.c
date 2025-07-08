@@ -21,19 +21,23 @@ void	redirect_output(t_shell *shell,t_cmd *cmd, int append)
 {
 	int	fd;
 
-	if (append)
-		fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
-	else
-		fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	if (fd < 0)
+	if(!cmd->flag_amb)
 	{
-		perror("open outfile");
-		shell->exit_status = 1;
-		cmd->c_flag = 1;
-		return ;
+		if (append)
+			fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
+		else
+			fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+		if (fd < 0)
+		{
+			perror("open outfile");
+			shell->exit_status = 1;
+			cmd->c_flag = 1;
+			return ;
+	
+		}
+		cmd->outfile_fd = fd;
 
 	}
-	cmd->outfile_fd = fd;
 }
 
 

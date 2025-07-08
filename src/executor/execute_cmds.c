@@ -186,28 +186,36 @@ static void	exec_loop(t_shell *shell)
 void	wait_all(int last_pid, t_shell *shell)
 {
 	int	status;
-	int	pid;
+	pid_t	pid;
+	int	sigint = 0;
+	int	sigquit = 0;
 
 	while ((pid = waitpid(-1, &status, 0)) > 0)
 	{
-	if (pid == last_pid)
-	{
-		if (WIFEXITED(status))
-			shell->exit_status = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
-			shell->exit_status = 128 + WTERMSIG(status);
+		if (pid == last_pid)
+		{
+			if (WIFEXITED(status))
+				shell->exit_status = WEXITSTATUS(status);
+			else if (WIFSIGNALED(status))
+				shell->exit_status = 128 + WTERMSIG(status);
+		}
+
+		if (WIFSIGNALED(status))
+		{
+			int sig = WTERMSIG(status);
+			if (sig == SIGQUIT)
+				sigquit = 1;
+			else if (sig == SIGINT)
+				sigint= 1;
+		}
 	}
 
-	if (WIFSIGNALED(status))
-	{
-		int sig = WTERMSIG(status);
-		if (sig == SIGQUIT && pid == last_pid)
-			ft_putstr_fd("Quit (core dumped)\n", 2);
-		else if (sig == SIGINT && pid == last_pid)
-			ft_putchar_fd('\n', 2);
-	}
-	}
+	if (sigquit)
+		ft_putstr_fd("Quit (core dumped)\n", 2);
+	if (sigint)
+		ft_putchar_fd('\n', 2);
 }
+
 
 void	execute_pipeline(t_shell *shell)
 {

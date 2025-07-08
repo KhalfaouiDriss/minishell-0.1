@@ -1,8 +1,0 @@
-a
-include
-lib
-Makefile
-minishell
-readline.supp
-src
-test.supp

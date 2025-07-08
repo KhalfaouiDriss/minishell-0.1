@@ -14,8 +14,10 @@ void main_loop(t_shell *shell, char **envp)
 			printf("exit\n");
 			exit(shell->exit_status);
 		}
-		if (shell->input[0])
+		if (shell->input[0]){
+			
 			add_history(shell->input);
+		}
 
 		if (global_state(-1) == 2)
 			shell->exit_status = 130;
