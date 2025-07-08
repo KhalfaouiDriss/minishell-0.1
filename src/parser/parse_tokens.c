@@ -59,18 +59,21 @@ static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 		shell->exit_status = 1;
 		cmd->fod_flag = 1;
 		cmd->args[0] = NULL;
-		return -1; // error
+		return -1;
 	}
 
 	if (((*token)->type == REDIR_OUT || (*token)->type == REDIR_IN || (*token)->type == REDIR_APPEND || (*token)->type == REDIR_HEREDOC)
 		&& !next->ebag)
 	{
 		handle_ambiguous(token, cmd, shell);
-		return -1;
+		cmd = cmd->next;
+		return 0;
 	}
 
-	if ((*token)->type == REDIR_IN)
+	if ((*token)->type == REDIR_IN){
 		cmd->infile = safe_strdup(next->value);
+		return 0;
+	}
 	else if ((*token)->type == REDIR_HEREDOC)
 	{
 		cmd->heredoc = safe_strdup(next->value);
@@ -121,14 +124,11 @@ static t_cmd	*parse_command(t_token **token, t_shell *shell)
 		}
 		else
 		{
-			if (parse_redirections(token, cmd, shell) == -1 && cmd->heredoc == NULL)
+			int n=parse_redirections(token, cmd, shell);
+			if (n == -1 )
 			{
-				while (*token && (*token)->type != PIPE)
-					*token = (*token)->next;
-				break;
-			}
-			else
 				return NULL;
+			}
 		}
 		if (*token)
 			*token = (*token)->next;
