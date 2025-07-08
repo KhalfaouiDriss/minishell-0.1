@@ -83,7 +83,6 @@ static void	print_not_found_and_exit(t_cmd *cmd, t_shell *shell)
 	write(2, ": command not found\n", 21);
 	if(shell->not_found)
 		shell->not_found = 0;
-	gc_free_all();
 	exit(127);
 }
 

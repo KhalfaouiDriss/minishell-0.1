@@ -506,7 +506,8 @@ void handle_quotes(t_shell *shell, t_lexer_state *state)
 			}
 			else
 			{
-				state->current_word = ft_strdup(" ");
+				shell->not_found = 1;
+				state->current_word = ft_strdup("");
 
 			}
 		}
