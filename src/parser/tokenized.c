@@ -336,6 +336,7 @@ char *expand_variables_in_string(char *str, t_shell *shell, char qt)
 			tmp = ft_substr(str, start, i - start);
 			result = strjoin_free(result, tmp);
 		}
+		i++;
 	}
 	return result;
 }
@@ -372,14 +373,17 @@ int pips_coount(char *input)
 
 void finalize_current_word(t_shell *shell ,t_lexer_state *state)
 {
-	if (state->current_word)
+	if (state->current_word )
 	{
 		if (state->current_word[0] == '$')
 			state->token_type = VARIABLE;
 		else if (state->current_word[0] == '-' && ft_strlen(state->current_word) >= 2)
 			state->token_type = OPTION;
 		else
+		{
+			// printf("==============\n");
 			state->token_type = WORD;
+		}
 
 		state->t_tmp = new_token(&(shell->ebag) , state->current_word, WORD, 0);
 		state->t_tmp->quot_type = state->current_quote_type;
@@ -440,7 +444,7 @@ void handle_dollar_in_single_quotes(t_lexer_state *state)
 void handle_dollar_sign(t_shell *shell, t_lexer_state *state)
 {
 	int j = state->i;
-
+	
 	if (state->current_quote_type == S_QUOTE)
 		handle_dollar_in_single_quotes(state);
 	else
@@ -502,17 +506,16 @@ void handle_quotes(t_shell *shell, t_lexer_state *state)
 			if((state->i == 1 && ft_strlen(state->str) == 2) || !state->str[state->i + 1])
 			{
 				shell->not_found = 1;
-				state->current_word = ft_strdup("''");
+				state->current_word = ft_strdup("");
 			}
 			else
 			{
 				shell->not_found = 1;
 				state->current_word = ft_strdup("");
-
 			}
 		}
 	}
-	else if (quote == '\'' && tmp[0] != '$')
+	if (quote == '\'' && tmp[0] != '$')
 		state->current_word = strjoin_free(state->current_word, tmp);
 	else
 	{
@@ -535,8 +538,12 @@ void process_token_loop(t_shell *shell, t_lexer_state *state)
 	state->start = state->i;
 	while (state->str[state->i] && !is_space(state->str[state->i]))
 	{
+		// printf("============\n");
 		if (state->str[state->i] == '\'' || state->str[state->i] == '"')
+		{
 			handle_quotes(shell, state);
+			// printf("tok : %s\n", state->current_word);
+		}
 		else if (is_special(state->str[state->i]))
 			handle_special_token_case(shell, state);
 		else if (state->str[state->i] == '$' && state->str[state->i + 1] != '.')
@@ -583,7 +590,9 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 	if (check_initial_dollar_error(shell, &state))
 		return state.head;
 	while (state.str[state.i])
+	{
 		process_token_loop(shell, &state);
+	}
 	correct_lexer(shell, &state.head);
 	// print_tokens(state.head);
 	return state.head;

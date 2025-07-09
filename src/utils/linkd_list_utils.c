@@ -17,15 +17,16 @@ t_token *new_token(int *ebag ,char *val, int type, int error_type)
     t_token *t = (t_token *)ft_malloc(sizeof(t_token));
     if (!t)
         return NULL;
+    
     if (val)
     {
         t->value = ft_strdup(val);
         if (!t->value)
-            return NULL;
+        return NULL;
     }
     else
     {
-        t->value = NULL;
+        t->value = ft_strdup("");
     }
     t->ebag = *ebag;
     t->type = type;
@@ -37,11 +38,8 @@ t_token *new_token(int *ebag ,char *val, int type, int error_type)
 
 void add_token(t_token **head, t_token *new)
 {
-    if (!new || !new->value || new->value[0] == '\0')
-    {
-        
+    if (!new)
         return;
-    }
 
     if (!*head)
     {

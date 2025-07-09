@@ -8,13 +8,7 @@ char *find_command_path(char *cmd, t_env *envp)
 	int i;
 
 	if (ft_strchr(cmd, '/'))
-	{
-		struct stat sb;
-		if (access(cmd, X_OK) == 0 && stat(cmd, &sb) == 0 && !S_ISDIR(sb.st_mode))
-			return ft_strdup(cmd);
-		return NULL;
-	}
-
+		return ft_strdup(cmd);
 	envp_value = find_env_node(envp, "PATH");
 	if (!envp_value)
 		return NULL;
@@ -32,12 +26,10 @@ char *find_command_path(char *cmd, t_env *envp)
 		struct stat sb;
 		if (access(full_path, X_OK) == 0 && stat(full_path, &sb) == 0 && !S_ISDIR(sb.st_mode))
 		{
-			free_split(paths);
 			return full_path;
 		}
 		i++;
 	}
-	free_split(paths);
 	return NULL;
 }
 
@@ -79,10 +71,12 @@ static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 
 static void	print_not_found_and_exit(t_cmd *cmd, t_shell *shell)
 {
+	write(2, "'", 1);
 	write(2, cmd->args[0], ft_strlen(cmd->args[0]));
-	write(2, ": command not found\n", 21);
+	write(2, "' : command not found\n", 23);
 	if(shell->not_found)
 		shell->not_found = 0;
+	gc_free_all();
 	exit(127);
 }
 
@@ -103,18 +97,25 @@ void close_parent_fds(t_cmd *cmd)
 
 static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 {
+	struct stat sb;
     signal(SIGQUIT, SIG_DFL);
 	char	*path;
 
-	if(cmd->args[0] == NULL)
+	if(cmd->args[0] == NULL && cmd->flag_amb == 1)
 		exit(0);
-	if (cmd->c_flag == 1 || cmd->flag_amb == 1 || cmd->fod_flag == 1)
-		exit(1);
+		// if(cmd->args[0][0] == '\0')
+		// {
+			// 	// printf("ex : %d\n", shell->exit_status);
+			// 	ft_putstr_fd("Command '' not found\n", 2);
+			// 	exit(0);
+			// }
+		if (cmd->c_flag == 1 || cmd->flag_amb == 1)
+			exit(1);
 
-	if (cmd->next){
-		dup2(fd[1], 1);
-		close(fd[1]);
-		close(fd[0]);
+		if (cmd->next){
+			dup2(fd[1], 1);
+			close(fd[1]);
+			close(fd[0]);
 	}
 	if (prev_pipe != -1)
 	{
@@ -126,17 +127,22 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 		dup2(cmd->heredoc_fd, 0);
 		close(cmd->heredoc_fd);
 	}
-
-	if (is_builtin(cmd->args[0])){
+	
+	if (is_builtin(cmd->args[0]))
 		exit(handle_builtin_redirs(cmd, shell));
-	}
 	if (cmd->infile)
 		redirect_input(cmd->infile, cmd);
-	if (!cmd->args[0] || cmd->args[0][0] == '\0'){
-		gc_free_all();
+	if (!cmd->args[0]){
 		exit(0);
 	}
 	path = find_command_path(cmd->args[0], shell->env);
+	if (path && access(path, X_OK) == 0 && stat(path, &sb) == 0 && S_ISDIR(sb.st_mode))
+	{
+		write(1, path, ft_strlen(path));
+		write(1, ": Is a directory\n", 18);
+		gc_free_all();
+		exit(126);
+	}
 	if (!path)
 	{
 		print_not_found_and_exit(cmd, shell);
@@ -147,7 +153,14 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 		close(cmd->outfile_fd);
 	}
 	execve(path, cmd->args, shell->new_env);
-	perror(cmd->args[0]);
+	if (access(path, X_OK) == 0 && stat(path, &sb) == 0 && !S_ISDIR(sb.st_mode))
+	{
+		perror(cmd->args[0]);
+		gc_free_all();
+		exit(127);
+	}
+	else
+		perror(cmd->args[0]);
 	gc_free_all();
 	exit(126);
 }

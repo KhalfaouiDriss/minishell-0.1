@@ -17,8 +17,6 @@ int	count_args(t_token *token)
 
 char	*safe_strdup(char *s)
 {
-	if (!s)
-		return (NULL);
 	return (ft_strdup(s));
 }
 
@@ -53,18 +51,8 @@ static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 	if (!next)
 		return 0;
 
-	if (((*token)->type == REDIR_OUT || (*token)->type == REDIR_IN || (*token)->type == REDIR_APPEND) &&
-		ft_strncmp(next->value, "''", 3) == 0)
-	{
-		write(2, "minishell: : No such file or directory\n", 39);
-		shell->exit_status = 1;
-		cmd->fod_flag = 1;
-		cmd->args[0] = NULL;
-		return 0;
-	}
-
 	if (((*token)->type == REDIR_OUT || (*token)->type == REDIR_IN || (*token)->type == REDIR_APPEND)
-		&& !next->ebag)
+		&& !next->ebag && !cmd->flag_amb)
 	{
 		handle_ambiguous(token, cmd, shell);
 		cmd->flag_amb = 1;
@@ -113,16 +101,9 @@ static t_cmd	*parse_command(t_token **token, t_shell *shell)
 	i = 0;
 	while (*token && (*token)->type != PIPE)
 	{
+		shell->exit_status = 0;
 		if ((*token)->type == WORD || (*token)->type == OPTION)
-		{
-			if(ft_strncmp((*token)->value, "''", 3) == 0)
-			{
-				if(cmd->args[0] == NULL)
-					cmd->args[i++] = safe_strdup((*token)->value);
-			}
-			else
 				cmd->args[i++] = safe_strdup((*token)->value);
-		}
 		else
 		{
 			if (parse_redirections(token, cmd, shell) == -1){

@@ -41,7 +41,7 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
     //     (*i)++;
     //     return ft_strdup("$");
     // }
-
+	// printf("=============");
     if (str[*i] == '$' && (str[*i + 1] == '\0' || str[*i + 1] == ' '))
 	{
 		(*i)++;
@@ -96,7 +96,9 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	start = *i;
 
 	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
+	{
 		(*i)++;
+	}
 
 	len = *i - start;
 	var_name = ft_substr(str, start, len);

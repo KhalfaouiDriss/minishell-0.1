@@ -93,7 +93,7 @@ static void	run_heredoc_loop(int tmp_fd, char *delimiter, t_shell *shell)
 	{
 		line = readline("> ");
 		if(line == NULL)
-			exit(1);
+			exit(0);
 		if (check_delimiter(line, delimiter))
 		{
 			free(line);

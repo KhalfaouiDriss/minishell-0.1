@@ -28,8 +28,5 @@ void get_sig(int sig)
 		rl_on_new_line();
 		rl_redisplay();
 	}
-	if(state  == 4)
-		exit(130);
-
 
 }
