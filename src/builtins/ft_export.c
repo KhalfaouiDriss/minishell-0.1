@@ -1,17 +1,30 @@
 #include "../../include/minishell.h"
 
+char	*ft_strdup2(const char *str)
+{
+	size_t	size;
+	char	*dest;
+
+	size = ft_strlen(str);
+	dest = malloc((sizeof(char) * size) + 1);
+	if (!dest)
+		return (NULL);
+	ft_strlcpy(dest, str, size + 1);
+	return (dest);
+}
+
 void add_env_node(t_shell *shell, t_env **env, char *key, char *value)
 {
-    t_env *new_node = ft_malloc(sizeof(t_env));
+    t_env *new_node = malloc(sizeof(t_env));
     t_env *tmp;
     int i;
 
     if (!new_node)
         return;
-    new_node->name = ft_strdup(key);
+    new_node->name = ft_strdup2(key);
     new_node->value = NULL;
     if (value)
-        new_node->value = ft_strdup(value);
+        new_node->value = ft_strdup2(value);
     new_node->next = NULL;
 
     if (*env == NULL)
@@ -27,7 +40,8 @@ void add_env_node(t_shell *shell, t_env **env, char *key, char *value)
         i++;
     }
     tmp->next = new_node;
-
+    free(key);
+    free(value);
     shell->new_env = ft_malloc(sizeof(char *) * (i + 2));
     init_new_env(shell);
 }
@@ -62,11 +76,11 @@ void ft_export(t_shell *shell, char **args)
             {
                 int key_len = equal_sign - args[i];
                 key = ft_substr(args[i], 0, key_len);
-                value = ft_strdup(equal_sign + 1);
+                value = ft_strdup2(equal_sign + 1);
             }
             else
             {
-                key = ft_strdup(args[i]);
+                key = ft_strdup2(args[i]);
                 value = NULL;
             }
 

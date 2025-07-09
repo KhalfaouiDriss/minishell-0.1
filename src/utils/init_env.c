@@ -8,8 +8,8 @@ void	add_env(t_shell *shell, char *name, char *value)
 	if (!new_env)
 		return ;
 
-	new_env->name = ft_strdup(name);
-	new_env->value = ft_strdup(value);
+	new_env->name = ft_strdup2(name);
+	new_env->value = ft_strdup2(value);
 	new_env->next = NULL;
 
 	if (!shell->env)

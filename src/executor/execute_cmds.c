@@ -66,6 +66,8 @@ static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 	close(in);
 	dup2(out, 1);
 	close(out);
+	gc_free_all();
+	free_env(shell->env);
 	return shell->exit_status;
 }
 

@@ -1,5 +1,17 @@
 #include "../include/minishell.h"
 
+void free_env_list(t_env *env)
+{
+    t_env *tmp;
+    while (env)
+    {
+        tmp = env->next;
+        free(env->name);
+        free(env->value);
+        free(env);
+        env = tmp;
+    }
+}
 
 void main_loop(t_shell *shell, char **envp)
 {
@@ -12,6 +24,7 @@ void main_loop(t_shell *shell, char **envp)
 			gc_free_all();
 			// free_split(shell->new_env);
 			printf("exit\n");
+			free_env_list(shell->env);
 			exit(shell->exit_status);
 		}
 		if (shell->input[0]){
