@@ -22,7 +22,11 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	char	*var_name = NULL;
 	char	*var_value = NULL;
 	t_env	*env = shell->env;
+	int is = 0;
 
+	if(str[*i - 1] == '\'' && str[*i - 2] == '\'')
+		is = 1;
+	// printf("str : %s && i : %d\n", str+*i-2, *i);
     if(ft_isdigit(str[*i + 1]))
     {
         *i += 2;
@@ -96,10 +100,7 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	start = *i;
 
 	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
-	{
 		(*i)++;
-	}
-
 	len = *i - start;
 	var_name = ft_substr(str, start, len);
 
@@ -108,19 +109,24 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 		char *result = ft_strjoin("$", var_name);
 		return result;
 	}
-	while (env)
-	{
-		if (ft_strncmp(env->name, var_name, ft_strlen(env->name)) == 0
-			&& ft_strlen(env->name) == len)
-		{
-			var_value = env->value;
-			// var_value = ft_strdup(env->value);
-			break;
-		}
-		env = env->next;
-	}
+	// while (env)
+	// {
+	// 	if (ft_strncmp(env->name, var_name, ft_strlen(env->name)) == 0
+	// 		&& ft_strlen(env->name) == len)
+	// 	{
+	// 		var_value = env->value;
+	// 		// var_value = ft_strdup(env->value);
+	// 		break;
+	// 	}
+	// 	env = env->next;
+	// }
+
+	var_value = find_env_node(env, var_name);
+	if((!var_value && str[*i] == '\'' && str[*i + 1] == '\'') || (!var_value && is))
+			return NULL;
 	if (!var_value && !var_name && ft_isalpha(var_name[0]))
 	{
+		// printf("========\n");
 		char *unknown = NULL;
 		return ft_strdup("");
 			// free(var_name);

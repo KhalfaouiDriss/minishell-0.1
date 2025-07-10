@@ -331,7 +331,7 @@ char *expand_variables_in_string(char *str, t_shell *shell, char qt)
 		else
 		{
 			int start = i;
-			while (str[i] && str[i] != '$')
+			while (str[i] && str[i] != '$' )
 				i++;
 			tmp = ft_substr(str, start, i - start);
 			result = strjoin_free(result, tmp);
@@ -508,7 +508,7 @@ void handle_quotes(t_shell *shell, t_lexer_state *state)
 				shell->not_found = 1;
 				state->current_word = ft_strdup("");
 			}
-			else
+			else if(state->current_word)
 			{
 				shell->not_found = 1;
 				state->current_word = ft_strdup("");
@@ -538,15 +538,11 @@ void process_token_loop(t_shell *shell, t_lexer_state *state)
 	state->start = state->i;
 	while (state->str[state->i] && !is_space(state->str[state->i]))
 	{
-		// printf("============\n");
 		if (state->str[state->i] == '\'' || state->str[state->i] == '"')
-		{
 			handle_quotes(shell, state);
-			// printf("tok : %s\n", state->current_word);
-		}
 		else if (is_special(state->str[state->i]))
 			handle_special_token_case(shell, state);
-		else if (state->str[state->i] == '$' && state->str[state->i + 1] != '.')
+		else if (state->str[state->i] == '$')
 			handle_dollar_sign(shell, state);
 		else
 			handle_normal_word(state);
@@ -590,10 +586,8 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 	if (check_initial_dollar_error(shell, &state))
 		return state.head;
 	while (state.str[state.i])
-	{
 		process_token_loop(shell, &state);
-	}
 	correct_lexer(shell, &state.head);
-	// print_tokens(state.head);
+	print_tokens(state.head);
 	return state.head;
 }
