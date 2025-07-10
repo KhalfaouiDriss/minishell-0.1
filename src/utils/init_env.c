@@ -2,14 +2,14 @@
 
 void	add_env(t_shell *shell, char *name, char *value)
 {
-	t_env	*new_env = malloc(sizeof(t_env));
-	t_env	*last;
+	t_env *new_env = malloc(sizeof(t_env));
+	t_env *last;
 
 	if (!new_env)
-		return ;
+		return;
 
-	new_env->name = ft_strdup(name);
-	new_env->value = ft_strdup(value);
+	new_env->name = ft_strdupv2(name);
+	new_env->value = value ? ft_strdupv2(value) : NULL;
 	new_env->next = NULL;
 
 	if (!shell->env)
@@ -30,67 +30,58 @@ void	process_env_variable(t_shell *shell, char *env_str)
 	char	*value;
 
 	if (!egl)
-		return ;
+		return;
 
-	name = ft_substr(env_str, 0, ft_strlen(env_str) - ft_strlen(egl));
+	name = ft_substr(env_str, 0, egl - env_str); 
 	value = egl + 1;
 
 	if (!name)
-		return ;
+		return;
 
 	add_env(shell, name, value);
 }
+
+
 char	*ft_strjoin2(const char *s1, const char *s2)
 {
-	size_t	lens1;
-	size_t	lens2;
-	char	*res;
+	size_t len1 = ft_strlen(s1);
+	size_t len2 = ft_strlen(s2);
+	char *res = malloc(len1 + len2 + 1);
 
-	if (!s1 || !s2)
-		return (NULL);
-	lens1 = ft_strlen(s1);
-	lens2 = ft_strlen(s2);
-	res = malloc(lens1 + lens2 + 1);
 	if (!res)
-		return (NULL);
-	ft_strlcpy(res, s1, ft_strlen(s1) + 1);
-	ft_strlcat(res, s2, lens1 + lens2 + 1);
-	return (res);
+		return NULL;
+	ft_strlcpy(res, s1, len1 + 1);
+	ft_strlcat(res, s2, len1 + len2 + 1);
+	return res;
 }
 
-
-void init_new_env(t_shell *shell)
+void	init_new_env(t_shell *shell)
 {
-	int i;
-	t_env *tmp;
-	char *temp1;
-	char *temp2;
+	int i = 0;
+	t_env *tmp = shell->env;
+	char *temp1, *temp2;
 
-	i = 0;
-	tmp = shell->env;
 	while (tmp)
 	{
 		temp1 = ft_strjoin2(tmp->name, "=");
-		if(tmp->value)
+		if (tmp->value)
 		{
 			temp2 = ft_strjoin2(temp1, tmp->value);
-			free(temp1);
-			shell->new_env[i] = ft_strdup(temp2);
+			shell->new_env[i] = ft_strdupv2(temp2);
 			free(temp2);
 		}
 		else
-		{
-			shell->new_env[i] = ft_strdup(temp1);
-			free(temp1);
-		}
+			shell->new_env[i] = ft_strdupv2(temp1);
+		free(temp1);
 		i++;
 		tmp = tmp->next;
 	}
-	shell->new_env[i - 1] = NULL;
+	shell->new_env[i] = NULL;
 }
+
 void	init_env(t_shell *shell, char **envp)
 {
-	int	i = 0;
+	int i = 0;
 
 	shell->env = NULL;
 	while (envp[i])
@@ -98,6 +89,6 @@ void	init_env(t_shell *shell, char **envp)
 		process_env_variable(shell, envp[i]);
 		i++;
 	}
-	shell->new_env = ft_malloc((sizeof(char *) * (i + 1)));
+	shell->new_env = malloc(sizeof(char *) * (i + 1));
 	init_new_env(shell);
 }

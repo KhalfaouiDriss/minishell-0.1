@@ -194,4 +194,7 @@ int is_builtin(char *cmd);
 void redirect_output_builtin(t_cmd *cmd, int append);
 int execute_builtin(t_shell *shell, char *cmd, char **args);
 
+
+char	*ft_strdupv2(const char *str);
+void	free_new_env(char **env);
 #endif

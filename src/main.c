@@ -1,7 +1,28 @@
 #include "../include/minishell.h"
 
+void	clean_env(t_env *env)
+{
+	t_env *tmp;
 
-void main_loop(t_shell *shell, char **envp)
+	while (env)
+	{
+		tmp = env;
+		env = env->next;
+		free(tmp->name);
+		free(tmp->value);
+		free(tmp);
+	}
+}
+
+void	clean_shell(t_shell *shell)
+{
+	free_new_env(shell->new_env);
+	clean_env(shell->env);
+	gc_free_all(); 
+}
+
+
+void	main_loop(t_shell *shell)
 {
 	while (1)
 	{
@@ -11,9 +32,8 @@ void main_loop(t_shell *shell, char **envp)
 			shell->exit_status = 130;
 		if (!shell->input)
 		{
-			free(shell->input);
-			gc_free_all();
-			printf("exit\n");
+			ft_putendl_fd("exit", 1);
+			clean_shell(shell);
 			exit(shell->exit_status);
 		}
 		if (shell->input[0])
@@ -25,24 +45,19 @@ void main_loop(t_shell *shell, char **envp)
 		global_state(1);
 		execute_pipeline(shell);
 	}
-	return;
 }
 
 int	main(int ac, char **av, char **envp)
 {
 	t_shell shell;
-	char *pwd;
-	int i = 0;
 
-	shell.not_found = 0;
 	(void)ac;
 	(void)av;
 	init_shell(&shell);
 	init_env(&shell, envp);
 	signal(SIGINT, get_sig);
-	signal(SIGTSTP, SIG_IGN); 
+	signal(SIGTSTP, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
-	main_loop(&shell, envp);
+	main_loop(&shell);
 	return 0;
 }
-
