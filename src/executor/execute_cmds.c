@@ -6,11 +6,23 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:24:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/10 16:24:38 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/10 21:15:36 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+char	*full_paths(char *path, char *cmd)
+{
+	int			total_size;
+	char		*full_path;
+	total_size = ft_strlen(path) + ft_strlen(cmd) + 2;
+	full_path = ft_malloc(total_size);
+	ft_strlcpy(full_path, path, total_size);
+	ft_strlcat(full_path, "/", total_size);
+	ft_strlcat(full_path, cmd, total_size);
+	return full_path;
+}
 
 char	*find_command_path(char *cmd, t_env *envp)
 {
@@ -19,7 +31,6 @@ char	*find_command_path(char *cmd, t_env *envp)
 	char		*envp_value;
 	struct stat	sb;
 	int			i;
-	int			total_size;
 
 	paths = NULL;
 	full_path = NULL;
@@ -32,11 +43,7 @@ char	*find_command_path(char *cmd, t_env *envp)
 	i = 0;
 	while (paths[i])
 	{
-		total_size = ft_strlen(paths[i]) + ft_strlen(cmd) + 2;
-		full_path = ft_malloc(total_size);
-		ft_strlcpy(full_path, paths[i], total_size);
-		ft_strlcat(full_path, "/", total_size);
-		ft_strlcat(full_path, cmd, total_size);
+		full_path = full_paths(paths[i], cmd);
 		if (access(full_path, X_OK) == 0 && stat(full_path, &sb) == 0
 			&& !S_ISDIR(sb.st_mode))
 			return (full_path);
@@ -44,29 +51,31 @@ char	*find_command_path(char *cmd, t_env *envp)
 	}
 	return (NULL);
 }
-
+void dupping(int in, int out)
+{
+	dup2(in, 0);
+	close(in);
+	dup2(out, 1);
+	close(out);
+}
 static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 {
 	int	in;
 	int	out;
 
-	if (cmd->c_flag == 1 || cmd->flag_amb == 1 || cmd->fod_flag == 1)
+	if (cmd->c_flag == 1 || cmd->flag_amb == 1)
 		return (shell->exit_status);
 	in = -1;
 	out = -1;
 	in = dup(0);
 	out = dup(1);
-	if (cmd->infile)
+	if (cmd->infile && redirect_input(cmd->infile, cmd))
 	{
-		if (redirect_input(cmd->infile, cmd))
-		{
-			shell->exit_status = 1;
 			if (in != -1)
-				close(in);
+			close(in);
 			if (out != -1)
-				close(out);
-			return (shell->exit_status);
-		}
+			close(out);
+			return (shell->exit_status = 1, shell->exit_status);
 	}
 	if (cmd->outfile_fd)
 	{
@@ -74,10 +83,7 @@ static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 		close(cmd->outfile_fd);
 	}
 	shell->exit_status = execute_builtin(shell, cmd->args[0], cmd->args);
-	dup2(in, 0);
-	close(in);
-	dup2(out, 1);
-	close(out);
+	dupping(in, out);
 	return (shell->exit_status);
 }
 
@@ -102,6 +108,11 @@ void	close_parent_fds(t_cmd *cmd)
 		cmd->heredoc_fd = -1;
 	}
 }
+void dupping2(int fd, int a)
+{
+	dup2(fd, a);
+	close(fd);
+}
 
 static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 {
@@ -109,33 +120,27 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 	char		*path;
 
 	signal(SIGQUIT, SIG_DFL);
+	if(cmd->flag_amb == 1 && cmd->args[0] == NULL)
+		exit(0);
 	if (cmd->flag_amb == 1 || cmd->outfile_fd == -1)
 		exit(1);
 	if (cmd->next)
 	{
-		dup2(fd[1], 1);
-		close(fd[1]);
+		dupping2(fd[1], 1);
 		close(fd[0]);
 	}
 	if (prev_pipe != -1)
-	{
-		dup2(prev_pipe, 0);
-		close(prev_pipe);
-	}
+		dupping2(prev_pipe, 0);
 	if (cmd->heredoc_fd != -1)
-	{
-		dup2(cmd->heredoc_fd, 0);
-		close(cmd->heredoc_fd);
-	}
+		dupping2(cmd->heredoc_fd, 0);
 	if (is_builtin(cmd->args[0]))
 		exit(handle_builtin_redirs(cmd, shell));
 	if (cmd->infile){
 		if (redirect_input(cmd->infile, cmd))
 			exit(1);
 	}
-	if (!cmd->args[0]){
+	if (!cmd->args[0])
 		exit(0);
-	}
 	path = find_command_path(cmd->args[0], shell->env);
 	if (path && access(path, X_OK) == 0 && stat(path, &sb) == 0
 		&& S_ISDIR(sb.st_mode))
