@@ -588,6 +588,6 @@ t_token *lexer_split_to_tokens(t_shell *shell)
 	while (state.str[state.i])
 		process_token_loop(shell, &state);
 	correct_lexer(shell, &state.head);
-	print_tokens(state.head);
+	// print_tokens(state.head);
 	return state.head;
 }

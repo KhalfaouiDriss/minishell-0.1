@@ -51,6 +51,7 @@ static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 
 	if ((*token)->type == REDIR_IN){
 		cmd->infile = safe_strdup(next->value);
+		*token = next;
 		return 1;
 	}
 	else if ((*token)->type == REDIR_HEREDOC)

@@ -121,8 +121,7 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 		if (redirect_input(cmd->infile, cmd))
 			exit(1);
 	}
-	if (!cmd->args[0])
-	{
+	if (!cmd->args[0]){
 		exit(0);
 	}
 	path = find_command_path(cmd->args[0], shell->env);
