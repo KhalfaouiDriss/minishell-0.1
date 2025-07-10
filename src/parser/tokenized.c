@@ -1,155 +1,129 @@
 #include "../../include/minishell.h"
 
-char *strjoin_free(char *s1, char *s2)
-{
-	char *new_str;
+// ================================================================
 
-	if (!s1 && !s2)
-		return NULL;
-	if (!s1)
-		return strdup(s2);
-	if (!s2)
-		return strdup(s1);
-	new_str = ft_strjoin(s1, s2);
-	free(s1);
-	return new_str;
+void handle_invalid_option(t_shell *shell, t_token **head)
+{
+	char *err_str = ft_strdup("Error: Invalid option");
+
+	add_token(head, new_token(&(shell->ebag), err_str, ERROR, OPTION_INVA));
+	shell->exit_status = 2;
 }
 
-int handle_quoted_token(const char *input, int *i, t_shell *shell)
+
+void detect_token_type(const char *input, char *final, int *type, int *error)
 {
-	char quote;
-	char *final = NULL;
-	int type = WORD;
-	int error = 0;
-	t_token **head = &(shell->token);
-
-	if (input[*i] == '"' || input[*i] == '\'')
+	if (final && final[0] == '-' && ft_strlen(final) >= 2)
+		*type = OPTION;
+	if (final && input[1] == ' ') 
 	{
-		quote = input[(*i)++];
-		int j = 0;
-		char *segment = malloc(ft_strlen(input) + 1);
-		if (!segment)
-			return (0);
+		*type = ERROR;
+		*error = OPTION_INVA;
+	}
+}
 
-		while (input[*i])
+
+void handle_unmatched_quote(t_shell *shell, char *segment, char *final)
+{
+	t_token **head = &(shell->token);
+	char *err_str = ft_strdup("Error: Unmatched quote");
+
+	add_token(head, new_token(&(shell->ebag), err_str, ERROR, QUETS_INVA));
+	shell->exit_status = 2;
+}
+
+int fill_segment(const char *input, int *i, char *segment, char quote)
+{
+	int j = 0;
+
+	while (input[*i])
+	{
+		if (input[*i] == quote)
+			break;
+		if (quote == '"' && input[*i] == '\\' && input[*i + 1])
 		{
-			if (input[*i] == quote)
-				break;
-
-			if (quote == '"' && input[*i] == '\\' && input[*i + 1])
-			{
-				(*i)++;
-				segment[j++] = input[(*i)++];
-			}
-			else
-			{
-				segment[j++] = input[(*i)++];
-			}
-		}
-
-		if (input[*i] != quote)
-		{
-			segment[j] = '\0';
-			char *err_str = ft_strdup("Error: Unmatched quote");
-			add_token(head, new_token(err_str, ERROR, QUETS_INVA));
-			free(err_str);
-			free(segment);
-			free(final);
-			shell->exit_status = 2;
-			return (0);
-		}
-
-		(*i)++;
-		segment[j] = '\0';
-
-		if (ft_strncmp(segment, " ", 2) == 0)
-		{
-			free(segment);
+			(*i)++;
+			segment[j++] = input[(*i)++];
 		}
 		else
 		{
-			char *tmp;
-
-			if (final)
-				tmp = ft_strjoin(final, segment);
-			else
-				tmp = ft_strjoin("", segment);
-
-			free(final);
-			free(segment);
-			final = tmp;
-		}
-
-		while (input[*i] == '"' || input[*i] == '\'')
-		{
-			char nested_quote = input[(*i)++];
-			j = 0;
-			segment = malloc(ft_strlen(input) + 1);
-			if (!segment)
-			{
-				free(final);
-				return (0);
-			}
-			while (input[*i])
-			{
-				if (input[*i] == nested_quote)
-					break;
-				if (nested_quote == '"' && input[*i] == '\\' && input[*i + 1])
-				{
-					(*i)++;
-					segment[j++] = input[(*i)++];
-				}
-				else
-				{
-					segment[j++] = input[(*i)++];
-				}
-			}
-			if (input[*i] != nested_quote)
-			{
-				segment[j] = '\0';
-				char *err_str = ft_strdup("Error: Unmatched quote");
-				add_token(head, new_token(err_str, ERROR, QUETS_INVA));
-				free(err_str);
-				free(segment);
-				free(final);
-				shell->exit_status = 2;
-				return (0);
-			}
-			(*i)++;
-			segment[j] = '\0';
-
-			char *tmp = ft_strjoin(final ? final : "", segment);
-			free(final);
-			free(segment);
-			final = tmp;
+			segment[j++] = input[(*i)++];
 		}
 	}
+	return j;
+}
 
-	if (final && final[0] == '-' && ft_strlen(final) >= 2)
-		type = OPTION;
 
-	if (final && input[*i + 1] == ' ')
+int collect_single_quote(const char *input, int *i, char **final, char quote, t_shell *shell)
+{
+	char *segment;
+	int j;
+
+	segment = ft_malloc(ft_strlen(input) + 1);
+	if (!segment)
+		return (0);
+	j = fill_segment(input, i, segment, quote);
+	if (input[*i] != quote)
 	{
-		type = ERROR;
-		error = OPTION_INVA;
+		handle_unmatched_quote(shell, segment, *final);
+		return (0);
 	}
+	(*i)++;
+	segment[j] = '\0';
+	if (ft_strncmp(segment, " ", 2) != 0)
+	{
+		char *tmp = ft_strjoin((*final) ? *final : "", segment);
+		*final = tmp;
+	}
+	return (1);
+}
 
+
+
+
+int collect_all_quotes(const char *input, int *i, char **final, t_shell *shell)
+{
+	char quote = input[(*i)++];
+	if (!collect_single_quote(input, i, final, quote, shell))
+		return (0);
+
+	while (input[*i] == '"' || input[*i] == '\'')
+	{
+		char nested_quote = input[(*i)++];
+		if (!collect_single_quote(input, i, final, nested_quote, shell))
+			return (0);
+	}
+	return (1);
+}
+
+
+
+int handle_quoted_token(const char *input, int *i, t_shell *shell)
+{
+	t_token **head = &(shell->token);
+	char *final = NULL;
+	int type = WORD;
+	int error = 0;
+
+	if (input[*i] == '"' || input[*i] == '\'')
+	{
+		if (!collect_all_quotes(input, i, &final, shell))
+			return (0);
+	}
+	detect_token_type(input, final, &type, &error);
 	if (final)
-		add_token(head, new_token(final, type, error));
-
-	free(final);
+		add_token(head, new_token(&(shell->ebag), final, type, error));
 	if (error)
 	{
-		char *err_str = ft_strdup("Error: Invalid option");
-		add_token(head, new_token(err_str, ERROR, error));
-		free(err_str);
-		shell->exit_status = 2;
+		handle_invalid_option(shell, head);
 		return (0);
 	}
 	return (1);
 }
 
-void handle_special_token(const char *input, int *i, t_token **head)
+// ================================================================
+
+void handle_special_token(t_shell *shell, const char *input, int *i, t_token **head)
 {
 	int start;
 	int type;
@@ -164,8 +138,7 @@ void handle_special_token(const char *input, int *i, t_token **head)
 	{
 		(*i)++;
 		val = ft_substr(input, start, *i - start);
-		add_token(head, new_token(val, ERROR, 0));
-		free(val);
+		add_token(head, new_token(&(shell->ebag), val, ERROR, 0));
 		return;
 	}
 	val = ft_substr(input, start, *i - start);
@@ -181,11 +154,12 @@ void handle_special_token(const char *input, int *i, t_token **head)
 		type = REDIR_OUT;
 	else
 		type = ERROR;
-	add_token(head, new_token(val, type, 0));
-	free(val);
+	if(type == REDIR_APPEND || type == REDIR_HEREDOC || type == REDIR_IN || type == REDIR_OUT)
+		shell->is_heredoc_delimiter = 1;
+	add_token(head, new_token(&(shell->ebag), val, type, 0));
 }
 
-int handle_option_token(const char *input, int *i, t_token **head)
+int handle_option_token(t_shell *shell, const char *input, int *i, t_token **head)
 {
 	int start;
 	int opt_start;
@@ -205,25 +179,22 @@ int handle_option_token(const char *input, int *i, t_token **head)
 		if (!input[*i])
 		{
 			val = ft_substr(input, start, *i);
-			add_token(head, new_token(val, ERROR, QUETS_INVA));
-			free(val);
+			add_token(head, new_token(&(shell->ebag) , val, ERROR, QUETS_INVA));
 			return (0);
 		}
 		if (input[*i] == ' ')
 		{
 			val = ft_substr(input, start, *i);
-			add_token(head, new_token(val, ERROR, OPTION_INVA));
-			free(val);
+			add_token(head, new_token(&(shell->ebag) , val, ERROR, OPTION_INVA));
 			return (0);
 		}
 		content = ft_substr(input, quoted_start, *i - quoted_start);
-		val = malloc(ft_strlen(content) + 2);
+		val = ft_malloc(ft_strlen(content) + 2);
 		if (val)
 		{
 			val[0] = '-';
 			ft_strlcpy(&val[1], content, ft_strlen(content) + 1);
 		}
-		free(content);
 		(*i)++;
 	}
 	else
@@ -231,7 +202,7 @@ int handle_option_token(const char *input, int *i, t_token **head)
 		opt_start = *i;
 		if (input[*i + 1] == ' ')
 		{
-			add_token(head, new_token(val, 0, OPTION_INVA));
+			add_token(head, new_token(&(shell->ebag) , val, 0, OPTION_INVA));
 			return 0;
 		}
 		while (input[*i] && !(input[*i] == ' ') && !is_special(input[*i]))
@@ -240,16 +211,15 @@ int handle_option_token(const char *input, int *i, t_token **head)
 	}
 	if (val)
 	{
-		add_token(head, new_token(val, OPTION, 0));
-		free(val);
+		add_token(head, new_token(&(shell->ebag) , val, OPTION, 0));
 	}
 	return (1);
 }
 
-void handle_word_token(const char *input, int *i, t_token **head)
+void handle_word_token(t_shell *shell, const char *input, int *i, t_token **head)
 {
 	int start = *i;
-	char *buffer = malloc(ft_strlen(input) + 1);
+	char *buffer = ft_malloc(ft_strlen(input) + 1);
 	int j = 0;
 
 	if (!buffer)
@@ -261,24 +231,10 @@ void handle_word_token(const char *input, int *i, t_token **head)
 	buffer[j] = '\0';
 
 	if (j > 0)
-		add_token(head, new_token(buffer, WORD, 0));
-	free(buffer);
+		add_token(head, new_token(&(shell->ebag) , buffer, WORD, 0));
 }
 
-int ft_nodelen(t_token *head)
-{
-	int i;
-	t_token *tmp;
 
-	tmp = head;
-	i = 0;
-	while (tmp)
-	{
-		i++;
-		tmp = tmp->next;
-	}
-	return i;
-}
 void correct_lexer(t_shell *shell, t_token **token)
 {
 	t_token *tmp = *token;
@@ -287,10 +243,8 @@ void correct_lexer(t_shell *shell, t_token **token)
 	if (!tmp)
 		return;
 
-	// Check for pipe at the beginning
 	if (tmp->type == PIPE)
 	{
-		free(tmp->value);
 		tmp->value = ft_strdup("mshell: syntax error near unexpected token `|'");
 		tmp->type = ERROR;
 		tmp->error = INPUT_INVA;
@@ -302,47 +256,52 @@ void correct_lexer(t_shell *shell, t_token **token)
 	{
 		if (tmp->type == WORD)
 		{
-			free(last_operator);
 			last_operator = NULL;
 			tmp = tmp->next;
 			continue;
 		}
 
-		// Check for redirections and pipes
 		if (tmp->type == REDIR_OUT || tmp->type == REDIR_IN ||
 			tmp->type == REDIR_APPEND || tmp->type == REDIR_HEREDOC || tmp->type == PIPE)
 		{
 			if (last_operator)
 			{
-				// Two operators in a row (e.g., >> >>, | |)
-				free(tmp->value);
-				tmp->value = ft_strdup("mshell: syntax error near unexpected token");
+				if ((tmp->type == PIPE && ft_strncmp(last_operator, "|", 1) == 0) ||
+					(tmp->type != PIPE && strncmp(last_operator, "|", 1) != 0))
+				{
+					tmp->value = ft_strdup("mshell: syntax error near unexpected token");
+					tmp->type = ERROR;
+					tmp->error = INPUT_INVA;
+					shell->exit_status = 2;
+					return;
+				}
+			}
+
+			last_operator = ft_strdup(tmp->value);
+
+			if (tmp->next == NULL)
+			{
+				tmp->value = ft_strdup("mshell: syntax error near unexpected end of input");
 				tmp->type = ERROR;
 				tmp->error = INPUT_INVA;
 				shell->exit_status = 2;
-				free(last_operator);
 				return;
 			}
 
-			// Save this operator to check the next token
-			free(last_operator);
-			last_operator = ft_strdup(tmp->value);
-
-			// Check if next token exists and is a WORD
-			if (tmp->next == NULL || tmp->next->type != WORD)
+			if (tmp->type != PIPE &&
+				(tmp->next->type == REDIR_OUT || tmp->next->type == REDIR_IN ||
+				 tmp->next->type == REDIR_APPEND || tmp->next->type == REDIR_HEREDOC ||
+				 tmp->next->type == PIPE))
 			{
-				free(tmp->value);
-				tmp->value = ft_strdup("mshell: syntax error near unexpected token");
-				tmp->type = ERROR;
-				tmp->error = INPUT_INVA;
+				tmp->next->value = ft_strdup("mshell: syntax error near unexpected token");
+				tmp->next->type = ERROR;
+				tmp->next->error = INPUT_INVA;
 				shell->exit_status = 2;
-				free(last_operator);
 				return;
 			}
 		}
 		else
 		{
-			// Unknown token type: consider as error
 			tmp->type = ERROR;
 			tmp->error = INPUT_INVA;
 			shell->exit_status = 2;
@@ -350,32 +309,11 @@ void correct_lexer(t_shell *shell, t_token **token)
 
 		tmp = tmp->next;
 	}
-
-	// Check if last token is operator (no word after)
-	if (last_operator)
-	{
-		t_token *last = *token;
-		while (last->next)
-			last = last->next;
-
-		if (last->type != WORD)
-		{
-			free(last->value);
-			last->value = ft_strdup("mshell: syntax error near unexpected end of input");
-			last->type = ERROR;
-			last->error = INPUT_INVA;
-			shell->exit_status = 2;
-		}
-	}
-
-	free(last_operator);
 }
 
 
-int is_space(char c)
-{
-	return (c == ' ' || c == '\t' || c == '\n');
-}
+
+
 
 char *expand_variables_in_string(char *str, t_shell *shell, char qt)
 {
@@ -389,7 +327,6 @@ char *expand_variables_in_string(char *str, t_shell *shell, char qt)
 		{
 			tmp = handle_variable_token(str, &i, shell, qt);
 			result = strjoin_free(result, tmp);
-			free(tmp);
 		}
 		else
 		{
@@ -398,8 +335,8 @@ char *expand_variables_in_string(char *str, t_shell *shell, char qt)
 				i++;
 			tmp = ft_substr(str, start, i - start);
 			result = strjoin_free(result, tmp);
-			free(tmp);
 		}
+		i++;
 	}
 	return result;
 }
@@ -431,186 +368,232 @@ int pips_coount(char *input)
 	}
 	return j;
 }
+// =================================================================
+
+
+void finalize_current_word(t_shell *shell ,t_lexer_state *state)
+{
+	if (state->current_word )
+	{
+		if (state->current_word[0] == '$')
+			state->token_type = VARIABLE;
+		else if (state->current_word[0] == '-' && ft_strlen(state->current_word) >= 2)
+			state->token_type = OPTION;
+		else
+		{
+			// printf("==============\n");
+			state->token_type = WORD;
+		}
+
+		state->t_tmp = new_token(&(shell->ebag) , state->current_word, WORD, 0);
+		state->t_tmp->quot_type = state->current_quote_type;
+		add_token(&state->head, state->t_tmp);
+		state->current_word = NULL;
+	}
+}
+
+
+void handle_normal_word(t_lexer_state *state)
+{
+	char *tmp;
+	state->start = state->i;
+	while (state->str[state->i] && !is_space(state->str[state->i]) && state->str[state->i] != '\'' &&
+		   state->str[state->i] != '"' && !is_special(state->str[state->i]) && state->str[state->i] != '$')
+		state->i++;
+	tmp = ft_substr(state->str, state->start, state->i - state->start);
+	state->current_word = strjoin_free(state->current_word, tmp);
+}
+
+// ==================================================================================
+
+void handle_dollar_variable_expansion(t_shell *shell, t_lexer_state *state, int j)
+{
+	char *value, *tmp2, *tmp3;
+
+	value = handle_variable_token(state->str, &state->i, shell, 0);
+	if (value)
+	{
+		if (ft_strncmp(value, "$", 1) == 0)
+		{
+			state->current_word = strjoin_free(state->current_word, value);
+			state->i++;
+		}
+		else
+		{
+			tmp2 = ft_substr(state->str, 0, j);
+			tmp3 = ft_substr(state->str, state->i, ft_strlen(state->str) - state->i);
+			shell->input = ft_strjoin(tmp2, value);
+			tmp2 = shell->input;
+			shell->input = ft_strjoin(shell->input, tmp3);
+			state->str = shell->input;
+			state->i = j;
+		}
+	}
+}
+void handle_dollar_in_single_quotes(t_lexer_state *state)
+{
+	char *tmp;
+
+	state->start = state->i++;
+	while (state->str[state->i] && (ft_isalnum(state->str[state->i]) || state->str[state->i] == '_'))
+		state->i++;
+	tmp = ft_substr(state->str, state->start, state->i - state->start);
+	state->current_word = strjoin_free(state->current_word, tmp);
+}
+
+void handle_dollar_sign(t_shell *shell, t_lexer_state *state)
+{
+	int j = state->i;
+	
+	if (state->current_quote_type == S_QUOTE)
+		handle_dollar_in_single_quotes(state);
+	else
+		handle_dollar_variable_expansion(shell, state, j);
+}
+
+
+void handle_special_token_case(t_shell *shell, t_lexer_state *state)
+{
+	if (state->current_word)
+	{
+		state->t_tmp = new_token(&(shell->ebag), state->current_word, WORD, 0);
+		state->t_tmp->quot_type = state->current_quote_type;
+		add_token(&state->head, state->t_tmp);
+		state->current_word = NULL;
+	}
+	handle_special_token(shell, state->str, &state->i, &state->head);
+}
+
+
+// ======================================================
+
+void handle_invalid_quote(t_shell *shell, t_lexer_state *state)
+{
+	add_token(&state->head, new_token(&(shell->ebag), "Invalid quote", 0, QUETS_INVA));
+	shell->exit_status = 258;
+}
+
+
+void set_quote_type_explicitly(t_lexer_state *state, char quote)
+{
+	if (quote == '"')
+		state->current_quote_type = D_QUOTE;
+	else if (quote == '\'')
+		state->current_quote_type = S_QUOTE;
+}
+
+
+void handle_quotes(t_shell *shell, t_lexer_state *state)
+{
+	char *tmp, *expanded;
+	char quote = state->str[state->i];
+
+	set_quote_type_explicitly(state, quote);
+	state->i++;
+	state->start = state->i;
+	while (state->str[state->i] && state->str[state->i] != quote)
+		state->i++;
+	if (state->str[state->i] == '\0')
+	{
+		handle_invalid_quote(shell, state);
+		return;
+	}
+	tmp = ft_substr(state->str, state->start, state->i - state->start);
+	if(state->start == state->i && state->str[state->i])
+	{
+		if(!state->current_word)
+		{
+			if((state->i == 1 && ft_strlen(state->str) == 2) || !state->str[state->i + 1])
+			{
+				shell->not_found = 1;
+				state->current_word = ft_strdup("");
+			}
+			else
+			{
+				shell->not_found = 1;
+				state->current_word = ft_strdup("");
+			}
+		}
+	}
+	if (quote == '\'' && tmp[0] != '$')
+		state->current_word = strjoin_free(state->current_word, tmp);
+	else
+	{
+		expanded = expand_variables_in_string(tmp, shell, quote);
+		state->current_word = strjoin_free(state->current_word, expanded);
+	}
+	state->i++;
+	state->current_quote_type = 0;
+}
+
+// ======================================================
+
+
+void process_token_loop(t_shell *shell, t_lexer_state *state)
+{
+	while (state->str[state->i] && is_space(state->str[state->i]))
+		state->i++;
+	if (state->str[state->i] == '\0')
+		return;
+	state->start = state->i;
+	while (state->str[state->i] && !is_space(state->str[state->i]))
+	{
+		// printf("============\n");
+		if (state->str[state->i] == '\'' || state->str[state->i] == '"')
+		{
+			handle_quotes(shell, state);
+			// printf("tok : %s\n", state->current_word);
+		}
+		else if (is_special(state->str[state->i]))
+			handle_special_token_case(shell, state);
+		else if (state->str[state->i] == '$' && state->str[state->i + 1] != '.')
+			handle_dollar_sign(shell, state);
+		else
+			handle_normal_word(state);
+	}
+	finalize_current_word(shell, state);
+}
+
+
+int check_initial_dollar_error(t_shell *shell, t_lexer_state *state)
+{
+	if (state->str[0] == '$' && (!state->str[1] || state->str[1] == ' '))
+	{
+		add_token(&state->head, new_token(&(shell->ebag), "minishell: '$' command not found", 0, NOT_FOUND));
+		shell->exit_status = 127;
+		return 1;
+	}
+	return 0;
+}
+
+
+void init_lexer_vars(t_shell *shell, t_lexer_state *state)
+{
+	state->i = 0;
+	state->j = 0;
+	state->t_tmp = NULL;
+	state->head = NULL;
+	state->current_word = NULL;
+	state->current_quote_type = 0;
+	state->token_type = 0;
+	state->str = shell->input;
+	state->start = 0;
+	shell->pip_count = pips_coount(shell->input);
+}
+
 
 t_token *lexer_split_to_tokens(t_shell *shell)
 {
-	int i = 0;
-	t_token *head = NULL;
-	t_token *t_tmp = NULL;
-	char quote;
-	char *isQuote = NULL;
-	int current_quote_type = 0;
-	int token_type = 0;
-	char *str = shell->input;
-	char *tmp;
-	char *tmp_2;
-	char *tmp_3;
-	int start = 0;
-	char *current_word = NULL;
-	int j = 0;
-	char *value;
+	t_lexer_state state;
 
-	shell->pip_count = pips_coount(shell->input);
-	if (str[0] == '$' && (!str[1] || str[1] == ' '))
+	init_lexer_vars(shell, &state);
+	if (check_initial_dollar_error(shell, &state))
+		return state.head;
+	while (state.str[state.i])
 	{
-		add_token(&head, new_token("minishell: '$' command not found", 0, NOT_FOUND));
-		shell->exit_status = 127;
-		return head;
+		process_token_loop(shell, &state);
 	}
-
-	while (str[i])
-	{
-		while (str[i] && is_space(str[i]))
-			i++;
-		if (str[i] == '\0')
-			break;
-		start = i;
-		while (str[i] && !is_space(str[i]))
-		{
-			if (str[i] == '\'' || str[i] == '"')
-			{
-				quote = str[i];
-				if (quote == '"')
-					current_quote_type = D_QUOTE;
-				else
-					current_quote_type = S_QUOTE;
-				i++;
-				start = i;
-
-				while (str[i] && str[i] != quote)
-					i++;
-				if (str[i] == '\0')
-				{
-					add_token(&head, new_token("Invalid quote", 0, QUETS_INVA));
-					shell->exit_status = 258;
-					free(current_word);
-					return head;
-				}
-				tmp = ft_substr(str, start, i - start);
-				if (quote == '\'' && tmp[0] != '$')
-					current_word = strjoin_free(current_word, tmp);
-				else
-				{
-					char *expanded = expand_variables_in_string(tmp, shell, quote);
-					current_word = strjoin_free(current_word, expanded);
-					free(expanded);
-				}
-				free(tmp);
-				i++;
-				current_quote_type = 0;
-			}
-
-			else if (is_special(str[i]))
-			{
-				if (current_word)
-				{
-					t_tmp = new_token(current_word, WORD, 0);
-					t_tmp->quot_type = current_quote_type;
-					add_token(&head, t_tmp);
-					free(current_word);
-					current_word = NULL;
-				}
-				// if (str[i] == '|' && str[i + 1] == '|')
-				// {
-				// 	correct_lexer(shell, &head);
-				// 	return head;
-				// }
-				handle_special_token(str, &i, &head);
-			}
-			// -------------------------------------------------------
-				// else if (str[i] == '$')
-				// {
-				// 	if (current_quote_type == S_QUOTE)
-				// 	{
-				// 		start = i;
-				// 		i++;
-				// 		while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
-				// 			i++;
-				// 		tmp = ft_substr(str, start, i - start);
-				// 		current_word = strjoin_free(current_word, tmp);
-				// 		free(tmp);
-				// 	}
-				// 	else
-				// 	{
-				// 		char *value = handle_variable_token(str, &i, shell, 0);
-				// 		if (value)
-				// 		{
-				// 			current_word = strjoin_free(current_word, value);
-				// 			free(value);
-				// 		}
-				// 	}
-				// }
-			// -----------------------------------------------------
-			else if (str[i] == '$' && str[i + 1] != '.')
-			{
-				j = i;
-				if (current_quote_type == S_QUOTE)
-				{
-					start = i;
-					i++;
-					while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
-						i++;
-					tmp = ft_substr(str, start, i - start);
-					current_word = strjoin_free(current_word, tmp);
-					free(tmp);
-				}
-				else
-				{
-					char *value = handle_variable_token(str, &i, shell, 0);
-					if (value)
-					{
-						if (ft_strncmp(value, "$", 1) == 0)
-						{
-							current_word = strjoin_free(current_word, value);
-							free(value);
-							i++; 
-						}
-						else
-						{
-							tmp_2 = ft_substr(str, 0, j);
-							tmp_3 = ft_substr(str, i, ft_strlen(str) - i);
-							free(shell->input);
-							shell->input = ft_strjoin(tmp_2, value);
-							free(tmp_2);
-							tmp_2 = shell->input;
-							shell->input = ft_strjoin(shell->input, tmp_3);
-							free(tmp_2);
-							free(tmp_3);
-							free(value);
-							str = shell->input;
-							i = j;
-						}
-					}
-
-				}
-			}
-			else
-			{
-				start = i;
-				while (str[i] && !is_space(str[i]) && str[i] != '\'' && str[i] != '"' && !is_special(str[i]) && str[i] != '$')
-					i++;
-				tmp = ft_substr(str, start, i - start);
-				current_word = strjoin_free(current_word, tmp);
-				free(tmp);
-			}
-		}
-		if (current_word)
-		{
-			if (current_word[0] == '$')
-				token_type = VARIABLE;
-			else if (current_word[0] == '-' && ft_strlen(current_word) >= 2)
-				token_type = OPTION;
-			else
-				token_type = WORD;
-
-			t_tmp = new_token(current_word, WORD, 0);
-			t_tmp->quot_type = current_quote_type;
-			add_token(&head, t_tmp);
-			free(current_word);
-			current_word = NULL;
-		}
-	}
-	correct_lexer(shell, &head);
-	// print_tokens(head);
-	return head;
+	correct_lexer(shell, &state.head);
+	// print_tokens(state.head);
+	return state.head;
 }

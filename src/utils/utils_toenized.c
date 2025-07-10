@@ -1,75 +1,19 @@
 #include "../../include/minishell.h"
 
-int is_special(char c)
+int check_embag(char *var_value)
 {
-    return (c == '|' || c == '>' || c == '<');
-}
+	char **value;
+	int i;
 
-t_token *new_token(char *val, int type, int error_type)
-{
-    t_token *t = (t_token *)malloc(sizeof(t_token));
-    if (!t)
-        return NULL;
-    if (val)
-    {
-        t->value = strdup(val);
-        if (!t->value)
-        {
-            free(t);
-            return NULL;
-        }
-    }
-    else
-    {
-        t->value = NULL;
-    }
-
-    t->type = type;
-    t->error = error_type;
-    t->next = NULL;
-    return t;
-}
-
-void add_token(t_token **head, t_token *new)
-{
-    if (!new || !new->value || new->value[0] == '\0')
-    {
-        if (new)
-        {
-            free(new->value);
-            free(new);
-        }
-        return;
-    }
-
-    if (!*head)
-    {
-        *head = new;
-        return;
-    }
-
-    t_token *tmp = *head;
-    while (tmp->next)
-        tmp = tmp->next;
-
-    tmp->next = new;
-}
-
-char *find_env_node(t_env *env, char *key)
-{
-    t_env *tmp = env;
-    size_t key_len;
-
-    key_len = ft_strlen(key);
-    while (tmp)
-    {
-        if (ft_strncmp(tmp->name, key, key_len) == 0 && tmp->name[key_len] == '\0')
-        {
-            return tmp->value;
-        }
-        tmp = tmp->next;
-    }
-    return NULL;
+	if(!var_value)
+		return 0;
+	value = ft_split(var_value, ' ');
+	i = 0;
+	while (value[i])
+		i++;
+	if(i > 1)
+		return 0;
+	return 1;
 }
 
 char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
@@ -97,7 +41,7 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
     //     (*i)++;
     //     return ft_strdup("$");
     // }
-
+	// printf("=============");
     if (str[*i] == '$' && (str[*i + 1] == '\0' || str[*i + 1] == ' '))
 	{
 		(*i)++;
@@ -110,9 +54,21 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 		return ft_strdup("$$");
 	}
 
-    if(!ft_isalnum(str[*i + 1]))
-        return (ft_strdup("$"));
-
+	if((str[*i + 1] == '\'' && str[*i + 2] == '\'') || (str[*i + 1] == '"' && str[*i + 2] == '"'))
+    {
+		(*i) += 3;
+	    return (ft_strdup(""));
+	}
+	if((str[*i + 1] == '\'' && str[*i + 2] != '\'') || (str[*i + 1] == '"' && str[*i + 2] != '"'))
+    {
+		(*i)++;
+	    return NULL;
+	}
+	if(!ft_isalnum(str[*i + 1]))
+    {
+		return (ft_strdup("$"));
+	}
+	
 	if (*i > 0 && (str[*i - 1] == '\\'))
 	{
 		(*i)++;
@@ -122,7 +78,6 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 		len = *i - start;
 		var_name = ft_substr(str, start, len);
 		char *result = ft_strjoin("$", var_name);
-		free(var_name);
 		return result;
 	}
 
@@ -137,13 +92,13 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	// 	return result;
     // }
 
-
-	
 	(*i)++;
 	start = *i;
 
 	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
+	{
 		(*i)++;
+	}
 
 	len = *i - start;
 	var_name = ft_substr(str, start, len);
@@ -151,7 +106,6 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	if (quote == '\'')
 	{
 		char *result = ft_strjoin("$", var_name);
-		free(var_name);
 		return result;
 	}
 	while (env)
@@ -159,26 +113,38 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 		if (ft_strncmp(env->name, var_name, ft_strlen(env->name)) == 0
 			&& ft_strlen(env->name) == len)
 		{
-			var_value = ft_strdup(env->value);
+			var_value = env->value;
+			// var_value = ft_strdup(env->value);
 			break;
 		}
 		env = env->next;
 	}
-
+	if (!var_value && !var_name && ft_isalpha(var_name[0]))
+	{
+		char *unknown = NULL;
+		return ft_strdup("");
+			// free(var_name);
+	}
 	if (!var_value && ft_isalpha(var_name[0]))
 	{
 		char *unknown = NULL;
-		free(var_name);
-		// return ft_strdup("");
-        return NULL;
+		shell->ebag = 0;
+		if(shell->is_heredoc_delimiter)
+		{
+			shell->is_heredoc_delimiter = 0;
+			(*i)--;
+			return ft_strjoin("$", var_name);
+		}
+		return ft_strdup("");
+			// free(var_name);
 	}
     if (!var_value)
 	{
 		char *unknown = NULL;
-		free(var_name);
 		return ft_strdup("$");
 	}
-	free(var_name);
+	shell->ebag = check_embag(var_value);
+	// shell->ebag_final = check_embag(var_value);
 	return var_value;
 }
 
@@ -215,7 +181,7 @@ void print_tokens(t_token *head)
 {
     while (head)
     {
-        printf("Token: %s | Type: %s | Error type: %d | quote type : %d", head->value, token_type_to_str(head->type), head->error, head->quot_type);
+        printf("Token: %s | Type: %s | Error type: %d | quote type : %d | ebag : %d", head->value, token_type_to_str(head->type), head->error, head->quot_type, head->ebag);
         printf("\n");
         head = head->next;
     }

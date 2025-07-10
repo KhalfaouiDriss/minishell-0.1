@@ -1,21 +1,5 @@
 #include "../../include/minishell.h"
 
-void	free_split(char **lst)
-{
-	int	i;
-
-	i = 0;
-	if (!lst)
-		return ;
-	while (lst[i])
-	{
-		free(lst[i]);
-		i++;
-	}
-	free(lst);
-}
-
-
 void init_shell(t_shell *shell)
 {
     shell->arg_count = 0;
@@ -27,78 +11,74 @@ void init_shell(t_shell *shell)
     shell->env = NULL;
     shell->input = NULL;
     shell->pip_count = 0;
+	shell->is_heredoc_delimiter = 0;
+	shell->ebag = -1;
+	shell->ebag_final = -1;
 }
 
-void free_tokens(t_token *tokens)
+void gc_remove(void *ptr)
 {
-    t_token *tmp;
+	t_gc *gc = get_gc();
+	t_mlc *curr = gc->head;
+	t_mlc *prev = NULL;
 
-    while (tokens)
-    {
-        tmp = tokens->next;
-        if (tokens->value)
-            free(tokens->value);
-        free(tokens);
-        tokens = tmp;
-    }
-}
-
-void free_env(t_env *env)
-{
-    t_env *tmp;
-
-    while (env)
-    {
-        tmp = env->next;
-        if (env->name)
-            free(env->name);
-        if (env->value)
-            free(env->value);
-        free(env);
-        env = tmp;
-    }
+	while (curr)
+	{
+		if (curr->ptr == ptr)
+		{
+			if (prev)
+				prev->next = curr->next;
+			else
+				gc->head = curr->next;
+			free(curr->ptr);
+			free(curr);
+			return;
+		}
+		prev = curr;
+		curr = curr->next;
+	}
 }
 
 
-void free_all(t_shell *shell)
+char *strjoin_free(char *s1, char *s2)
 {
-    if (!shell)
-        return;
+	char *new_str;
 
-    if (shell->input)
-    {
-        free(shell->input);
-        shell->input = NULL;
-    }
+	if (!s1 && !s2)
+		return NULL;
+	if (!s1)
+		return s2;
+	if (!s2)
+		return s1;
 
-    if (shell->token)
-    {
-        free_tokens(shell->token);
-        shell->token = NULL;
-    }
-
-    if (shell->args)
-    {
-        free_split(shell->args);
-        shell->args = NULL;
-    }
-    if (shell->cmd_list)
-    {
-        free_cmds(shell->cmd_list);
-        shell->cmd_list = NULL;
-    }
-
+	new_str = ft_strjoin(s1, s2);
+	gc_remove(s1);
+	return new_str;
 }
 
 
-t_token	*new_node(char *value)
+int ft_nodelen(t_token *head)
 {
-	t_token	*new;
+	int i;
+	t_token *tmp;
 
-	new = malloc(sizeof(*new));
-	if (!new)
-		return (NULL);
-    new->value = value;
-	new->next = NULL;
-	return (new);
+	tmp = head;
+	i = 0;
+	while (tmp)
+	{
+		i++;
+		tmp = tmp->next;
+	}
+	return i;
+}
+
+int is_space(char c)
+{
+	return (c == ' ' || c == '\t' || c == '\n');
+}
+
+
+int is_special(char c)
+{
+    return (c == '|' || c == '>' || c == '<');
 }

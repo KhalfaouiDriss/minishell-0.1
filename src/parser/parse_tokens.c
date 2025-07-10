@@ -2,9 +2,8 @@
 
 int	count_args(t_token *token)
 {
-	int	i;
+	int	i = 0;
 
-	i = 0;
 	while (token && token->type != PIPE)
 	{
 		if (token->type == OPTION || token->type == WORD)
@@ -18,34 +17,12 @@ int	count_args(t_token *token)
 
 char	*safe_strdup(char *s)
 {
-	if (!s)
-		return (NULL);
 	return (ft_strdup(s));
-}
-
-void	free_cmds(t_cmd *cmds)
-{
-	t_cmd	*current;
-	t_cmd	*next;
-	int		i;
-
-	current = cmds;
-	while (current)
-	{
-		next = current->next;
-		i = 0;
-		while (current->args[i])
-			free(current->args[i++]);
-		free(current->args);
-		free(current->infile);
-		free(current->outfile);
-		free(current);
-		current = next;
-	}
 }
 
 void	init_str(t_cmd *cmd)
 {
+	cmd->args = NULL;
 	cmd->infile = NULL;
 	cmd->outfile = NULL;
 	cmd->next = NULL;
@@ -53,57 +30,78 @@ void	init_str(t_cmd *cmd)
 	cmd->append = 0;
 	cmd->outfile_fd = 0;
 	cmd->c_flag = 0;
+	cmd->flag_amb = 0;
+	cmd->heredoc_fd = -1;
+	cmd->fod_flag = 0;
 }
 
-static void	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
+
+static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 {
-	if ((*token)->type == REDIR_IN && (*token)->next)
+	t_token *next = (*token)->next;
+
+
+	if (((*token)->type == REDIR_OUT || (*token)->type == REDIR_IN || (*token)->type == REDIR_APPEND)
+		&& !next->ebag && !cmd->flag_amb)
 	{
-		cmd->infile = safe_strdup((*token)->next->value);
-		(*token) = (*token)->next;
+		cmd->flag_amb = 1;
+		*token = next;
+		return 0;
 	}
-	else if ((*token)->type == REDIR_HEREDOC && (*token)->next)
-	{
-		cmd->heredoc_fd = handle_heredoc((*token)->next->value, shell);
-		
-		(*token) = (*token)->next;
+
+	if ((*token)->type == REDIR_IN){
+		cmd->infile = safe_strdup(next->value);
+		return 1;
 	}
-	else if ((*token)->type == REDIR_OUT && (*token)->next)
+	else if ((*token)->type == REDIR_HEREDOC)
 	{
-		cmd->outfile = safe_strdup((*token)->next->value);
-		redirect_output(cmd, 0);
+		cmd->heredoc = safe_strdup(next->value);
+		cmd->heredoc_fd = handle_heredoc(next->value, shell);
+		if (cmd->heredoc_fd == -1)
+			return -1;
+	}
+	else if ((*token)->type == REDIR_OUT)
+	{
+		cmd->outfile = safe_strdup(next->value);
+		redirect_output(shell, cmd, 0);
 		cmd->append = 0;
-		(*token) = (*token)->next;
 	}
-	else if ((*token)->type == REDIR_APPEND && (*token)->next)
+	else if ((*token)->type == REDIR_APPEND)
 	{
-		cmd->outfile = safe_strdup((*token)->next->value);
-		redirect_output(cmd, 1);
+		cmd->outfile = safe_strdup(next->value);
+		redirect_output(shell, cmd, 1);
 		cmd->append = 1;
-		(*token) = (*token)->next;
 	}
+	*token = next;
+	return 1;
 }
 
 static t_cmd	*parse_command(t_token **token, t_shell *shell)
 {
 	t_cmd	*cmd;
-	int		arg_count;
-	int		i;
+	int		arg_count, i;
 
-	cmd = malloc(sizeof(t_cmd));
+	cmd = ft_malloc(sizeof(t_cmd));
 	if (!cmd)
 		return (NULL);
 	init_str(cmd);
+
 	arg_count = count_args(*token);
-	cmd->args = malloc((arg_count + 1) * sizeof(char *));
+	cmd->args = ft_malloc((arg_count + 1) * sizeof(char *));
 	i = 0;
 	while (*token && (*token)->type != PIPE)
 	{
+		shell->exit_status = 0;
 		if ((*token)->type == WORD || (*token)->type == OPTION)
-			cmd->args[i++] = safe_strdup((*token)->value);
+				cmd->args[i++] = safe_strdup((*token)->value);
 		else
-			parse_redirections(token, cmd, shell);
-		(*token) = (*token)->next;
+		{
+			if (parse_redirections(token, cmd, shell) == -1){
+				return NULL;
+			}
+		}
+		if (*token)
+			*token = (*token)->next;
 	}
 	cmd->args[i] = NULL;
 	return (cmd);
@@ -111,12 +109,11 @@ static t_cmd	*parse_command(t_token **token, t_shell *shell)
 
 t_cmd	*parse_tokens(t_shell *shell)
 {
-	t_cmd	*head;
-	t_cmd	*last;
+	t_cmd	*head = NULL;
+	t_cmd	*last = NULL;
 	t_cmd	*cmd;
-	t_token	*token;
+	t_token	*token = shell->token;
 
-	token = shell->token;
 	while (token)
 	{
 		if (!token->type)
@@ -128,8 +125,7 @@ t_cmd	*parse_tokens(t_shell *shell)
 		token = token->next;
 	}
 	token = shell->token;
-	head = NULL;
-	last = NULL;
+
 	while (token)
 	{
 		cmd = parse_command(&token, shell);

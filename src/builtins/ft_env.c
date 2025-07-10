@@ -12,9 +12,12 @@ void ft_env(t_env *env, int print_as_env)
         else
         {
             if (env->value)
+            {
                 printf("declare -x %s=\"%s\"\n", env->name, env->value);
-            else
+            }
+            else{
                 printf("declare -x %s\n", env->name);
+            }
         }
         env = env->next;
     }
