@@ -34,6 +34,7 @@
 # define INPUT_INVA    15
 # define D_QUOTE       16
 # define S_QUOTE       17
+# define syntax_error "mshell: syntax error near unexpected token"
 
 typedef struct s_error
 {
@@ -105,7 +106,14 @@ typedef struct s_lexer_state
 	char *current_word;
 	t_token *t_tmp;
 	t_token *head;
-    
+	char	*tmp;
+    char	quote;
+	int		opt_start;
+	int		quoted_start;
+	char	*val;
+	char	*content;
+    const char *input;
+
 }	t_lexer_state;
 
 // galbege_collecter
@@ -134,7 +142,7 @@ void	handle_special_token(t_shell *shell, const char *input, int *i, t_token **h
 
 // tokenized Utils
 void print_tokens(t_token *head);
-
+void	correct_lexer(t_shell *shell, t_token **token);
 // utils_1.c
 void init_shell(t_shell *shell);
 char *strjoin_free(char *s1, char *s2);
