@@ -1,92 +1,50 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_tokens.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/10 15:51:13 by sel-bech          #+#    #+#             */
+/*   Updated: 2025/07/10 16:19:45 by sel-bech         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/minishell.h"
-
-int	count_args(t_token *token)
-{
-	int	i = 0;
-
-	while (token && token->type != PIPE)
-	{
-		if (token->type == OPTION || token->type == WORD)
-			i++;
-		if (token->type >= REDIR_IN && token->type <= REDIR_HEREDOC)
-			token = token->next;
-		token = token->next;
-	}
-	return (i);
-}
-
-char	*safe_strdup(char *s)
-{
-	return (ft_strdup(s));
-}
-
-void	init_str(t_cmd *cmd)
-{
-	cmd->args = NULL;
-	cmd->infile = NULL;
-	cmd->outfile = NULL;
-	cmd->next = NULL;
-	cmd->heredoc = 0;
-	cmd->append = 0;
-	cmd->outfile_fd = 0;
-	cmd->c_flag = 0;
-	cmd->flag_amb = 0;
-	cmd->heredoc_fd = -1;
-	cmd->fod_flag = 0;
-}
-
 
 static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 {
-	t_token *next = (*token)->next;
+	t_token	*next;
 
-
-	if (((*token)->type == REDIR_OUT || (*token)->type == REDIR_IN || (*token)->type == REDIR_APPEND)
-		&& !next->ebag && !cmd->flag_amb)
-	{
-		cmd->flag_amb = 1;
-		*token = next;
-		return 0;
-	}
-
-	if ((*token)->type == REDIR_IN){
-		cmd->infile = safe_strdup(next->value);
-		*token = next;
-		return 1;
-	}
+	next = (*token)->next;
+	if (((*token)->type == REDIR_OUT || (*token)->type == REDIR_IN
+			|| (*token)->type == REDIR_APPEND) && !next->ebag && !cmd->flag_amb)
+		return (cmd->flag_amb = 1, *token = next, 0);
+	if ((*token)->type == REDIR_IN)
+		return (cmd->infile = ft_strdup(next->value), *token = next, 1);
 	else if ((*token)->type == REDIR_HEREDOC)
 	{
-		cmd->heredoc = safe_strdup(next->value);
+		cmd->heredoc = ft_strdup(next->value);
 		cmd->heredoc_fd = handle_heredoc(next->value, shell);
 		if (cmd->heredoc_fd == -1)
-			return -1;
+			return (-1);
 	}
-	else if ((*token)->type == REDIR_OUT)
-	{
-		cmd->outfile = safe_strdup(next->value);
-		redirect_output(shell, cmd, 0);
-		cmd->append = 0;
-	}
-	else if ((*token)->type == REDIR_APPEND)
-	{
-		cmd->outfile = safe_strdup(next->value);
-		redirect_output(shell, cmd, 1);
-		cmd->append = 1;
-	}
+	else if ((*token)->type == REDIR_OUT || (*token)->type == REDIR_APPEND)
+		red_out(shell, cmd, (*token));
 	*token = next;
-	return 1;
+	return (1);
 }
 
 static t_cmd	*parse_command(t_token **token, t_shell *shell)
 {
 	t_cmd	*cmd;
-	int		arg_count, i;
+	int		arg_count;
+	int		i;
 
 	cmd = ft_malloc(sizeof(t_cmd));
 	if (!cmd)
 		return (NULL);
 	init_str(cmd);
-
 	arg_count = count_args(*token);
 	cmd->args = ft_malloc((arg_count + 1) * sizeof(char *));
 	i = 0;
@@ -94,38 +52,46 @@ static t_cmd	*parse_command(t_token **token, t_shell *shell)
 	{
 		shell->exit_status = 0;
 		if ((*token)->type == WORD || (*token)->type == OPTION)
-				cmd->args[i++] = safe_strdup((*token)->value);
+			cmd->args[i++] = ft_strdup((*token)->value);
 		else
 		{
 			if (parse_redirections(token, cmd, shell) == -1)
-				return NULL;
+				return (NULL);
 		}
 		if (*token)
 			*token = (*token)->next;
 	}
-	cmd->args[i] = NULL;
-	return (cmd);
+	return (cmd->args[i] = NULL, cmd);
 }
 
-t_cmd	*parse_tokens(t_shell *shell)
+int	check_syn(t_token *token)
 {
-	t_cmd	*head = NULL;
-	t_cmd	*last = NULL;
-	t_cmd	*cmd;
-	t_token	*token = shell->token;
-
 	while (token)
 	{
 		if (!token->type)
 		{
 			ft_putstr_fd(token->value, 2);
 			printf("\n");
-			return (NULL);
+			return (1);
 		}
 		token = token->next;
 	}
-	token = shell->token;
+	return (0);
+}
 
+t_cmd	*parse_tokens(t_shell *shell)
+{
+	t_cmd	*head;
+	t_cmd	*last;
+	t_cmd	*cmd;
+	t_token	*token;
+
+	head = NULL;
+	last = NULL;
+	token = shell->token;
+	if (check_syn(token))
+		return (NULL);
+	token = shell->token;
 	while (token)
 	{
 		cmd = parse_command(&token, shell);

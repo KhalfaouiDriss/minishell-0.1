@@ -310,11 +310,6 @@ void correct_lexer(t_shell *shell, t_token **token)
 		tmp = tmp->next;
 	}
 }
-
-
-
-
-
 char *expand_variables_in_string(char *str, t_shell *shell, char qt)
 {
 	int i = 0;

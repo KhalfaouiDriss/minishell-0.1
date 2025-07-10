@@ -166,6 +166,8 @@ t_token	*new_node(char *value);
 char *find_env_node(t_env *env, char *key);
 
 t_cmd *parse_tokens(t_shell *shell);
+void	init_str(t_cmd *cmd);
+void	red_out(t_shell *shell, t_cmd *cmd, t_token *token);
 int count_args(t_token *token);
 char *safe_strdup(char *s);
 int redirect_input(char *file, t_cmd *cmd);
