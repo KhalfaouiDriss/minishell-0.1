@@ -24,9 +24,6 @@ int execute_builtin(t_shell *shell, char *cmd, char **args)
     int i = 0;
     if (ft_strncmp(cmd, "echo", 5) == 0) {
         ft_echo(args);
-        shell->pip_count--;
-        if(!shell->pip_count)
-            shell->exit_status = 0;
         return (0);
     }
     else if (ft_strncmp(cmd, "cd", 3) == 0) {
@@ -50,15 +47,7 @@ int execute_builtin(t_shell *shell, char *cmd, char **args)
         i = 0;
         while(args[i] && ft_strncmp(args[i], "env", 3) == 0)
             i++;
-        if(!args[i])
-            ft_env(shell->env, 1);
-        else
-        {
-            ft_putstr_fd("env: '",2);
-            ft_putstr_fd(args[i], 2);
-            ft_putstr_fd("': No such file or directory\n", 2);
-            shell->exit_status = 126;
-        }
+        ft_env(shell->env, 1);
         return (shell->exit_status);
     }
     else if (ft_strncmp(cmd, "exit", 5) == 0) {

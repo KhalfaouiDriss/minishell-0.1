@@ -7,6 +7,8 @@ void main_loop(t_shell *shell, char **envp)
 	{
 		global_state(0);
 		shell->input = readline("➜ Minishell $/~ ");
+		if (global_state(-1) == 2)
+			shell->exit_status = 130;
 		if (!shell->input)
 		{
 			free(shell->input);
@@ -16,8 +18,6 @@ void main_loop(t_shell *shell, char **envp)
 		}
 		if (shell->input[0])
 			add_history(shell->input);
-		if (global_state(-1) == 2)
-			shell->exit_status = 130;
 		shell->token = lexer_split_to_tokens(shell);
 		shell->cmd_list = parse_tokens(shell);
 		if (!shell->cmd_list)

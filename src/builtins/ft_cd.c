@@ -87,14 +87,26 @@ void ft_cd(t_shell *shell, char **args)
 		}
 
 	}
+	struct stat	sb;
+	if (stat(target_dir, &sb) == 0 ){
+		if(S_ISDIR(sb.st_mode))
+		{
+			if(!(sb.st_mode & S_IXUSR))
+				write(2, "Permission denied\n",19);
+
+		}
+		else
+			write(2,"Not a directory\n",17);
+		shell->exit_status = 1;
+	}
 	if (chdir(target_dir) == -1)
 	{
-		write(2, "cd: ", 4);
-		write(2, target_dir, ft_strlen(target_dir));
-		write(2, ": No such file or directory\n", 29);
+		char *buffer = ft_strjoin(target_dir, ": No such file or directory\n");
+		write(2, buffer, ft_strlen(buffer));
 		shell->exit_status = 1;
 		free(oldpwd);
-		return;
+		return ;
+
 	}
 
 	update_env_var(shell->env, "OLDPWD", oldpwd);

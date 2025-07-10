@@ -96,9 +96,8 @@ static t_cmd	*parse_command(t_token **token, t_shell *shell)
 				cmd->args[i++] = safe_strdup((*token)->value);
 		else
 		{
-			if (parse_redirections(token, cmd, shell) == -1){
+			if (parse_redirections(token, cmd, shell) == -1)
 				return NULL;
-			}
 		}
 		if (*token)
 			*token = (*token)->next;
