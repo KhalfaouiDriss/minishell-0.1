@@ -28,7 +28,7 @@ t_token *new_token(int *ebag ,char *val, int type, int error_type)
     {
         t->value = ft_strdup("");
     }
-    t->ebag = *ebag;
+    t->ebag = *ebag;    
     t->type = type;
     t->error = error_type;
     t->next = NULL;

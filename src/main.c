@@ -14,6 +14,12 @@ void	clean_env(t_env *env)
 	}
 }
 
+t_shell *get_shell()
+{
+	static t_shell shell;
+	return &shell;
+}
+
 void	clean_shell(t_shell *shell)
 {
 	if(shell->new_env)
@@ -48,20 +54,22 @@ void	main_loop(t_shell *shell)
 			continue;
 		global_state(1);
 		execute_pipeline(shell);
+		free(shell->input);
 	}
 }
 
 int	main(int ac, char **av, char **envp)
 {
-	t_shell shell;
+	t_shell *shell;
 
+	shell = get_shell();
 	(void)ac;
 	(void)av;
-	init_shell(&shell);
-	init_env(&shell, envp);
+	init_shell(shell);
+	init_env(shell, envp);
 	signal(SIGINT, get_sig);
 	signal(SIGTSTP, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
-	main_loop(&shell);
+	main_loop(shell);
 	return 0;
 }

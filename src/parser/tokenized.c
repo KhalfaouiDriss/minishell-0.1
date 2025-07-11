@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenized.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:57:22 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/10 20:27:54 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/11 18:49:14 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,7 +246,7 @@ void	handle_special_token(t_shell *shell, const char *input, int *i,
 // 	return (1);
 // }
 
-static int	is_quote(char c)
+int	is_quote(char c)
 {
 	return (c == '\'' || c == '"');
 }
@@ -464,6 +464,11 @@ void	handle_dollar_variable_expansion(t_shell *shell, t_lexer_state *state,
 			state->i = j;
 		}
 	}
+	else
+	{
+		state->current_word = strjoin_free(state->current_word, value);
+		state->i++;
+	}
 }
 
 void	handle_dollar_in_single_quotes(t_lexer_state *state)
@@ -530,11 +535,11 @@ static void	handle_empty_quotes(t_shell *shell, t_lexer_state *state)
 				shell->not_found = 1;
 				state->current_word = ft_strdup("");
 			}
-			else if (state->current_word)
-			{
-				shell->not_found = 1;
-				state->current_word = ft_strdup("");
-			}
+			// else if (state->current_word)
+			// {
+			// 	shell->not_found = 1;
+			// 	state->current_word = ft_strdup("");
+			// }
 		}
 	}
 }
@@ -562,7 +567,10 @@ void	handle_quotes(t_shell *shell, t_lexer_state *state)
 	while (state->str[state->i] && state->str[state->i] != state->quote)
 		state->i++;
 	if (state->str[state->i] == '\0')
+	{
+		printf("var : %s\n", state->current_word);	
 		return (handle_invalid_quote(shell, state));
+	}
 	state->tmp = ft_substr(state->str, state->start, state->i - state->start);
 	handle_empty_quotes(shell, state);
 	append_expanded_or_raw(shell, state, state->tmp, state->quote);

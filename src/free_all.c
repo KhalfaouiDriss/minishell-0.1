@@ -33,4 +33,5 @@ void gc_free_all(void)
         free(tmp->ptr);
         free(tmp);
     }
+    gc->head = NULL;
 }

@@ -92,7 +92,6 @@ static void	run_heredoc_loop(int tmp_fd, char *delimiter, t_shell *shell)
 		if (check_delimiter(line, delimiter))
 		{
 			clean_shell(shell);
-			free(line);
 			exit(0);
 		}
 		if (ft_strchr(line, '$'))
