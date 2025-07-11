@@ -6,58 +6,12 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:24:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/10 21:15:36 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/11 10:28:59 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-char	*full_paths(char *path, char *cmd)
-{
-	int			total_size;
-	char		*full_path;
-	total_size = ft_strlen(path) + ft_strlen(cmd) + 2;
-	full_path = ft_malloc(total_size);
-	ft_strlcpy(full_path, path, total_size);
-	ft_strlcat(full_path, "/", total_size);
-	ft_strlcat(full_path, cmd, total_size);
-	return full_path;
-}
-
-char	*find_command_path(char *cmd, t_env *envp)
-{
-	char		**paths;
-	char		*full_path;
-	char		*envp_value;
-	struct stat	sb;
-	int			i;
-
-	paths = NULL;
-	full_path = NULL;
-	if (ft_strchr(cmd, '/'))
-		return (ft_strdup(cmd));
-	envp_value = find_env_node(envp, "PATH");
-	if (!envp_value)
-		return (NULL);
-	paths = ft_split(envp_value, ':');
-	i = 0;
-	while (paths[i])
-	{
-		full_path = full_paths(paths[i], cmd);
-		if (access(full_path, X_OK) == 0 && stat(full_path, &sb) == 0
-			&& !S_ISDIR(sb.st_mode))
-			return (full_path);
-		i++;
-	}
-	return (NULL);
-}
-void dupping(int in, int out)
-{
-	dup2(in, 0);
-	close(in);
-	dup2(out, 1);
-	close(out);
-}
 static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 {
 	int	in;
@@ -71,11 +25,11 @@ static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 	out = dup(1);
 	if (cmd->infile && redirect_input(cmd->infile, cmd))
 	{
-			if (in != -1)
+		if (in != -1)
 			close(in);
-			if (out != -1)
+		if (out != -1)
 			close(out);
-			return (shell->exit_status = 1, shell->exit_status);
+		return (shell->exit_status = 1, shell->exit_status);
 	}
 	if (cmd->outfile_fd)
 	{
@@ -85,83 +39,6 @@ static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 	shell->exit_status = execute_builtin(shell, cmd->args[0], cmd->args);
 	dupping(in, out);
 	return (shell->exit_status);
-}
-
-static void	print_not_found_and_exit(t_cmd *cmd, t_shell *shell)
-{
-	char *buffer = ft_strjoin(cmd->args[0], " : command not found\n");
-	write(2, buffer, ft_strlen(buffer));
-	gc_free_all();
-	exit(127);
-}
-
-void	close_parent_fds(t_cmd *cmd, int prev_pipe)
-{
-	if (cmd->outfile_fd > 2)
-	{
-		close(cmd->outfile_fd);
-		cmd->outfile_fd = -1;
-	}
-	if (cmd->heredoc_fd > 2)
-	{
-		close(cmd->heredoc_fd);
-		cmd->heredoc_fd = -1;
-	}
-	if (prev_pipe != -1)
-		close(prev_pipe);
-}
-void dupping2(int fd, int a)
-{
-	dup2(fd, a);
-	close(fd);
-}
-
-static void	handle_signals_and_exit_cases(t_cmd *cmd)
-{
-	signal(SIGQUIT, SIG_DFL);
-	if (cmd->flag_amb == 1 && cmd->args[0] == NULL)
-		exit(0);
-	if (cmd->flag_amb == 1 || cmd->outfile_fd == -1)
-		exit(1);
-}
-
-static void	handle_pipes_and_fds(t_cmd *cmd, int prev_pipe, int *fd)
-{
-	if (cmd->next)
-	{
-		dupping2(fd[1], 1);
-		close(fd[0]);
-	}
-	if (prev_pipe != -1)
-		dupping2(prev_pipe, 0);
-	if (cmd->heredoc_fd != -1)
-		dupping2(cmd->heredoc_fd, 0);
-	if (cmd->infile)
-	{
-		if (redirect_input(cmd->infile, cmd))
-			exit(1);
-	}
-	if (cmd->outfile_fd)
-	{
-		dup2(cmd->outfile_fd, 1);
-		close(cmd->outfile_fd);
-	}
-}
-
-static void	handle_exec_errors(char *path, t_cmd *cmd, t_shell *shell)
-{
-	struct stat	sb;
-
-	if (path && access(path, X_OK) == 0 && stat(path, &sb) == 0
-		&& S_ISDIR(sb.st_mode))
-	{
-		write(1, path, ft_strlen(path));
-		write(1, ": Is a directory\n", 18);
-		gc_free_all();
-		exit(127);
-	}
-	if (!path)
-		print_not_found_and_exit(cmd, shell);
 }
 
 static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
@@ -181,12 +58,11 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 	if (stat(path, &sb) == 0 && !S_ISDIR(sb.st_mode))
 	{
 		perror(cmd->args[0]);
-		exit(127);
+		exit(126);
 	}
 	perror(cmd->args[0]);
-	exit(126);
+	exit(127);
 }
-
 
 static void	exec_loop(t_shell *shell)
 {
@@ -197,7 +73,7 @@ static void	exec_loop(t_shell *shell)
 
 	cmd = shell->cmd_list;
 	prev_pipe = -1;
-	if (is_builtin(cmd->args[0]) && !cmd->next)
+	if (is_builtin(cmd->args[0]) && !cmd->next && cmd->outfile_fd != -1)
 		return (handle_builtin_redirs(cmd, shell), (void)0);
 	while (cmd)
 	{
@@ -206,8 +82,7 @@ static void	exec_loop(t_shell *shell)
 		pid = fork();
 		if (pid == 0)
 			handle_child(cmd, shell, prev_pipe, fd);
-		else
-			close_parent_fds(cmd, prev_pipe);
+		close_parent_fds(cmd, prev_pipe);
 		if (cmd->next)
 		{
 			close(fd[1]);
@@ -216,21 +91,6 @@ static void	exec_loop(t_shell *shell)
 		cmd = cmd->next;
 	}
 	wait_all(pid, shell);
-}
-
-void sig_val(int sig, int *sigquit, int *sigint)
-{
-	if (sig == SIGQUIT)
-		*sigquit = 1;
-	else if (sig == SIGINT)
-		*sigint = 1;
-}
-void affiche_sig(int sigquit, int sigint)
-{
-	if (sigquit)
-		ft_putstr_fd("Quit (core dumped)\n", 2);
-	if (sigint)
-		ft_putchar_fd('\n', 2);
 }
 
 void	wait_all(int last_pid, t_shell *shell)
@@ -243,33 +103,18 @@ void	wait_all(int last_pid, t_shell *shell)
 
 	sigint = 0;
 	sigquit = 0;
-	while ((pid = waitpid(-1, &status, 0)) > 0)
+	waitpid(last_pid, &status, 0);
+	while (wait(NULL) > 0)
+		;
+	if (WIFEXITED(status))
+		shell->exit_status = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
 	{
-		if (pid == last_pid)
-		{
-			if (WIFEXITED(status))
-				shell->exit_status = WEXITSTATUS(status);
-			else if (WIFSIGNALED(status))
-				shell->exit_status = 128 + WTERMSIG(status);
-		}
-		if (WIFSIGNALED(status))
-		{
-			sig = WTERMSIG(status);
-			sig_val(sig, &sigquit, &sigint);
-		}
+		shell->exit_status = 128 + WTERMSIG(status);
+		sig = WTERMSIG(status);
+		sig_val(sig, &sigquit, &sigint);
 	}
 	affiche_sig(sigquit, sigint);
-}
-
-static void	handle_ambiguous(t_cmd *cmd, t_shell *shell)
-{
-	if (cmd->args[0] == NULL)
-	{
-		shell->exit_status = 0;
-	}
-	else
-		shell->exit_status = 1;
-	write(2, "ambiguous redirect\n", 20);
 }
 
 void	execute_pipeline(t_shell *shell)
