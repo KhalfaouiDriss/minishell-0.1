@@ -182,7 +182,7 @@ void	sig_val(int sig, int *sigquit, int *sigint);
 void	affiche_sig(int sigquit, int sigint);
 void	print_not_found_and_exit(t_cmd *cmd, t_shell *shell);
 void	handle_exec_errors(char *path, t_cmd *cmd, t_shell *shell);
-void	handle_signals_and_exit_cases(t_cmd *cmd);
+void	handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd);
 void	dupping2(int fd, int a);
 void	dupping(int in, int out);
 void	handle_pipes_and_fds(t_cmd *cmd, int prev_pipe, int *fd);

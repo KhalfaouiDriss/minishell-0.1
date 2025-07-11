@@ -64,7 +64,7 @@ static void	write_expanded_line(char *line, t_shell *shell, int tmp_fd)
 			if (var)
 			{
 				write(tmp_fd, var, ft_strlen(var));
-				free(var);
+				// free(var);
 			}
 		}
 		else
@@ -91,6 +91,7 @@ static void	run_heredoc_loop(int tmp_fd, char *delimiter, t_shell *shell)
 		line = readline("> ");
 		if (check_delimiter(line, delimiter))
 		{
+			clean_shell(shell);
 			free(line);
 			exit(0);
 		}
@@ -135,6 +136,7 @@ static void	handle_fork_child(int fd, char *delimiter, t_shell *shell)
 {
 	run_heredoc_loop(fd, delimiter, shell);
 	close(fd);
+	clean_shell(shell);
 	exit(shell->exit_status);
 }
 

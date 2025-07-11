@@ -1,17 +1,16 @@
 {
     "files.associations": {
-        "types.h": "c",
-        "readline.h": "c",
-        "minishell.h": "c",
-        "fcntl.h": "c",
-        "array": "c",
-        "memory": "c",
+        "charconv": "c",
+        "chrono": "c",
+        "optional": "c",
         "format": "c",
-        "istream": "c",
+        "ratio": "c",
+        "system_error": "c",
+        "array": "c",
         "functional": "c",
         "tuple": "c",
-        "utility": "c",
-        "variant": "c"
+        "type_traits": "c",
+        "utility": "c"
     },
     "makefile.configureOnOpen": true
 }

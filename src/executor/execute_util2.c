@@ -6,7 +6,7 @@
 /*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:45:02 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/11 11:04:28 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/11 11:45:35 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,17 @@ void	handle_exec_errors(char *path, t_cmd *cmd, t_shell *shell)
 		print_not_found_and_exit(cmd, shell);
 }
 
-void	handle_signals_and_exit_cases(t_cmd *cmd)
+void	handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd)
 {
 	signal(SIGQUIT, SIG_DFL);
 	if (cmd->flag_amb == 1 && cmd->args[0] == NULL)
+	{
+		clean_shell(shell);
 		exit(0);
+	}
 	if (cmd->flag_amb == 1 || cmd->outfile_fd == -1)
+	{
+		clean_shell(shell);	
 		exit(1);
+	}
 }

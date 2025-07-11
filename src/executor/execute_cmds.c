@@ -6,7 +6,7 @@
 /*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:24:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/11 11:22:05 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/11 11:46:12 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 	char		*path;
 	struct stat	sb;
 
-	handle_signals_and_exit_cases(cmd);
+	handle_signals_and_exit_cases(shell, cmd);
 	if (is_builtin(cmd->args[0]))
 	{
 		int k = handle_builtin_redirs(cmd, shell);
@@ -56,7 +56,10 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 	}
 	handle_pipes_and_fds(cmd, prev_pipe, fd);
 	if (!cmd->args[0])
+	{
+		clean_shell(shell);
 		exit(0);
+	}
 	path = find_command_path(cmd->args[0], shell->env);
 	handle_exec_errors(path, cmd, shell);
 	execve(path, cmd->args, shell->new_env);

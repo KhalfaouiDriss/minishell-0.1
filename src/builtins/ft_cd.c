@@ -19,7 +19,12 @@ void update_env_var(t_env *env, const char *name, const char *value)
 	{
 		if (ft_strncmp(tmp->name, name, ft_strlen(name)) == 0)
 		{
-			tmp->value = value ? ft_strdup(value) : NULL;
+			if(tmp->value)
+				free(tmp->value);
+			if(value)
+				tmp->value = ft_strdupv2(value);
+			else
+				tmp->value = NULL;
 			return;
 		}
 		tmp = tmp->next;
