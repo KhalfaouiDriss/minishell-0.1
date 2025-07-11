@@ -52,7 +52,6 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 
 	if((str[*i + 1] == '\'' && str[*i + 2] == '\'') || (str[*i + 1] == '"' && str[*i + 2] == '"'))
     {
-		printf("====================9\n");
 		(*i) += 3;
 	    return (ft_strdup(""));
 	}
@@ -86,7 +85,6 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 
 	if(shell->is_heredoc_delimiter)
 	{
-		printf("=================4\n");
 		shell->ebag = 0;
 		shell->is_heredoc_delimiter = 0;
 		(*i)--;
@@ -102,18 +100,15 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 		return NULL;
 	if (!var_value && !var_name && ft_isalpha(var_name[0]))
 	{
-		printf("=================\n");
 		char *unknown = NULL;
 		return ft_strdup("");
 	}
 	if (!var_value && ft_isalpha(var_name[0]))
 	{
-		printf("=================1\n");
 		char *unknown = NULL;
 		shell->ebag = 0;
 		if(shell->is_heredoc_delimiter)
 		{
-			printf("=================2\n");
 			shell->is_heredoc_delimiter = 0;
 			(*i)--;
 			return ft_strjoin("$", var_name);
@@ -122,7 +117,6 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	}
     if (!var_value)
 	{
-		printf("=================3\n");
 		char *unknown = NULL;
 		return ft_strdup("$");
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_util2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:45:02 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/11 11:45:35 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/11 20:27:08 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@ void	handle_exec_errors(char *path, t_cmd *cmd, t_shell *shell)
 		write(1, path, ft_strlen(path));
 		write(1, ": Is a directory\n", 18);
 		gc_free_all();
-		shell->exit_status = 127;
-		exit(127);
+		shell->exit_status = 126;
+		exit(126);
 	}
 	if (!path)
 		print_not_found_and_exit(cmd, shell);

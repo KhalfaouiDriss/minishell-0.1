@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_cmds.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:24:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/11 18:37:27 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/11 20:29:14 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 	}
 	shell->exit_status = execute_builtin(shell, cmd->args[0], cmd->args);
 	dupping(in, out);
-	// clean_shell(shell);
 	return (shell->exit_status);
 }
 

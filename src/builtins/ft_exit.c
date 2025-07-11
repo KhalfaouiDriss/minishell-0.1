@@ -1,9 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_exit.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/11 20:37:09 by sel-bech          #+#    #+#             */
+/*   Updated: 2025/07/11 20:37:10 by sel-bech         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/minishell.h"
 
 static int	is_numeric(const char *str)
 {
-	int i = 0;
+	int	i;
 
+	i = 0;
 	if (!str)
 		return (0);
 	if (str[i] == '+' || str[i] == '-')
@@ -16,11 +29,14 @@ static int	is_numeric(const char *str)
 	}
 	return (1);
 }
+
 long long	ft_atoll(const char *str)
 {
-	long long	res = 0;
-	int			sign = 1;
+	long long	res;
+	int			sign;
 
+	res = 0;
+	sign = 1;
 	while (*str == ' ' || (*str >= 9 && *str <= 13))
 		str++;
 	if (*str == '+' || *str == '-')
@@ -36,8 +52,9 @@ long long	ft_atoll(const char *str)
 
 int	ft_exit(t_shell *shell, char **args)
 {
-	long long	exit_code = 0;
+	long long	exit_code;
 
+	exit_code = 0;
 	if (args[1])
 	{
 		if (!is_numeric(args[1]) || ft_strlen(args[1]) > 19)
@@ -50,17 +67,14 @@ int	ft_exit(t_shell *shell, char **args)
 		}
 		exit_code = ft_atoll(args[1]);
 		if (args[2])
-		{
-			write(2, "exit\n", 5);
-			write(2, "minishell: exit: too many arguments\n", 36);
-			shell->exit_status = 1;
-			return (1);
-		}
+			return (write(2, "exit\n", 5), write(2,
+					"minishell: exit: too many arguments\n", 36),
+				shell->exit_status = 1, 1);
 		printf("exit\n");
 		clean_shell(shell);
 		exit((unsigned char)exit_code);
 	}
-    printf("exit\n");
+	printf("exit\n");
 	clean_shell(shell);
 	exit(shell->exit_status);
 }

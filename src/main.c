@@ -54,7 +54,7 @@ void	main_loop(t_shell *shell)
 			continue;
 		global_state(1);
 		execute_pipeline(shell);
-		free(shell->input);
+		// free(shell->input);
 	}
 }
 

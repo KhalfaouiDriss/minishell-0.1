@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils_2.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/11 20:43:35 by sel-bech          #+#    #+#             */
+/*   Updated: 2025/07/11 20:43:56 by sel-bech         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/minishell.h"
 
 int	redirect_input(char *file, t_cmd *cmd)
@@ -15,11 +27,11 @@ int	redirect_input(char *file, t_cmd *cmd)
 	return (0);
 }
 
-void	redirect_output(t_shell *shell,t_cmd *cmd, int append)
+void	redirect_output(t_shell *shell, t_cmd *cmd, int append)
 {
 	int	fd;
 
-	if(!cmd->flag_amb)
+	if (!cmd->flag_amb)
 	{
 		if (append)
 			fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
@@ -30,13 +42,10 @@ void	redirect_output(t_shell *shell,t_cmd *cmd, int append)
 			perror("open outfile");
 			cmd->outfile_fd = fd;
 			return ;
-	
 		}
 		cmd->outfile_fd = fd;
-
 	}
 }
-
 
 static int	check_delimiter(char *line, char *delimiter)
 {
@@ -62,10 +71,7 @@ static void	write_expanded_line(char *line, t_shell *shell, int tmp_fd)
 			else
 				var = handle_variable_token(line, &i, shell, 0);
 			if (var)
-			{
 				write(tmp_fd, var, ft_strlen(var));
-				// free(var);
-			}
 		}
 		else
 		{
@@ -76,16 +82,17 @@ static void	write_expanded_line(char *line, t_shell *shell, int tmp_fd)
 	write(tmp_fd, "\n", 1);
 }
 
-void handel_sig(int sig)
+void	handel_sig(int sig)
 {
-	write(1,"\n",1);
+	write(1, "\n", 1);
 	exit(2);
 }
 
 static void	run_heredoc_loop(int tmp_fd, char *delimiter, t_shell *shell)
 {
 	char	*line;
-	signal(SIGINT,handel_sig);
+
+	signal(SIGINT, handel_sig);
 	while (1)
 	{
 		line = readline("> ");
@@ -105,19 +112,23 @@ static void	run_heredoc_loop(int tmp_fd, char *delimiter, t_shell *shell)
 	}
 }
 
-char *gen_random(){
-	char *tmp;
+char	*gen_random(void)
+{
+	char	*tmp;
+	int		i;
+	int		fd;
+
 	tmp = ft_malloc(6);
-	int i = 0;
-	int fd = open("/dev/random", O_RDONLY);
-	while(i < 5){
-		read(fd, &tmp[i],1);
+	i = 0;
+	fd = open("/dev/random", O_RDONLY);
+	while (i < 5)
+	{
+		read(fd, &tmp[i], 1);
 		if (tmp[i] >= 32 && tmp[i] <= 126 && tmp[i] != '/')
 			i++;
 	}
 	tmp[i] = '\0';
-	return tmp;
-	
+	return (tmp);
 }
 
 static int	open_heredoc_file(char **path)
@@ -163,11 +174,7 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
 	signal(SIGINT, SIG_IGN);
 	pid = fork();
 	if (pid == -1)
-	{
-		signal(SIGINT, get_sig);
-		close(tmp_fd);
-		return (perror("fork"), -1);
-	}
+		return (signal(SIGINT, get_sig), close(tmp_fd), perror("fork"), -1);
 	if (pid == 0)
 		handle_fork_child(tmp_fd, delimiter, shell);
 	close(tmp_fd);

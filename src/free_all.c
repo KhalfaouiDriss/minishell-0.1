@@ -30,8 +30,10 @@ void gc_free_all(void)
     {
         tmp = gc->head;
         gc->head = gc->head->next;
-        free(tmp->ptr);
-        free(tmp);
+        if (tmp->ptr)
+            free(tmp->ptr);
+        if (tmp)
+            free(tmp);
     }
     gc->head = NULL;
 }

@@ -6,12 +6,12 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 18:34:17 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/09 12:55:04 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/11 20:40:05 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include "../../include/minishell.h"
+#include "libft.h"
 
 static int	count_words(const char *str, char c)
 {
@@ -33,6 +33,7 @@ static int	count_words(const char *str, char c)
 	}
 	return (count);
 }
+
 char	*ft_substr2(const char *str, unsigned int start, size_t n)
 {
 	size_t	i;
