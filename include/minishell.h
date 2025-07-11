@@ -209,4 +209,5 @@ int execute_builtin(t_shell *shell, char *cmd, char **args);
 
 char	*ft_strdupv2(const char *str);
 void	free_new_env(char **env);
+void	clean_shell(t_shell *shell);
 #endif

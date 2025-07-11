@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_cmds.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:24:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/11 10:28:59 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/11 11:22:05 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 	}
 	shell->exit_status = execute_builtin(shell, cmd->args[0], cmd->args);
 	dupping(in, out);
+	// clean_shell(shell);
 	return (shell->exit_status);
 }
 
@@ -48,7 +49,11 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 
 	handle_signals_and_exit_cases(cmd);
 	if (is_builtin(cmd->args[0]))
-		exit(handle_builtin_redirs(cmd, shell));
+	{
+		int k = handle_builtin_redirs(cmd, shell);
+		clean_shell(shell);	
+		exit(k);
+	}
 	handle_pipes_and_fds(cmd, prev_pipe, fd);
 	if (!cmd->args[0])
 		exit(0);

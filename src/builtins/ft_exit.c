@@ -57,10 +57,10 @@ int	ft_exit(t_shell *shell, char **args)
 			return (1);
 		}
 		printf("exit\n");
-		gc_free_all();
+		clean_shell(shell);
 		exit((unsigned char)exit_code);
 	}
     printf("exit\n");
-	gc_free_all();
+	clean_shell(shell);
 	exit(shell->exit_status);
 }

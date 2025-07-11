@@ -16,9 +16,13 @@ void	clean_env(t_env *env)
 
 void	clean_shell(t_shell *shell)
 {
-	free_new_env(shell->new_env);
-	clean_env(shell->env);
-	gc_free_all(); 
+	if(shell->new_env)
+		free_new_env(shell->new_env);
+	if(shell->env)
+		clean_env(shell->env);
+	gc_free_all();
+	shell->new_env = NULL;
+	shell->env = NULL;
 }
 
 
