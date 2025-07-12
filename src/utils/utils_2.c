@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:43:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/12 09:18:54 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/12 14:37:00 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,8 @@ void	write_expanded_line(char *line, t_shell *shell, int tmp_fd)
 void	handel_sig(int sig)
 {
 	write(1, "\n", 1);
-	gc_free_all();
+	t_shell *shell = get_shell();
+	clean_shell(shell);
 	exit(2);
 }
 

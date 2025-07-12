@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenized.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:57:22 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/12 12:09:40 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/12 14:39:06 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,23 +141,21 @@ int	fill_segment(const char *input, int *i, char *segment, char quote)
 
 // ================================================================
 
-int	get_type(char *val)
+int	get_type(char *val, int type)
 {
-	int	type;
 
-	type = 0;
-	if (ft_strncmp(val, "|", 1) == 0)
-		type = PIPE;
-	else if (ft_strncmp(val, ">>", 2) == 0)
-		type = REDIR_APPEND;
-	else if (ft_strncmp(val, "<<", 2) == 0)
-		type = REDIR_HEREDOC;
-	else if (ft_strncmp(val, "<", 1) == 0)
-		type = REDIR_IN;
-	else if (ft_strncmp(val, ">", 1) == 0)
-		type = REDIR_OUT;
-	else
-		type = ERROR;
+		if (ft_strncmp(val, "|", 1) == 0)
+			type = PIPE;
+		else if (ft_strncmp(val, ">>", 2) == 0)
+			type = REDIR_APPEND;
+		else if (ft_strncmp(val, "<<", 2) == 0)
+			type = REDIR_HEREDOC;
+		else if (ft_strncmp(val, "<", 1) == 0)
+			type = REDIR_IN;
+		else if (ft_strncmp(val, ">", 1) == 0)
+			type = REDIR_OUT;
+		else
+			type = ERROR;
 	return (type);
 }
 
@@ -169,6 +167,11 @@ void	handle_special_token(t_shell *shell, const char *input, int *i,
 	char	*val;
 
 	start = *i;
+	// if(input[*i] == '|' && input[*i + 1] == '|')
+	// {
+	// 	(*i) += 2;
+	// 	type = 0;
+	// }
 	if ((input[*i] == '<' || input[*i] == '>') && input[*i + 1] == input[*i])
 		*i += 2;
 	else if (input[*i] == '|' || input[*i] == '<' || input[*i] == '>')
@@ -180,8 +183,14 @@ void	handle_special_token(t_shell *shell, const char *input, int *i,
 		add_token(head, new_token(&(shell->ebag), val, ERROR, 0));
 		return ;
 	}
+	// if(!type)
+	// {
+	// 	val = ft_strdup(syntax_error);
+	// 	add_token(head, new_token(&(shell->ebag), val, 0, INPUT_INVA));
+	// 	return;
+	// }
 	val = ft_substr(input, start, *i - start);
-	type = get_type(val);
+	type = get_type(val, type);
 	if (type == REDIR_APPEND || type == REDIR_HEREDOC || type == REDIR_IN
 		|| type == REDIR_OUT)
 		shell->is_heredoc_delimiter = 1;
@@ -452,11 +461,16 @@ void	handle_dollar_variable_expansion(t_shell *shell, t_lexer_state *state,
 			state->current_word = strjoin_free(state->current_word, value);
 			state->i++;
 		}
+		else if(value && ft_strlen(value) == 0)
+		{
+			state->current_word = strjoin_free(state->current_word, "");
+			state->i++;
+		}
 		else
 		{
 			tmp2 = ft_substr(state->str, 0, j);
 			tmp3 = ft_substr(state->str, state->i, ft_strlen(state->str)
-					- state->i);
+			- state->i);
 			shell->input = ft_strjoin(tmp2, value);
 			tmp2 = shell->input;
 			shell->input = ft_strjoin(shell->input, tmp3);

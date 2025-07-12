@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   correct_lexer.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:49:06 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/12 12:08:19 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/12 14:37:46 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ static int	handle_operator_errors(t_shell *shell, t_token *tmp,
 {
 	if (*last_operator)
 	{
-		if (handle_double_pipe(shell, tmp, last_operator))
+		if (handle_double_pipe(shell, tmp, last_operator) && shell->not_found)
 			return (1);
 	}
 	*last_operator = ft_strdup(tmp->value);
