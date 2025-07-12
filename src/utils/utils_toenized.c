@@ -136,13 +136,19 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 		return ft_strdup("");
 			// free(var_name);
 	}
+	if(shell->is_heredoc_delimiter)
+	{
+		shell->is_heredoc_delimiter = 1;
+		(*i)--;
+		return ft_strjoin("$", var_name);
+	}
 	if (!var_value && ft_isalpha(var_name[0]))
 	{
 		char *unknown = NULL;
 		shell->ebag = 0;
 		if(shell->is_heredoc_delimiter)
 		{
-			shell->is_heredoc_delimiter = 0;
+			shell->is_heredoc_delimiter = 1;
 			(*i)--;
 			return ft_strjoin("$", var_name);
 		}

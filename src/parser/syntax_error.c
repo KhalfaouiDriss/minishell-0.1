@@ -23,7 +23,6 @@ int is_operator(char *str, int i)
 	return 0;
 }
 
-
 int skip_spaces(char *str, int i)
 {
 	while (str[i] && isspace(str[i]))
