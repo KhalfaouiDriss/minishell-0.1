@@ -23,6 +23,7 @@ int is_operator(char *str, int i)
 	return 0;
 }
 
+
 int skip_spaces(char *str, int i)
 {
 	while (str[i] && isspace(str[i]))
@@ -63,7 +64,9 @@ int check_syntax_errors(t_shell *shell)
 		{
 			i += op_len;
 			i = skip_spaces(input, i);
-			if (!input[i] || is_operator(input, i)) {
+
+			// ✅ السماح فقط بوجود '<<' بعد أي operator، والباقي نرفضه
+			if (!input[i] || (is_operator(input, i) && !(input[i] == '<' && input[i + 1] == '<'))) {
 				printf("syntax error near unexpected token '%.*s'\n", op_len, &input[i - op_len]);
 				shell->exit_status = 2;
 				return 1;
@@ -91,4 +94,5 @@ int check_syntax_errors(t_shell *shell)
 	}
 	return 0;
 }
+
 
