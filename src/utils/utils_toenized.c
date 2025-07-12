@@ -22,12 +22,11 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	char	*var_name = NULL;
 	char	*var_value = NULL;
 	t_env	*env = shell->env;
+	int status = 0;
 	int is = 0;
 
-	if(is_quote(str[*i - 1]) && is_quote(str[*i - 2]))
-	{
+	if(*i > 1 && is_quote(str[*i - 1]) && is_quote(str[*i - 2]))
 		is = 1;
-	}
 	// printf("str : %s && i : %d\n", str+*i-2, *i);
     if(ft_isdigit(str[*i + 1]))
     {
@@ -37,7 +36,7 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
     if (str[*i] == '$' && str[*i + 1] == '?')
 	{
 		*i += 2;
-		int status = shell->exit_status;
+		status = shell->exit_status;
 		// shell->exit_status = 0;
 		return ft_itoa(status);
 	}
@@ -128,7 +127,6 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	var_value = find_env_node(env, var_name);
 	if((!var_value && is_quote(str[*i]) && is_quote(str[*i + 1])) || (!var_value && is))
 	{
-		printf("=====\n");
 		(*i)--;
 		return ft_strdup("");
 	}
@@ -154,9 +152,10 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 			shell->is_heredoc_delimiter = 0;
 			return ft_strjoin("$", var_name);
 		}
-		printf("=====\n");
-		(*i)--;
-		return ft_strdup("\0");
+		if(str[*i])
+			(*i)--;
+		return NULL;
+		// return ft_strdup("");
 			// free(var_name);
 	}
     if (!var_value)

@@ -93,7 +93,6 @@ void	ft_export(t_shell *shell, char **args)
 			ft_putstr_fd("minishell: export: ", 2);
 			ft_putstr_fd(args[i], 2);
 			ft_putstr_fd(": not a valid identifier\n", 2);
-			free(key);
 			shell->exit_status = 1;
 			i++;
 			continue;

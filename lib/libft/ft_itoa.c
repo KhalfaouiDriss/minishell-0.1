@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 08:30:22 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/04 16:18:06 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/12 21:50:32 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ char	*ft_itoa(int nbr)
 	res = ft_malloc(sizeof(char) * (int_len(nbr) + 1));
 	if (!res)
 		return (0);
+	res[0] = '\0';
 	r = nbr;
 	if (nbr == 0)
 		return (ft_strdup("0"));

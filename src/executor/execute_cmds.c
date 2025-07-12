@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_cmds.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:24:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/12 17:25:14 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/12 22:14:12 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,15 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 	if (is_builtin(cmd->args[0]))
 		exit(builtin_free_exit(shell, cmd));
 	if (cmd->infile && redirect_input(cmd->infile, cmd))
+	{
+		clean_shell(shell);
 		exit(1);
+	}
 	if (!cmd->args[0] || cmd->args[0][0] == '$')
+	{
+		clean_shell(shell);
 		exit(0);
+	}
 	path = find_command_path(cmd->args[0], shell->env);
 	handle_exec_errors(path, cmd, shell);
 	if (cmd->outfile_fd)
@@ -95,6 +101,7 @@ static void	exec_loop(t_shell *shell)
 		}
 		cmd = cmd->next;
 	}
+	// gc_free_all();
 	wait_all(pid, shell);
 }
 

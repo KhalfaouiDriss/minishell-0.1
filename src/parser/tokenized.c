@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenized.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:57:22 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/12 18:38:49 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/12 21:16:14 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -638,6 +638,6 @@ t_token	*lexer_split_to_tokens(t_shell *shell)
 	while (state.str[state.i])
 		process_token_loop(shell, &state);
 	// correct_lexer(shell, &state.head);
-	print_tokens(state.head);
+	// print_tokens(state.head);
 	return (state.head);
 }

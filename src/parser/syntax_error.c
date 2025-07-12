@@ -40,7 +40,6 @@ int check_syntax_errors(t_shell *shell)
 	i = skip_spaces(input, 0);
 	if (!input[i])
 		return 0;
-
 	while (input[i])
 	{
 		if (input[i] == '"' || input[i] == '\'')
@@ -65,9 +64,8 @@ int check_syntax_errors(t_shell *shell)
 			i += op_len;
 			i = skip_spaces(input, i);
 
-			// ✅ السماح فقط بوجود '<<' بعد أي operator، والباقي نرفضه
-			if (!input[i] || (is_operator(input, i) && !(input[i] == '<' && input[i + 1] == '<'))) {
-				printf("syntax error near unexpected token '%.*s'\n", op_len, &input[i - op_len]);
+			if (!input[i] || input[0] == '|' || (is_operator(input, i) && !((input[i] == '<') || (input[i] == '>')))) {
+				printf("syntax error\n");
 				shell->exit_status = 2;
 				return 1;
 			}

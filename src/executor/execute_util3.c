@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_util3.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:49:42 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/12 18:13:34 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/12 21:59:59 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,9 @@ void	handle_pipes_and_fds(t_cmd *cmd, int prev_pipe, int *fd)
 void	execve_fail(t_cmd *cmd)
 {
 	perror(cmd->args[0]);
-	gc_free_all();
+	// gc_free_all();
+	t_shell *shell =  get_shell();
+	clean_shell(shell);
 	exit(126);
 }
 
