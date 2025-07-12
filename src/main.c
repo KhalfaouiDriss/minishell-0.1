@@ -54,13 +54,12 @@ void	main_loop(t_shell *shell)
 			continue;
 		global_state(1);
 		execute_pipeline(shell);
-		// free(shell->input);
 	}
 }
 
 int	main(int ac, char **av, char **envp)
 {
-	t_shell *shell;
+	t_shell *shell;	
 
 	shell = get_shell();
 	(void)ac;

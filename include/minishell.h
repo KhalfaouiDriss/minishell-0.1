@@ -218,4 +218,5 @@ void	free_new_env(char **env);
 void	clean_shell(t_shell *shell);
 int	is_quote(char c);
 t_shell *get_shell();
+int check_syntax_errors(t_shell *shell);
 #endif

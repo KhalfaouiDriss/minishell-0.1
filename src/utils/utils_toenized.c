@@ -126,8 +126,8 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	var_value = find_env_node(env, var_name);
 	if((!var_value && is_quote(str[*i]) && is_quote(str[*i + 1])) || (!var_value && is))
 	{
-		// shell->not_found = 1;
-		(*i)++;
+		printf("=====\n");
+		(*i)--;
 		return ft_strdup("");
 	}
 	if (!var_value && !var_name && ft_isalpha(var_name[0]))

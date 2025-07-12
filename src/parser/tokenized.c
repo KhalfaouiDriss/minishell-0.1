@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenized.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:57:22 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/12 14:39:06 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/12 17:22:37 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -540,15 +540,9 @@ static void	handle_empty_quotes(t_shell *shell, t_lexer_state *state)
 		{
 			if ((state->i == 1 && ft_strlen(state->str) == 2)
 				|| !state->str[state->i + 1])
-			{
-				shell->not_found = 1;
 				state->current_word = ft_strdup("");
-			}
 			else if (state->current_word)
-			{
-				shell->not_found = 1;
 				state->current_word = ft_strdup("");
-			}
 		}
 	}
 }
@@ -636,13 +630,15 @@ void	init_lexer_vars(t_shell *shell, t_lexer_state *state)
 t_token	*lexer_split_to_tokens(t_shell *shell)
 {
 	t_lexer_state	state;
-
+	
+	if (check_syntax_errors(shell))
+		return NULL;
 	init_lexer_vars(shell, &state);
 	if (check_initial_dollar_error(shell, &state))
 		return (state.head);
 	while (state.str[state.i])
 		process_token_loop(shell, &state);
-	correct_lexer(shell, &state.head);
-	// print_tokens(state.head);
+	// correct_lexer(shell, &state.head);
+	print_tokens(state.head);
 	return (state.head);
 }
