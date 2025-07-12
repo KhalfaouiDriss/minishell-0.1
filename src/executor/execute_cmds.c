@@ -6,13 +6,13 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:24:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/11 20:29:14 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/12 10:58:55 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
+int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 {
 	int	in;
 	int	out;
@@ -43,33 +43,30 @@ static int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 
 static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 {
-	char		*path;
-	struct stat	sb;
+	char	*path;
 
 	handle_signals_and_exit_cases(shell, cmd);
+	if (cmd->next)
+	{
+		dupping2(fd[1], 1);
+		close(fd[0]);
+	}
+	if (prev_pipe != -1)
+		dupping2(prev_pipe, 0);
+	if (cmd->heredoc_fd != -1)
+		dupping2(cmd->heredoc_fd, 0);
 	if (is_builtin(cmd->args[0]))
-	{
-		int k = handle_builtin_redirs(cmd, shell);
-		clean_shell(shell);	
-		exit(k);
-	}
-	handle_pipes_and_fds(cmd, prev_pipe, fd);
+		exit(builtin_free_exit(shell, cmd));
+	if (cmd->infile && redirect_input(cmd->infile, cmd))
+		exit(1);
 	if (!cmd->args[0])
-	{
-		clean_shell(shell);
 		exit(0);
-	}
-
 	path = find_command_path(cmd->args[0], shell->env);
 	handle_exec_errors(path, cmd, shell);
+	if (cmd->outfile_fd)
+		dupping2(cmd->outfile_fd, 1);
 	execve(path, cmd->args, shell->new_env);
-	if (stat(path, &sb) == 0 && !S_ISDIR(sb.st_mode))
-	{
-		perror(cmd->args[0]);
-		exit(126);
-	}
-	perror(cmd->args[0]);
-	exit(127);
+	execve_fail(cmd);
 }
 
 static void	exec_loop(t_shell *shell)

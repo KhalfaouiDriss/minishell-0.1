@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:49:42 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/11 10:20:20 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/12 10:59:54 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,4 +47,21 @@ void	handle_pipes_and_fds(t_cmd *cmd, int prev_pipe, int *fd)
 		dup2(cmd->outfile_fd, 1);
 		close(cmd->outfile_fd);
 	}
+}
+
+void	execve_fail(t_cmd *cmd)
+{
+	perror(cmd->args[0]);
+	gc_free_all();
+	exit(126);
+}
+
+int	builtin_free_exit(t_shell *shell, t_cmd *cmd)
+{
+	int	n;
+
+	n = 0;
+	n = handle_builtin_redirs(cmd, shell);
+	clean_shell(shell);
+	return (n);
 }
