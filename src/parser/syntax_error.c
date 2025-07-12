@@ -25,9 +25,10 @@ int check_syntax_errors(t_shell *shell)
 
 	i = skip_spaces(input, 0);
 	if (!input[i])
-		return 0; // empty input is OK
-
-	while (input[i])
+		return 0;
+    if( input[0] == '|')
+    // {}    
+    while (input[i])
 	{
 		i = skip_spaces(input, i);
 		op_len = is_operator(input, i);
@@ -35,7 +36,7 @@ int check_syntax_errors(t_shell *shell)
 		{
 			i += op_len;
 			i = skip_spaces(input, i);
-			if (!input[i] || is_operator(input, i)) {
+			if (!input[i] || is_operator(input, i) ||  input[0] == '|') {
 				printf("syntax error near unexpected token '%.*s'\n", op_len, &input[i - op_len]);
                 shell->exit_status = 2;
 				return 1;
