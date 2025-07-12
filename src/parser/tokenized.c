@@ -6,7 +6,7 @@
 /*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:57:22 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/12 17:22:37 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/12 18:38:49 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,8 +191,7 @@ void	handle_special_token(t_shell *shell, const char *input, int *i,
 	// }
 	val = ft_substr(input, start, *i - start);
 	type = get_type(val, type);
-	if (type == REDIR_APPEND || type == REDIR_HEREDOC || type == REDIR_IN
-		|| type == REDIR_OUT)
+	if (type == REDIR_HEREDOC)
 		shell->is_heredoc_delimiter = 1;
 	add_token(head, new_token(&(shell->ebag), val, type, 0));
 	return ;
