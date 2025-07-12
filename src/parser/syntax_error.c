@@ -37,6 +37,7 @@ int check_syntax_errors(t_shell *shell)
 			i = skip_spaces(input, i);
 			if (!input[i] || is_operator(input, i)) {
 				printf("syntax error near unexpected token '%.*s'\n", op_len, &input[i - op_len]);
+                shell->exit_status = 2;
 				return 1;
 			}
 		}
