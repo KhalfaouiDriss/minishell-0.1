@@ -102,7 +102,9 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	start = *i;
 
 	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
+	{
 		(*i)++;
+	}
 	len = *i - start;
 	var_name = ft_substr(str, start, len);
 
@@ -148,11 +150,13 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 		shell->ebag = 0;
 		if(shell->is_heredoc_delimiter)
 		{
-			shell->is_heredoc_delimiter = 1;
-			(*i)--;
+			(*i)++;
+			shell->is_heredoc_delimiter = 0;
 			return ft_strjoin("$", var_name);
 		}
-		return NULL;
+		printf("=====\n");
+		(*i)--;
+		return ft_strdup("\0");
 			// free(var_name);
 	}
     if (!var_value)
