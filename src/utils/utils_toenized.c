@@ -12,7 +12,9 @@ int check_embag(char *var_value)
 	while (value[i])
 		i++;
 	if(i > 1)
+	{
 		return 0;
+	}
 	return 1;
 }
 
@@ -203,13 +205,14 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	}
 
 
+	shell->ebag = check_embag(var_value);
 	if(shell->is_heredoc_delimiter)
 	{
 		shell->is_heredoc_delimiter = 0;
 		(*i)--;
 		return ft_strjoin("$", var_name);
 	}
-	shell->ebag = check_embag(var_value);
+	// shell->ebag = check_embag(var_value);
 	return var_value;
 }
 
