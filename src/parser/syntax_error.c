@@ -6,7 +6,7 @@
 /*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:37 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/13 17:18:38 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/13 20:31:52 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,23 +35,67 @@ int	is_operator(char *str, int i)
 	return (0);
 }
 
-int	skip_spaces(char *str, int i)
+static int	handle_unmatched_quote(char quote, char *input, int *i,
+		t_shell *shell)
 {
-	while (str[i] && isspace(str[i]))
-		i++;
-	return (i);
+	while (input[*i] && input[*i] != quote)
+		(*i)++;
+	if (!input[*i])
+	{
+		printf("syntax error: unmatched quote\n");
+		shell->exit_status = 130;
+		return (1);
+	}
+	(*i)++;
+	return (0);
+}
+
+static int	handle_operator(char *input, int *i, t_shell *shell)
+{
+	int	op_len;
+
+	op_len = is_operator(input, *i);
+	if (op_len)
+	{
+		*i += op_len;
+		*i = skip_spaces(input, *i);
+		if (!input[*i] || input[0] == '|' || (is_operator(input, *i)
+				&& !((input[*i] == '<') || (input[*i] == '>'))))
+		{
+			printf("syntax error\n");
+			shell->exit_status = 2;
+			return (1);
+		}
+	}
+	return (0);
+}
+
+static int	skip_word(char *input, int *i, t_shell *shell)
+{
+	char	quote;
+
+	while (input[*i] && !isspace(input[*i]) && !is_operator(input, *i))
+	{
+		if (input[*i] == '"' || input[*i] == '\'')
+		{
+			quote = input[(*i)++];
+			if (handle_unmatched_quote(quote, input, i, shell))
+				return (1);
+		}
+		else
+			(*i)++;
+	}
+	return (0);
 }
 
 int	check_syntax_errors(t_shell *shell)
 {
 	int		i;
-	int		op_len;
 	char	*input;
 	char	quote;
 
-	i = 0;
+	i = skip_spaces(shell->input, 0);
 	input = shell->input;
-	i = skip_spaces(input, 0);
 	if (!input[i])
 		return (0);
 	while (input[i])
@@ -59,50 +103,15 @@ int	check_syntax_errors(t_shell *shell)
 		if (input[i] == '"' || input[i] == '\'')
 		{
 			quote = input[i++];
-			while (input[i] && input[i] != quote)
-				i++;
-			if (!input[i])
-			{
-				printf("syntax error: unmatched quote\n");
-				shell->exit_status = 130;
+			if (handle_unmatched_quote(quote, input, &i, shell))
 				return (1);
-			}
-			i++;
 			continue ;
 		}
 		i = skip_spaces(input, i);
-		op_len = is_operator(input, i);
-		if (op_len)
-		{
-			i += op_len;
-			i = skip_spaces(input, i);
-			if (!input[i] || input[0] == '|' || (is_operator(input, i)
-					&& !((input[i] == '<') || (input[i] == '>'))))
-			{
-				printf("syntax error\n");
-				shell->exit_status = 2;
-				return (1);
-			}
-		}
-		else
-		{
-			while (input[i] && !isspace(input[i]) && !is_operator(input, i))
-			{
-				if (input[i] == '"' || input[i] == '\'')
-				{
-					quote = input[i++];
-					while (input[i] && input[i] != quote)
-						i++;
-					if (!input[i])
-					{
-						printf("syntax error: unmatched quote\n");
-						shell->exit_status = 130;
-						return (1);
-					}
-				}
-				i++;
-			}
-		}
+		if (handle_operator(input, &i, shell))
+			return (1);
+		if (skip_word(input, &i, shell))
+			return (1);
 	}
 	return (0);
 }

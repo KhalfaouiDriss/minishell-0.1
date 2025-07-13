@@ -1,26 +1,63 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   signals_hand.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/13 20:36:53 by dkhalfao          #+#    #+#             */
+/*   Updated: 2025/07/13 20:41:15 by dkhalfao         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/minishell.h"
 
-// int g_blocked = 0;
-
-int global_state(int set)
+int	global_state(int set)
 {
-	static int state;
+	static int	state;
 
 	if (set != -1)
 		state = set;
-	return state;
+	return (state);
 }
 
-void get_sig(int sig)
+char	*get_variable(t_shell *shell, char *line, int *i, int quot)
 {
-	int state = global_state(-1);
+	char	*var_name;
+	char	*var_value;
+	int		start;
 
+	(*i)++;
+	start = *i;
+	while (line[*i] && (ft_isalnum(line[*i]) || line[*i] == '_'))
+		(*i)++;
+	var_name = ft_substr(line, start, *i - start);
+	var_value = find_env_node(shell->env, var_name);
+	if (var_value)
+		return (var_value);
+	else
+		return (ft_strdup(""));
+}
+
+void	handel_sig(int sig)
+{
+	t_shell	*shell;
+
+	write(1, "\n", 1);
+	shell = get_shell();
+	clean_shell(shell);
+	exit(2);
+}
+
+void	get_sig(int sig)
+{
+	int	state;
+
+	state = global_state(-1);
 	if (state == 1)
-		return;
-
+		return ;
 	if (sig == SIGINT)
 		global_state(2);
-
 	if (state != 3)
 	{
 		write(1, "\n", 1);
@@ -28,5 +65,4 @@ void get_sig(int sig)
 		rl_on_new_line();
 		rl_redisplay();
 	}
-
 }

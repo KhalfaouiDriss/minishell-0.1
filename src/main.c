@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/13 20:33:06 by dkhalfao          #+#    #+#             */
+/*   Updated: 2025/07/13 20:33:13 by dkhalfao         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/minishell.h"
 
 void	clean_env(t_env *env)
 {
-	t_env *tmp;
+	t_env	*tmp;
 
 	while (env)
 	{
@@ -14,23 +26,23 @@ void	clean_env(t_env *env)
 	}
 }
 
-t_shell *get_shell()
+t_shell	*get_shell(void)
 {
-	static t_shell shell;
-	return &shell;
+	static t_shell	shell;
+
+	return (&shell);
 }
 
 void	clean_shell(t_shell *shell)
 {
-	if(shell->new_env)
+	if (shell->new_env)
 		free_new_env(shell->new_env);
-	if(shell->env)
+	if (shell->env)
 		clean_env(shell->env);
 	gc_free_all();
 	shell->new_env = NULL;
 	shell->env = NULL;
 }
-
 
 void	main_loop(t_shell *shell)
 {
@@ -51,7 +63,7 @@ void	main_loop(t_shell *shell)
 		shell->token = lexer_split_to_tokens(shell);
 		shell->cmd_list = parse_tokens(shell);
 		if (!shell->cmd_list)
-			continue;
+			continue ;
 		global_state(1);
 		execute_pipeline(shell);
 	}
@@ -59,7 +71,7 @@ void	main_loop(t_shell *shell)
 
 int	main(int ac, char **av, char **envp)
 {
-	t_shell *shell;	
+	t_shell	*shell;
 
 	shell = get_shell();
 	(void)ac;
@@ -70,5 +82,5 @@ int	main(int ac, char **av, char **envp)
 	signal(SIGTSTP, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
 	main_loop(shell);
-	return 0;
+	return (0);
 }

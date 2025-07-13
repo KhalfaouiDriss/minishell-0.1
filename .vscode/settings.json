@@ -11,7 +11,8 @@
         "tuple": "c",
         "type_traits": "c",
         "utility": "c",
-        "minishell.h": "c"
+        "minishell.h": "c",
+        "sstream": "c"
     },
     "makefile.configureOnOpen": true
 }

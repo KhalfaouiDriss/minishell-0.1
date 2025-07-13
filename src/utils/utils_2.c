@@ -6,7 +6,7 @@
 /*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:43:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/13 19:54:53 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/13 20:41:09 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,23 +54,6 @@ int	check_delimiter(char *line, char *delimiter)
 	return (0);
 }
 
-char	*get_variable(t_shell *shell, char *line, int *i, int quot)
-{
-	char	*var_name;
-	char	*var_value;
-	int		start;
-
-	(*i)++;
-	start = *i;
-	while (line[*i] && (ft_isalnum(line[*i]) || line[*i] == '_'))
-		(*i)++;
-	var_name = ft_substr(line, start, *i - start);
-	var_value = find_env_node(shell->env, var_name);
-	if (var_value)
-		return (var_value);
-	else
-		return (ft_strdup(""));
-}
 void	write_expanded_line(char *line, t_shell *shell, int tmp_fd)
 {
 	int		i;
@@ -92,16 +75,6 @@ void	write_expanded_line(char *line, t_shell *shell, int tmp_fd)
 		}
 	}
 	write(tmp_fd, "\n", 1);
-}
-
-void	handel_sig(int sig)
-{
-	t_shell	*shell;
-
-	write(1, "\n", 1);
-	shell = get_shell();
-	clean_shell(shell);
-	exit(2);
 }
 
 void	run_heredoc_loop(int tmp_fd, char *delimiter, t_shell *shell)

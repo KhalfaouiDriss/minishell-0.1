@@ -6,7 +6,7 @@
 /*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:14 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/13 20:11:37 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/13 20:29:46 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ char	*expand_variables_in_string(char *str, t_shell *shell, char qt)
 		{
 			tmp = handle_variable_token(str, &i, shell, qt);
 			result = strjoin_free(result, tmp);
-			// i++;
 		}
 		else
 		{

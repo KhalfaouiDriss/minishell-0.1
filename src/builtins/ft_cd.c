@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_cd.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/13 21:41:04 by dkhalfao          #+#    #+#             */
+/*   Updated: 2025/07/13 21:41:05 by dkhalfao         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/minishell.h"
 
 char	*get_env_value(t_env *env, const char *name)
@@ -11,36 +23,19 @@ char	*get_env_value(t_env *env, const char *name)
 	return (NULL);
 }
 
-void	update_env_var(t_env *env, const char *name, const char *value)
+void	add_new_env_var(t_env *env, const char *name, const char *value)
 {
-	t_env	*tmp;
 	t_env	*new_var;
+	t_env	*tmp;
 
-	tmp = env;
-	while (tmp)
-	{
-		if (ft_strncmp(tmp->name, name, ft_strlen(name)) == 0)
-		{
-			
-			if (tmp->value)
-				free(tmp->value);
-			
-			if (value)
-				tmp->value = ft_strdupv2(value);
-			else
-				tmp->value = NULL;
-			return ;
-		}
-		tmp = tmp->next;
-	}
 	new_var = malloc(sizeof(t_env));
 	if (!new_var)
 		return ;
 	new_var->name = ft_strdupv2(name);
-	if(value)
+	if (value)
 		new_var->value = ft_strdupv2(value);
 	else
-		new_var->value =  NULL;
+		new_var->value = NULL;
 	new_var->next = NULL;
 	tmp = env;
 	if (!tmp)
@@ -50,79 +45,56 @@ void	update_env_var(t_env *env, const char *name, const char *value)
 	tmp->next = new_var;
 }
 
+void	update_env_var(t_env *env, const char *name, const char *value)
+{
+	t_env	*tmp;
+
+	tmp = env;
+	while (tmp)
+	{
+		if (ft_strncmp(tmp->name, name, ft_strlen(name)) == 0)
+		{
+			if (tmp->value)
+				free(tmp->value);
+			if (value)
+				tmp->value = ft_strdupv2(value);
+			else
+				tmp->value = NULL;
+			return ;
+		}
+		tmp = tmp->next;
+	}
+	add_new_env_var(env, name, value);
+}
+
+void	handle_cd_args_error(t_shell *shell)
+{
+	write(2, "cd: too many arguments\n", 24);
+	shell->exit_status = 1;
+}
+
 void	ft_cd(t_shell *shell, char **args)
 {
 	const char	*target_dir;
 	char		*oldpwd;
-	char		*newpwd;
-	char		*fallback;
-	int			attempts;
-	char		*tmp;
-	struct stat	sb;
-	char		*buffer;
 
 	if (args[2])
-	{
-		write(2, "cd: too many arguments\n", 24);
-		shell->exit_status = 1;
+		return (handle_cd_args_error(shell));
+	target_dir = get_target_dir(shell, args);
+	if (!target_dir)
 		return ;
-	}
-	if (!args[1])
-	{
-		target_dir = get_env_value(shell->env, "HOME");
-		if (!target_dir)
-		{
-			write(2, "cd: HOME not set\n", 17);
-			shell->exit_status = 1;
-			return ;
-		}
-	}
-	else
-		target_dir = args[1];
 	oldpwd = getcwd(NULL, 0);
 	if (!oldpwd)
+		handle_cd_oldpwd_failure(shell);
+	if (check_cd_errors(shell, target_dir))
 	{
-		fallback = get_env_value(shell->env, "PWD");
-		attempts = 10;
-		if (chdir(fallback) == -1 && attempts--)
-		{
-			tmp = fallback;
-			fallback = ft_strjoin(tmp, "/..");
-		}
-		if (fallback)
-		{
-			update_env_var(shell->env, "PWD", fallback);
-		}
-	}
-	if (stat(target_dir, &sb) == 0)
-	{
-		if (S_ISDIR(sb.st_mode))
-		{
-			if (!(sb.st_mode & S_IXUSR))
-				write(2, "Permission denied\n", 19);
-		}
-		else
-			write(2, "Not a directory\n", 17);
-		shell->exit_status = 1;
-	}
-	if (chdir(target_dir) == -1)
-	{
-		buffer = ft_strjoin(target_dir, ": No such file or directory\n");
-		write(2, buffer, ft_strlen(buffer));
-		shell->exit_status = 1;
 		free(oldpwd);
 		return ;
 	}
+	if (chdir(target_dir) == -1)
+		return (handle_cd_chdir_fail(shell, target_dir, oldpwd));
 	update_env_var(shell->env, "OLDPWD", oldpwd);
 	free(oldpwd);
-	newpwd = getcwd(NULL, 0);
-	if (!newpwd)
-	{
-		perror("cd: getcwd after chdir");
-		shell->exit_status = 1;
-		return ;
-	}
-	update_env_var(shell->env, "PWD", newpwd);
-	free(newpwd);
+	update_pwd_after_cd(shell);
 	shell->exit_status = 0;
 }

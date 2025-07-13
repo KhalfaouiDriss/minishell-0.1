@@ -6,7 +6,7 @@
 /*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:49:06 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/12 14:37:46 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/13 22:13:05 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static int	handle_pipe_at_start(t_shell *shell, t_token *token)
 {
 	if (token->type == PIPE)
 	{
-		token->value = ft_strdup(syntax_error);
+		token->value = ft_strdup(SYT_ERR);
 		token->type = ERROR;
 		token->error = INPUT_INVA;
 		shell->exit_status = 2;
@@ -37,7 +37,7 @@ int	handle_double_pipe(t_shell *shell, t_token *tmp, char **last_operator)
 	if ((tmp->type == PIPE && ft_strncmp(*last_operator, "|", 1) == 0)
 		|| (tmp->type != PIPE && strncmp(*last_operator, "|", 1) != 0))
 	{
-		tmp->value = ft_strdup(syntax_error);
+		tmp->value = ft_strdup(SYT_ERR);
 		tmp->type = ERROR;
 		tmp->error = INPUT_INVA;
 		shell->exit_status = 2;
@@ -57,7 +57,7 @@ static int	handle_operator_errors(t_shell *shell, t_token *tmp,
 	*last_operator = ft_strdup(tmp->value);
 	if (tmp->next == NULL)
 	{
-		tmp->value = ft_strdup(syntax_error);
+		tmp->value = ft_strdup(SYT_ERR);
 		tmp->type = ERROR;
 		tmp->error = INPUT_INVA;
 		shell->exit_status = 2;
@@ -65,7 +65,7 @@ static int	handle_operator_errors(t_shell *shell, t_token *tmp,
 	}
 	if (tmp->type != PIPE && is_operator(tmp->next))
 	{
-		tmp->next->value = ft_strdup(syntax_error);
+		tmp->next->value = ft_strdup(SYT_ERR);
 		tmp->next->type = ERROR;
 		tmp->next->error = INPUT_INVA;
 		shell->exit_status = 2;
