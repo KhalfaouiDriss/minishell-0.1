@@ -15,6 +15,7 @@ char	*gen_random(void)
 		if (tmp[i] >= 32 && tmp[i] <= 126 && tmp[i] != '/')
 			i++;
 	}
+	close(fd);
 	tmp[i] = '\0';
 	return (tmp);
 }

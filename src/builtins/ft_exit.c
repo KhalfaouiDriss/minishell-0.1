@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:37:09 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/13 09:18:19 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/13 20:19:14 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int	ft_exit(t_shell *shell, char **args)
 			write(2, "exit\n", 5);
 			write(2, args[1], ft_strlen(args[1]));
 			write(2, ": numeric argument required\n", 28);
-			gc_free_all();
+			clean_shell(shell);
 			exit(2);
 		}
 		exit_code = ft_atoll(args[1]);

@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:45:02 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/12 11:13:33 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/13 20:16:58 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	handle_exec_errors(char *path, t_cmd *cmd, t_shell *shell)
 	{
 		write(1, path, ft_strlen(path));
 		write(1, ": Is a directory\n", 18);
-		gc_free_all();
+		clean_shell(shell);
 		shell->exit_status = 126;
 		exit(126);
 	}
