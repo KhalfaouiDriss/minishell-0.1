@@ -173,7 +173,7 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 			shell->is_heredoc_delimiter = 0;
 			return ft_strjoin("$", var_name);
 		}
-		if(str[*i])
+		if(!str[*i])
 			(*i)--;
 		return NULL;
 		// return ft_strdup("");
