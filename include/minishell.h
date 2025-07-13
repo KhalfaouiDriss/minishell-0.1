@@ -61,6 +61,7 @@ typedef struct s_cmd
     int outfile_fd;
     int append;
     char *heredoc;
+    int infile_fd;
     int heredoc_fd;
     int c_flag;
     int fd_builtin;
@@ -182,6 +183,7 @@ void	finalize_current_word(t_shell *shell, t_lexer_state *state);
 void	handle_dollar_sign(t_shell *shell, t_lexer_state *state);
 
 t_cmd *parse_tokens(t_shell *shell);
+int	clean_exit(t_shell *shell, int fexit);
 void	handle_ambiguous(t_cmd *cmd, t_shell *shell);
 void	close_parent_fds(t_cmd *cmd, int prev_pipe);
 char	*find_command_path(char *cmd, t_env *envp);
@@ -204,7 +206,7 @@ void	run_heredoc_loop(int tmp_fd, char *delimiter, t_shell *shell);
 void	write_expanded_line(char *line, t_shell *shell, int tmp_fd);
 int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell);
 char *safe_strdup(char *s);
-int redirect_input(char *file, t_cmd *cmd);
+void redirect_input(char *file, t_cmd *cmd);
 void redirect_output(t_shell *shell, t_cmd *cmd, int append);
 int handle_heredoc(char *delimiter, t_shell *shell);
 void execute_pipeline(t_shell *shell);

@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:14:12 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/10 16:20:46 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/13 09:58:39 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ void	red_out(t_shell *shell, t_cmd *cmd, t_token *token)
 	else if (token->type == REDIR_APPEND)
 		cmd->append = 1;
 	redirect_output(shell, cmd, cmd->append);
+	if (token->next->next && (token->next->next->type == REDIR_OUT || token->next->next->type == REDIR_APPEND))
+		close(cmd->outfile_fd);
 }
 
 int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
@@ -68,6 +70,7 @@ void	init_str(t_cmd *cmd)
 	cmd->outfile = NULL;
 	cmd->next = NULL;
 	cmd->heredoc = 0;
+	cmd->infile = 0;
 	cmd->append = 0;
 	cmd->outfile_fd = 0;
 	cmd->c_flag = 0;

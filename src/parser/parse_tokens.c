@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_tokens.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 15:51:13 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/12 17:19:56 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/13 10:11:13 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,12 @@ static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 			|| (*token)->type == REDIR_APPEND) && !next->ebag && !cmd->flag_amb)
 		return (cmd->flag_amb = 1, *token = next, 0);
 	if ((*token)->type == REDIR_IN)
-		return (cmd->infile = ft_strdup(next->value), *token = next, 1);
+	{
+		cmd->infile = ft_strdup(next->value);
+		redirect_input(cmd->infile, cmd);
+		if(cmd->infile_fd == -1)
+			return (shell->exit_status = 1, *token = next, 1);
+	}
 	else if ((*token)->type == REDIR_HEREDOC)
 	{
 		cmd->heredoc = ft_strdup(next->value);

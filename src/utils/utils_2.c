@@ -6,32 +6,29 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:43:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/12 22:13:17 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/13 10:35:03 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int	redirect_input(char *file, t_cmd *cmd)
+void	redirect_input(char *file, t_cmd *cmd)
 {
 	int	fd;
-
-	fd = open(file, O_RDONLY);
-	if (fd < 0)
+	if(cmd->infile_fd != -1)
 	{
-		perror("open infile");
-		return (1);
+		fd = open(file, O_RDONLY);
+		cmd->infile_fd = fd; 
+		if (fd < 0)
+			perror("open infile");
 	}
-	dup2(fd, 0);
-	close(fd);
-	return (0);
 }
 
 void	redirect_output(t_shell *shell, t_cmd *cmd, int append)
 {
 	int	fd;
 
-	if (!cmd->flag_amb)
+	if (!cmd->flag_amb && cmd->infile_fd != -1)
 	{
 		if (append)
 			fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);

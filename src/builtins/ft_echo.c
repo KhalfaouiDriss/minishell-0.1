@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:32:29 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/11 20:33:44 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/13 09:16:01 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,7 @@ void	ft_strchar(char *s, int f)
 
 void	ft_echo(char **args)
 {
-	int	i;
-	int	no_newline;
-	int	j;
-
+	int (i), (no_newline), (j);
 	i = 1;
 	no_newline = 0;
 	while (args[i] && args[i][0] == '-')
@@ -35,8 +32,11 @@ void	ft_echo(char **args)
 		j = 1;
 		while (args[i][j] == 'n')
 			j++;
-		if (args[i++][j] == '\0')
+		if (args[i][j] == '\0')
+		{
 			no_newline = 1;
+			i++;
+		}
 		else
 			break ;
 	}

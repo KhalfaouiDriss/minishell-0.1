@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:24:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/12 22:14:12 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/13 10:49:29 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 	out = -1;
 	in = dup(0);
 	out = dup(1);
-	if (cmd->infile && redirect_input(cmd->infile, cmd))
+	if (cmd->infile)
 	{
 		if (in != -1)
 			close(in);
@@ -47,30 +47,23 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 
 	handle_signals_and_exit_cases(shell, cmd);
 	if (cmd->next)
-	{
-		dupping2(fd[1], 1);
-		close(fd[0]);
-	}
+		(dupping2(fd[1], 1), close(fd[0]));
 	if (prev_pipe != -1)
 		dupping2(prev_pipe, 0);
 	if (cmd->heredoc_fd != -1)
 		dupping2(cmd->heredoc_fd, 0);
 	if (is_builtin(cmd->args[0]))
 		exit(builtin_free_exit(shell, cmd));
-	if (cmd->infile && redirect_input(cmd->infile, cmd))
-	{
-		clean_shell(shell);
-		exit(1);
-	}
+	if (cmd->infile_fd == -1)
+		exit(clean_exit(shell, 1));
 	if (!cmd->args[0] || cmd->args[0][0] == '$')
-	{
-		clean_shell(shell);
-		exit(0);
-	}
+		exit(clean_exit(shell, 0));
 	path = find_command_path(cmd->args[0], shell->env);
 	handle_exec_errors(path, cmd, shell);
 	if (cmd->outfile_fd)
 		dupping2(cmd->outfile_fd, 1);
+	if (cmd->infile_fd)
+		dupping2(cmd->infile_fd, 0);
 	execve(path, cmd->args, shell->new_env);
 	execve_fail(cmd);
 }
@@ -101,7 +94,6 @@ static void	exec_loop(t_shell *shell)
 		}
 		cmd = cmd->next;
 	}
-	// gc_free_all();
 	wait_all(pid, shell);
 }
 

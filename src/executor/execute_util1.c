@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:40:33 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/12 11:11:37 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/13 10:33:46 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,11 @@ void	close_parent_fds(t_cmd *cmd, int prev_pipe)
 		close(cmd->heredoc_fd);
 		cmd->heredoc_fd = -1;
 	}
+	if (cmd->infile_fd > 2)
+	{
+		close(cmd->infile_fd);
+		cmd->infile_fd = -1;
+	}
 	if (prev_pipe != -1)
 		close(prev_pipe);
 }
@@ -73,4 +78,10 @@ void	handle_ambiguous(t_cmd *cmd, t_shell *shell)
 {
 	shell->exit_status = 1;
 	write(2, "ambiguous redirect\n", 20);
+}
+
+int	clean_exit(t_shell *shell, int fexit)
+{
+	clean_shell(shell);
+	return (fexit);
 }
