@@ -143,6 +143,7 @@ void	handle_special_token(t_shell *shell, const char *input, int *i, t_token **h
 // tokenized Utils
 void print_tokens(t_token *head);
 void	correct_lexer(t_shell *shell, t_token **token);
+int	pips_coount(char *input);
 // utils_1.c
 void init_shell(t_shell *shell);
 char *strjoin_free(char *s1, char *s2);
@@ -172,6 +173,13 @@ void add_token(t_token **head, t_token *new);
 t_token *new_token(int *ebag, char *val, int type, int error_type);
 t_token	*new_node(char *value);
 char *find_env_node(t_env *env, char *key);
+
+// parser
+void	handle_quotes(t_shell *shell, t_lexer_state *state);
+void	handle_special_token_case(t_shell *shell, t_lexer_state *state);
+void	handle_normal_word(t_lexer_state *state);
+void	finalize_current_word(t_shell *shell, t_lexer_state *state);
+void	handle_dollar_sign(t_shell *shell, t_lexer_state *state);
 
 t_cmd *parse_tokens(t_shell *shell);
 void	handle_ambiguous(t_cmd *cmd, t_shell *shell);

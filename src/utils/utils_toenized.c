@@ -16,6 +16,27 @@ int check_embag(char *var_value)
 	return 1;
 }
 
+int	pips_coount(char *input)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	while (input[i])
+	{
+		if (input[i] == '|')
+			j++;
+		i++;
+	}
+	return (j);
+}
+
+int	is_quote(char c)
+{
+	return (c == '\'' || c == '"');
+}
+
 char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 {
 	int		start, len;
