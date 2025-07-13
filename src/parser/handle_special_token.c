@@ -39,7 +39,7 @@ void	handle_special_token(t_shell *shell, const char *input, int *i,
 	}
 	val = ft_substr(input, start, *i - start);
 	type = get_type(val, type);
-	if (type == REDIR_HEREDOC)
+	if (type == REDIR_HEREDOC || type == REDIR_APPEND || type == REDIR_IN || type == REDIR_OUT )
 		shell->is_heredoc_delimiter = 1;
 	add_token(head, new_token(&(shell->ebag), val, type, 0));
 	return ;
