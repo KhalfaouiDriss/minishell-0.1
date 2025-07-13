@@ -169,12 +169,16 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 		shell->ebag = 0;
 		if(shell->is_heredoc_delimiter)
 		{
-			(*i)++;
+			// (*i)++;
 			shell->is_heredoc_delimiter = 0;
 			return ft_strjoin("$", var_name);
 		}
+		// printf("===%s==\n", &str[*i]);
 		if(!str[*i])
+		{
+			// printf("===%s==\n", &str[*i]);
 			(*i)--;
+		}
 		return NULL;
 		// return ft_strdup("");
 			// free(var_name);
