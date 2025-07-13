@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parce_red.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:14:12 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/13 17:16:40 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/13 18:03:35 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ void	init_str(t_cmd *cmd)
 	cmd->next = NULL;
 	cmd->heredoc = 0;
 	cmd->infile = 0;
+	cmd->infile_fd = 0;
 	cmd->append = 0;
 	cmd->outfile_fd = 0;
 	cmd->c_flag = 0;

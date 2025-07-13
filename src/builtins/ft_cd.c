@@ -21,8 +21,10 @@ void	update_env_var(t_env *env, const char *name, const char *value)
 	{
 		if (ft_strncmp(tmp->name, name, ft_strlen(name)) == 0)
 		{
+			
 			if (tmp->value)
 				free(tmp->value);
+			
 			if (value)
 				tmp->value = ft_strdupv2(value);
 			else
@@ -31,11 +33,14 @@ void	update_env_var(t_env *env, const char *name, const char *value)
 		}
 		tmp = tmp->next;
 	}
-	new_var = ft_malloc(sizeof(t_env));
+	new_var = malloc(sizeof(t_env));
 	if (!new_var)
 		return ;
-	new_var->name = ft_strdup(name);
-	new_var->value = value ? ft_strdup(value) : NULL;
+	new_var->name = ft_strdupv2(name);
+	if(value)
+		new_var->value = ft_strdupv2(value);
+	else
+		new_var->value =  NULL;
 	new_var->next = NULL;
 	tmp = env;
 	if (!tmp)
@@ -83,12 +88,10 @@ void	ft_cd(t_shell *shell, char **args)
 		{
 			tmp = fallback;
 			fallback = ft_strjoin(tmp, "/..");
-			free(tmp);
 		}
 		if (fallback)
 		{
 			update_env_var(shell->env, "PWD", fallback);
-			free(fallback);
 		}
 	}
 	if (stat(target_dir, &sb) == 0)
