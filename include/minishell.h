@@ -145,6 +145,8 @@ void	handle_special_token(t_shell *shell, const char *input, int *i, t_token **h
 void print_tokens(t_token *head);
 void	correct_lexer(t_shell *shell, t_token **token);
 int	pips_coount(char *input);
+void	set_quote_type_explicitly(t_lexer_state *state, char quote);
+
 // utils_1.c
 void init_shell(t_shell *shell);
 char *strjoin_free(char *s1, char *s2);

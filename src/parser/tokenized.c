@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenized.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/13 17:18:45 by dkhalfao          #+#    #+#             */
+/*   Updated: 2025/07/13 17:26:24 by dkhalfao         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/minishell.h"
 
 void	process_token_loop(t_shell *shell, t_lexer_state *state)
@@ -50,15 +62,13 @@ void	init_lexer_vars(t_shell *shell, t_lexer_state *state)
 t_token	*lexer_split_to_tokens(t_shell *shell)
 {
 	t_lexer_state	state;
-	
+
 	if (check_syntax_errors(shell))
-		return NULL;
+		return (NULL);
 	init_lexer_vars(shell, &state);
 	if (check_initial_dollar_error(shell, &state))
 		return (state.head);
 	while (state.str[state.i])
 		process_token_loop(shell, &state);
-	// correct_lexer(shell, &state.head);
-	// print_tokens(state.head);
 	return (state.head);
 }

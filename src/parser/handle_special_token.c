@@ -1,20 +1,31 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   handle_special_token.c                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/13 17:18:26 by dkhalfao          #+#    #+#             */
+/*   Updated: 2025/07/13 17:52:03 by dkhalfao         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/minishell.h"
 
 int	get_type(char *val, int type)
 {
-
-		if (ft_strncmp(val, "|", 1) == 0)
-			type = PIPE;
-		else if (ft_strncmp(val, ">>", 2) == 0)
-			type = REDIR_APPEND;
-		else if (ft_strncmp(val, "<<", 2) == 0)
-			type = REDIR_HEREDOC;
-		else if (ft_strncmp(val, "<", 1) == 0)
-			type = REDIR_IN;
-		else if (ft_strncmp(val, ">", 1) == 0)
-			type = REDIR_OUT;
-		else
-			type = ERROR;
+	if (ft_strncmp(val, "|", 1) == 0)
+		type = PIPE;
+	else if (ft_strncmp(val, ">>", 2) == 0)
+		type = REDIR_APPEND;
+	else if (ft_strncmp(val, "<<", 2) == 0)
+		type = REDIR_HEREDOC;
+	else if (ft_strncmp(val, "<", 1) == 0)
+		type = REDIR_IN;
+	else if (ft_strncmp(val, ">", 1) == 0)
+		type = REDIR_OUT;
+	else
+		type = ERROR;
 	return (type);
 }
 
@@ -39,7 +50,7 @@ void	handle_special_token(t_shell *shell, const char *input, int *i,
 	}
 	val = ft_substr(input, start, *i - start);
 	type = get_type(val, type);
-	if (type == REDIR_HEREDOC || type == REDIR_APPEND || type == REDIR_IN || type == REDIR_OUT )
+	if (type == REDIR_HEREDOC)
 		shell->is_heredoc_delimiter = 1;
 	add_token(head, new_token(&(shell->ebag), val, type, 0));
 	return ;

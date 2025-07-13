@@ -1,12 +1,16 @@
-#include "../../include/minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   handle_quotes.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/13 17:18:14 by dkhalfao          #+#    #+#             */
+/*   Updated: 2025/07/13 17:25:24 by dkhalfao         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-void	set_quote_type_explicitly(t_lexer_state *state, char quote)
-{
-	if (quote == '"')
-		state->current_quote_type = D_QUOTE;
-	else if (quote == '\'')
-		state->current_quote_type = S_QUOTE;
-}
+#include "../../include/minishell.h"
 
 void	handle_invalid_quote(t_shell *shell, t_lexer_state *state)
 {

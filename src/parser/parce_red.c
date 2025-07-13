@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parce_red.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:14:12 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/13 09:58:39 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/13 17:16:40 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@ void	red_out(t_shell *shell, t_cmd *cmd, t_token *token)
 	else if (token->type == REDIR_APPEND)
 		cmd->append = 1;
 	redirect_output(shell, cmd, cmd->append);
-	if (token->next->next && (token->next->next->type == REDIR_OUT || token->next->next->type == REDIR_APPEND))
+	if (token->next->next && (token->next->next->type == REDIR_OUT
+			|| token->next->next->type == REDIR_APPEND))
 		close(cmd->outfile_fd);
 }
 

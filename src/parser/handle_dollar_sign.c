@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   handle_dollar_sign.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/13 17:18:04 by dkhalfao          #+#    #+#             */
+/*   Updated: 2025/07/13 17:24:35 by dkhalfao         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/minishell.h"
 
 void	handle_dollar_in_single_quotes(t_lexer_state *state)
@@ -12,37 +24,48 @@ void	handle_dollar_in_single_quotes(t_lexer_state *state)
 	state->current_word = strjoin_free(state->current_word, tmp);
 }
 
+void	handle_empty_or_literal_dollar(t_shell *shell, t_lexer_state *state,
+		char *value)
+{
+	if (ft_strncmp(value, "$", 1) == 0)
+	{
+		state->current_word = strjoin_free(state->current_word, value);
+		state->i++;
+	}
+	else if (ft_strlen(value) == 0)
+	{
+		state->current_word = strjoin_free(state->current_word, "");
+		state->i++;
+	}
+}
+
+void	handle_non_empty_variable(t_shell *shell, t_lexer_state *state,
+		char *value, int j)
+{
+	char	*tmp2;
+	char	*tmp3;
+
+	tmp2 = ft_substr(state->str, 0, j);
+	tmp3 = ft_substr(state->str, state->i, ft_strlen(state->str) - state->i);
+	shell->input = ft_strjoin(tmp2, value);
+	tmp2 = shell->input;
+	shell->input = ft_strjoin(shell->input, tmp3);
+	state->str = shell->input;
+	state->i = j;
+}
+
 void	handle_dollar_variable_expansion(t_shell *shell, t_lexer_state *state,
 		int j)
 {
 	char	*value;
-	char	*tmp2;
-	char	*tmp3;
 
 	value = handle_variable_token(state->str, &state->i, shell, 0);
 	if (value)
 	{
-		if (ft_strncmp(value, "$", 1) == 0)
-		{
-			state->current_word = strjoin_free(state->current_word, value);
-			state->i++;
-		}
-		else if(value && ft_strlen(value) == 0)
-		{
-			state->current_word = strjoin_free(state->current_word, "");
-			state->i++;
-		}
+		if (ft_strncmp(value, "$", 1) == 0 || ft_strlen(value) == 0)
+			handle_empty_or_literal_dollar(shell, state, value);
 		else
-		{
-			tmp2 = ft_substr(state->str, 0, j);
-			tmp3 = ft_substr(state->str, state->i, ft_strlen(state->str)
-			- state->i);
-			shell->input = ft_strjoin(tmp2, value);
-			tmp2 = shell->input;
-			shell->input = ft_strjoin(shell->input, tmp3);
-			state->str = shell->input;
-			state->i = j;
-		}
+			handle_non_empty_variable(shell, state, value, j);
 	}
 }
 

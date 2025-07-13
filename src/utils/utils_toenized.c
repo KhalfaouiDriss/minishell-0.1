@@ -34,60 +34,18 @@ int	pips_coount(char *input)
 	return (j);
 }
 
+void	set_quote_type_explicitly(t_lexer_state *state, char quote)
+{
+	if (quote == '"')
+		state->current_quote_type = D_QUOTE;
+	else if (quote == '\'')
+		state->current_quote_type = S_QUOTE;
+}
+
 int	is_quote(char c)
 {
 	return (c == '\'' || c == '"');
 }
-
-// char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
-// {
-// 	int		start, len;
-// 	char	*var_name = NULL;
-// 	char	*var_value = NULL;
-// 	t_env	*env = shell->env;
-// 	int status = 0;
-
-// 	if (str[*i] == '$' && str[*i + 1] == '?')
-// 	{
-// 		*i += 2;
-// 		status = shell->exit_status;
-// 		return ft_itoa(status);
-// 	}
-// 	if(ft_isdigit(str[*i + 1]))
-//     {
-//         *i += 2;
-//         return NULL;
-//     }
-// 	if (str[*i] == '$' && (str[*i + 1] == '\0' || str[*i + 1] == ' '))
-// 	{
-// 		(*i)++;
-// 		return ft_strdup("$");
-// 	}
-// 	if (str[*i] == '$' && str[*i + 1] == '$')
-// 	{
-// 		*i += 2;
-// 		return ft_strdup("$$");
-// 	}
-// 	if(!ft_isalnum(str[*i + 1]))
-//     {
-// 		return (ft_strdup("$"));
-// 	}
-// 	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
-// 		(*i)++;
-// 	len = *i - start;
-// 	var_name = ft_substr(str, start, len);
-
-	// if (quote == '\'')
-	// {
-	// 	printf("===========2======\n");
-	// 	return ft_strjoin("$", var_name);
-	// }
-	// else if(quote == '\"')
-	// {
-	// 	char *result = ft_strdup("");
-	// 	return result;
-	// }
-// }
 
 int is_embg_befor(t_shell *shell, int i)
 {
@@ -96,10 +54,6 @@ int is_embg_befor(t_shell *shell, int i)
 		return 0;
 	return 1; 
 }
-// int is_embg_after(t_shell *shell, int i, int end)
-// {
-
-// }
 
 int last_is_redir(t_shell *shell, int i)
 {
@@ -129,7 +83,6 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	start = *i;
 	if(*i > 1 && is_quote(str[*i - 1]) && is_quote(str[*i - 2]))
 		is = 1;
-	// printf("str : %s && i : %d\n", str+*i-2, *i);
     if(ft_isdigit(str[*i + 1]))
     {
         *i += 2;
@@ -139,22 +92,13 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	{
 		*i += 2;
 		status = shell->exit_status;
-		// shell->exit_status = 0;
 		return ft_itoa(status);
 	}
-
-    // if(!str[*i + 1] || str[*i + 1] == ' ')
-    // {
-    //     (*i)++;
-    //     return ft_strdup("$");
-    // }
-	// printf("=============");
     if (str[*i] == '$' && (str[*i + 1] == '\0' || str[*i + 1] == ' '))
 	{
 		(*i)++;
 		return ft_strdup("$");
 	}
-
 	if (str[*i] == '$' && str[*i + 1] == '$')
 	{
 		*i += 2;
@@ -191,6 +135,13 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	
 	var_value = find_env_node(env, var_name);
 
+	if(shell->is_heredoc_delimiter)
+	{
+		shell->is_heredoc_delimiter = 0;
+		(*i)--;
+		return ft_strjoin("$", var_name);
+	}
+
 	if (!var_value)
 	{
 		if (last_is_redir(shell, start))
@@ -206,13 +157,6 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 
 
 	shell->ebag = check_embag(var_value);
-	if(shell->is_heredoc_delimiter)
-	{
-		shell->is_heredoc_delimiter = 0;
-		(*i)--;
-		return ft_strjoin("$", var_name);
-	}
-	// shell->ebag = check_embag(var_value);
 	return var_value;
 }
 
