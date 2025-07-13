@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:43:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/13 10:35:03 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/13 19:54:53 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,11 @@
 void	redirect_input(char *file, t_cmd *cmd)
 {
 	int	fd;
-	if(cmd->infile_fd != -1)
+
+	if (cmd->infile_fd != -1)
 	{
 		fd = open(file, O_RDONLY);
-		cmd->infile_fd = fd; 
+		cmd->infile_fd = fd;
 		if (fd < 0)
 			perror("open infile");
 	}
@@ -53,6 +54,23 @@ int	check_delimiter(char *line, char *delimiter)
 	return (0);
 }
 
+char	*get_variable(t_shell *shell, char *line, int *i, int quot)
+{
+	char	*var_name;
+	char	*var_value;
+	int		start;
+
+	(*i)++;
+	start = *i;
+	while (line[*i] && (ft_isalnum(line[*i]) || line[*i] == '_'))
+		(*i)++;
+	var_name = ft_substr(line, start, *i - start);
+	var_value = find_env_node(shell->env, var_name);
+	if (var_value)
+		return (var_value);
+	else
+		return (ft_strdup(""));
+}
 void	write_expanded_line(char *line, t_shell *shell, int tmp_fd)
 {
 	int		i;
@@ -63,10 +81,7 @@ void	write_expanded_line(char *line, t_shell *shell, int tmp_fd)
 	{
 		if (line[i] == '$')
 		{
-			if (ft_strchr(shell->input, '\''))
-				var = handle_variable_token(line, &i, shell, '\'');
-			else
-				var = handle_variable_token(line, &i, shell, 0);
+			var = get_variable(shell, line, &i, 0);
 			if (var)
 				write(tmp_fd, var, ft_strlen(var));
 		}
@@ -81,8 +96,10 @@ void	write_expanded_line(char *line, t_shell *shell, int tmp_fd)
 
 void	handel_sig(int sig)
 {
+	t_shell	*shell;
+
 	write(1, "\n", 1);
-	t_shell *shell = get_shell();
+	shell = get_shell();
 	clean_shell(shell);
 	exit(2);
 }

@@ -76,6 +76,7 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	int		start, len;
 	char	*var_name = NULL;
 	char	*var_value = NULL;
+	char	*var_value2 = NULL;
 	t_env	*env = shell->env;
 	int status = 0;
 	int is = 0;
@@ -130,11 +131,11 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 
 	if (quote == '\'')
 		return ft_strjoin("$", var_name);
-	else if(quote == '\"')
-		return ft_strdup("");
+	// else if(quote == '\"')
+	// 	return ft_strdup("");
 	
 	var_value = find_env_node(env, var_name);
-
+	var_value2 = ft_strdup(var_name);
 	if(shell->is_heredoc_delimiter)
 	{
 		shell->is_heredoc_delimiter = 0;
@@ -154,7 +155,6 @@ char *handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 			return ft_strdup("");
 		}
 	}
-
 
 	shell->ebag = check_embag(var_value);
 	return var_value;

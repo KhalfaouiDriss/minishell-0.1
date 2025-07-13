@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_quotes.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:14 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/13 18:13:17 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/13 20:11:37 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ char	*expand_variables_in_string(char *str, t_shell *shell, char qt)
 		{
 			tmp = handle_variable_token(str, &i, shell, qt);
 			result = strjoin_free(result, tmp);
-			i++;
+			// i++;
 		}
 		else
 		{
