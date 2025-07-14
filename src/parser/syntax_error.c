@@ -6,7 +6,7 @@
 /*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:37 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/14 15:55:42 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/14 17:46:03 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,11 @@ static int	handle_unmatched_quote(char quote, char *input, int *i,
 		(*i)++;
 	if (!input[*i])
 	{
-		printf("syntax error: unmatched quote\n");
-		shell->exit_status = 130;
+		if(shell->pos = 1)
+		{
+			printf("syntax error: unmatched quote\n");
+			shell->exit_status = 130;
+		}
 		return (1);
 	}
 	(*i)++;
@@ -62,14 +65,11 @@ static int	handle_operator(char *input, int *i, t_shell *shell)
 		if (!input[*i] || input[0] == '|' || (is_operator(input, *i)
 				&& !((input[*i] == '<') || (input[*i] == '>'))))
 		{
-			if(shell->pos == 1)
-				printf("syntax error\n");
-			else if(shell->pos == 2)
+			if(shell->pos = 1)
 			{
-				printf("'%s' ", input);
-				printf("command not found\n");
+				printf("syntax error\n");
+				shell->exit_status = 2;
 			}
-			shell->exit_status = 2;
 			return (1);
 		}
 	}
@@ -99,8 +99,8 @@ int	check_syntax_errors(t_shell *shell, char *input, int pos)
 	int		i;
 	char	quote;
 
-	shell->pos = pos;
 	i = skip_spaces(shell->input, 0);
+	shell->pos = pos;
 	if (!input[i])
 		return (0);
 	while (input[i])
@@ -118,6 +118,5 @@ int	check_syntax_errors(t_shell *shell, char *input, int pos)
 		if (skip_word(input, &i, shell))
 			return (1);
 	}
-	shell->pos = 0;
 	return (0);
 }

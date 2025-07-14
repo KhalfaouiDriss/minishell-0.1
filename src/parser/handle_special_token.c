@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_special_token.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:26 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/13 17:52:03 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/14 16:36:32 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,11 @@ void	handle_special_token(t_shell *shell, const char *input, int *i,
 	}
 	val = ft_substr(input, start, *i - start);
 	type = get_type(val, type);
+	if(shell->not_found == 2)
+	{
+		type = WORD;
+		shell->not_found = 0;
+	}
 	if (type == REDIR_HEREDOC)
 		shell->is_heredoc_delimiter = 1;
 	add_token(head, new_token(&(shell->ebag), val, type, 0));
