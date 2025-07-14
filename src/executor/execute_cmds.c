@@ -36,6 +36,8 @@ int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 		dup2(cmd->outfile_fd, 1);
 		close(cmd->outfile_fd);
 	}
+	shell->in = in;
+	shell->out = out;
 	shell->exit_status = execute_builtin(shell, cmd->args[0], cmd->args);
 	dupping(in, out);
 	return (shell->exit_status);

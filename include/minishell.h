@@ -106,6 +106,8 @@ typedef struct s_shell
 	char			**new_env;
 	int				not_found;
 	int				pos;
+	int				in;
+	int				out;
 }					t_shell;
 
 typedef struct s_lexer_state

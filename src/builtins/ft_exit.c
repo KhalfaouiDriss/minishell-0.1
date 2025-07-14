@@ -30,7 +30,7 @@ static int	is_numeric(const char *str)
 	return (1);
 }
 
-long long	ft_atoll(const char *str)
+long long	ft_atoll(char *str)
 {
 	long long	res;
 	int			sign;
@@ -57,15 +57,16 @@ int	ft_exit(t_shell *shell, char **args)
 	exit_code = 0;
 	if (args[1])
 	{
-		if (!is_numeric(args[1]) || ft_strlen(args[1]) > 19 || !args[1][0])
+		exit_code = ft_atoll(args[1]);
+		if (!is_numeric(ft_itoa(exit_code)) || ft_strlen(ft_itoa(exit_code)) > 19 || !args[1][0])
 		{
+			close_parent_fds(shell->cmd_list, -1);
 			write(2, "exit\n", 5);
 			write(2, args[1], ft_strlen(args[1]));
 			write(2, ": numeric argument required\n", 28);
 			clean_shell(shell);
 			exit(2);
 		}
-		exit_code = ft_atoll(args[1]);
 		if (args[2])
 			return (write(2, "exit\n", 5), write(2,
 					"minishell: exit: too many arguments\n", 36),

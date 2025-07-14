@@ -37,6 +37,10 @@ void	clean_shell(t_shell *shell)
 {
 	if (shell->new_env)
 		free_new_env(shell->new_env);
+	if(shell->in != -1)
+		close(shell->in);
+	if(shell->out != -1)
+		close(shell->out);
 	if (shell->env)
 		clean_env(shell->env);
 	gc_free_all();
