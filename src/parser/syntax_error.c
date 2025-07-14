@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_error.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:37 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/13 20:31:52 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/14 15:55:42 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,13 @@ static int	handle_operator(char *input, int *i, t_shell *shell)
 		if (!input[*i] || input[0] == '|' || (is_operator(input, *i)
 				&& !((input[*i] == '<') || (input[*i] == '>'))))
 		{
-			printf("syntax error\n");
+			if(shell->pos == 1)
+				printf("syntax error\n");
+			else if(shell->pos == 2)
+			{
+				printf("'%s' ", input);
+				printf("command not found\n");
+			}
 			shell->exit_status = 2;
 			return (1);
 		}
@@ -88,14 +94,13 @@ static int	skip_word(char *input, int *i, t_shell *shell)
 	return (0);
 }
 
-int	check_syntax_errors(t_shell *shell)
+int	check_syntax_errors(t_shell *shell, char *input, int pos)
 {
 	int		i;
-	char	*input;
 	char	quote;
 
+	shell->pos = pos;
 	i = skip_spaces(shell->input, 0);
-	input = shell->input;
 	if (!input[i])
 		return (0);
 	while (input[i])
@@ -113,5 +118,6 @@ int	check_syntax_errors(t_shell *shell)
 		if (skip_word(input, &i, shell))
 			return (1);
 	}
+	shell->pos = 0;
 	return (0);
 }

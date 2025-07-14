@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 21:59:52 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/13 22:01:13 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/14 14:57:38 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	print_export_error(t_shell *shell, char *arg, int *i)
 	ft_putstr_fd(arg, 2);
 	ft_putstr_fd(": not a valid identifier\n", 2);
 	shell->exit_status = 1;
-	i++;
+	(*i)++;
 }
 
 void	parse_key_value(char *arg, char **key, char **value)

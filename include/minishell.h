@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 22:10:08 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/13 22:14:27 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/14 15:52:36 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,7 @@ typedef struct s_shell
 	int				is_heredoc_delimiter;
 	char			**new_env;
 	int				not_found;
+	int				pos;
 }					t_shell;
 
 typedef struct s_lexer_state
@@ -278,5 +279,5 @@ void				free_new_env(char **env);
 void				clean_shell(t_shell *shell);
 int					is_quote(char c);
 t_shell				*get_shell(void);
-int					check_syntax_errors(t_shell *shell);
+int					check_syntax_errors(t_shell *shell, char *input, int pos);
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenized.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:45 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/13 17:26:24 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/14 15:41:44 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ t_token	*lexer_split_to_tokens(t_shell *shell)
 {
 	t_lexer_state	state;
 
-	if (check_syntax_errors(shell))
+	if (check_syntax_errors(shell, shell->input, 1))
 		return (NULL);
 	init_lexer_vars(shell, &state);
 	if (check_initial_dollar_error(shell, &state))

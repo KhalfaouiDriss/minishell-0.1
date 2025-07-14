@@ -6,7 +6,7 @@
 /*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:04 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/14 14:04:19 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/14 15:52:17 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,11 @@ void	handle_dollar_variable_expansion(t_shell *shell, t_lexer_state *state,
 	value = handle_variable_token(state->str, &state->i, shell, 0);
 	if (value)
 	{
+		if(check_syntax_errors(shell, value, 2))
+		{
+			shell->token = NULL;
+			return;
+		}
 		if (ft_strncmp(value, "$", 1) == 0 || ft_strlen(value) == 0)
 			handle_empty_or_literal_dollar(shell, state, value);
 		else
