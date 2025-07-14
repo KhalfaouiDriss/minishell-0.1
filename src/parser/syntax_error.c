@@ -6,7 +6,7 @@
 /*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:37 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/14 17:46:03 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/14 16:49:45 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,5 +118,6 @@ int	check_syntax_errors(t_shell *shell, char *input, int pos)
 		if (skip_word(input, &i, shell))
 			return (1);
 	}
+	shell->pos = 0;
 	return (0);
 }
