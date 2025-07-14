@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtins_utils.c                                   :+:      :+:    :+:   */
+/*   builtins_utils_1.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 21:37:44 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/13 21:42:43 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/14 14:50:50 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,6 @@ void	handle_cd_chdir_fail(t_shell *shell, const char *target_dir,
 	buffer = ft_strjoin(target_dir, ": No such file or directory\n");
 	write(2, buffer, ft_strlen(buffer));
 	shell->exit_status = 1;
-	free(buffer);
 	free(oldpwd);
 }
 
