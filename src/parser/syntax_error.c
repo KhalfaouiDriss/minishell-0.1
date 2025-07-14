@@ -42,7 +42,7 @@ static int	handle_unmatched_quote(char quote, char *input, int *i,
 		(*i)++;
 	if (!input[*i])
 	{
-		if(shell->pos == 1)
+		if (shell->pos == 1)
 		{
 			printf("syntax error: unmatched quote\n");
 			shell->exit_status = 130;
@@ -65,7 +65,7 @@ static int	handle_operator(char *input, int *i, t_shell *shell)
 		if (!input[*i] || input[0] == '|' || (is_operator(input, *i)
 				&& !((input[*i] == '<') || (input[*i] == '>'))))
 		{
-			if(shell->pos == 1)
+			if (shell->pos == 1)
 			{
 				printf("syntax error \n");
 				shell->exit_status = 2;

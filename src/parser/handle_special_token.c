@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_special_token.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:26 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/14 16:36:32 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/14 17:19:36 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,15 +42,11 @@ void	handle_special_token(t_shell *shell, const char *input, int *i,
 	else if (input[*i] == '|' || input[*i] == '<' || input[*i] == '>')
 		(*i)++;
 	else
-	{
-		(*i)++;
-		val = ft_substr(input, start, *i - start);
-		add_token(head, new_token(&(shell->ebag), val, ERROR, 0));
-		return ;
-	}
+		return ((*i)++, val = ft_substr(input, start, *i - start),
+			add_token(head, new_token(&(shell->ebag), val, ERROR, 0)), (void)0);
 	val = ft_substr(input, start, *i - start);
 	type = get_type(val, type);
-	if(shell->not_found == 2)
+	if (shell->not_found == 2)
 	{
 		type = WORD;
 		shell->not_found = 0;

@@ -59,7 +59,6 @@ char	*expand_variables_in_string(char *str, t_shell *shell, char qt)
 			result = strjoin_free(result, tmp);
 		}
 	}
-	
 	return (result);
 }
 

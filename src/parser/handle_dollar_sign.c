@@ -62,7 +62,7 @@ void	handle_dollar_variable_expansion(t_shell *shell, t_lexer_state *state,
 	value = handle_variable_token(state->str, &state->i, shell, 0);
 	if (value)
 	{
-		if(check_syntax_errors(shell, value, 2))
+		if (check_syntax_errors(shell, value, 2))
 			shell->not_found = 2;
 		if (ft_strncmp(value, "$", 1) == 0 || ft_strlen(value) == 0)
 			handle_empty_or_literal_dollar(shell, state, value);
