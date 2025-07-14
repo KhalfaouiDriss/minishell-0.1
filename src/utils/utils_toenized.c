@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_toenized.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 21:15:41 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/13 21:15:42 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/14 12:46:50 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ void	set_quote_type_explicitly(t_lexer_state *state, char quote)
 		state->current_quote_type = D_QUOTE;
 	else if (quote == '\'')
 		state->current_quote_type = S_QUOTE;
+	state->quote = quote;
 }
 
 int	is_quote(char c)

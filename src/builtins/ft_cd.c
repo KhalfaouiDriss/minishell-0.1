@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 21:41:04 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/13 21:41:05 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/14 14:25:16 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ void	ft_cd(t_shell *shell, char **args)
 	const char	*target_dir;
 	char		*oldpwd;
 
-	if (args[2])
+	if (args[1] && args[2])
 		return (handle_cd_args_error(shell));
 	target_dir = get_target_dir(shell, args);
 	if (!target_dir)

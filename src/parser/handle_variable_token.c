@@ -3,22 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   handle_variable_token.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:55:57 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/13 21:19:01 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/14 15:23:29 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-static char	*handle_special_cases(char *str, int *i, t_shell *shell)
+static char	*handle_special_cases(char *str, int *i, t_shell *shell, char quote)
 {
 	char	*ret;
 
 	ret = handle_special_cases_utile(str, i, shell);
 	if (ret)
 		return (ret);
+	if (str[*i] == '$' && !ft_isalnum(str[*i + 1]))
+	{
+		if(!is_quote(str[*i + 1]) && quote)
+			(*i)++;
+		return (ft_strdup("$"));
+	}
 	if (ft_isdigit(str[*i + 1]))
 	{
 		*i += 2;
@@ -61,6 +67,8 @@ static char	*handle_no_var_value(t_shell *shell, char *var_name, int start,
 		(*i)--;
 		return (ft_strdup(""));
 	}
+	if(shell->input[*i] == ' ')
+		(*i)++;
 	return (NULL);
 }
 
@@ -73,13 +81,15 @@ char	*handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	char	*special;
 
 	var_name = NULL;
-	special = handle_special_cases(str, i, shell);
+	special = handle_special_cases(str, i, shell, quote);
 	if (special)
-		return (special);
+	return (special);
 	start = *i;
 	var_name = extract_var_name(str, i);
 	if (quote == '\'')
+	{
 		return (ft_strjoin("$", var_name));
+	}
 	if (shell->is_heredoc_delimiter)
 		return (handle_heredoc_case(shell, var_name, i));
 	var_value = find_env_node(shell->env, var_name);

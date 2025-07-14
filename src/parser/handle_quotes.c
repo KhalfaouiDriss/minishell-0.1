@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_quotes.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:14 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/13 20:29:46 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/14 14:15:19 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ char	*expand_variables_in_string(char *str, t_shell *shell, char qt)
 			result = strjoin_free(result, tmp);
 		}
 	}
+	
 	return (result);
 }
 
@@ -68,12 +69,15 @@ static void	append_expanded_or_raw(t_shell *shell, t_lexer_state *state,
 	char	*expanded;
 
 	if (quote == '\'' && tmp[0] != '$')
+	{
 		state->current_word = strjoin_free(state->current_word, tmp);
+	}
 	else
 	{
 		expanded = expand_variables_in_string(tmp, shell, quote);
 		state->current_word = strjoin_free(state->current_word, expanded);
 	}
+	state->quote = 0;
 }
 
 void	handle_quotes(t_shell *shell, t_lexer_state *state)
@@ -84,8 +88,6 @@ void	handle_quotes(t_shell *shell, t_lexer_state *state)
 	state->start = state->i;
 	while (state->str[state->i] && state->str[state->i] != state->quote)
 		state->i++;
-	if (state->str[state->i] == '\0')
-		return (handle_invalid_quote(shell, state));
 	state->tmp = ft_substr(state->str, state->start, state->i - state->start);
 	handle_empty_quotes(shell, state);
 	append_expanded_or_raw(shell, state, state->tmp, state->quote);
