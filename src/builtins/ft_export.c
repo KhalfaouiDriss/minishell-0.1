@@ -42,10 +42,7 @@ void	parse_key_value(char *arg, char **key, char **value)
 		if (ft_strlen(equal + 1))
 			*value = equal + 1;
 		else
-		{
 			*value = NULL;
-			printf("=====\n");
-		}
 	}
 	else
 	{

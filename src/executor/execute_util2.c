@@ -37,6 +37,7 @@ void	print_not_found_and_exit(t_cmd *cmd, t_shell *shell)
 	gc_free_all();
 	free_env(shell->env);
 	free_new_env(shell->new_env);
+	shell->exit_status = 127;
 	exit(127);
 }
 
@@ -65,4 +66,6 @@ void	handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd)
 		clean_shell(shell);
 		exit(1);
 	}
+	if(cmd->outfile_fd != -1 && cmd->args[0] == NULL)
+		close(cmd->outfile_fd);
 }

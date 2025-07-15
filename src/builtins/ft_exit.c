@@ -60,29 +60,38 @@ void	close_fd_bin(int in, int out)
 
 int	ft_exit(t_shell *shell, char **args)
 {
+	char		*trimmed;
 	long long	exit_code;
 
-	exit_code = 0;
 	if (args[1])
 	{
-		if (!is_numeric(args[1]) || ft_strlen(args[1]) > 19 || !args[1][0])
+		trimmed = ft_strtrim(args[1], " \t\n\v\f\r");
+		if (!trimmed || !is_numeric(trimmed) || ft_strlen(trimmed) > 19)
 		{
 			write(2, "exit\n", 5);
 			write(2, args[1], ft_strlen(args[1]));
 			write(2, ": numeric argument required\n", 28);
+			free(trimmed);
 			clean_shell(shell);
 			close_fd_bin(shell->in, shell->out);
 			exit(2);
 		}
 		if (args[2])
+		{
+			free(trimmed);
 			return (write(2, "exit\n", 5), write(2,
 					"minishell: exit: too many arguments\n", 36),
 				shell->exit_status = 1, 1);
+		}
+		exit_code = ft_atoll(trimmed);
+		free(trimmed);
 		close_fd_bin(shell->in, shell->out);
 		printf("exit\n");
 		clean_shell(shell);
 		exit((unsigned char)exit_code);
 	}
-	(close_fd_bin(shell->in, shell->out), printf("exit\n"));
-	(clean_shell(shell), exit(shell->exit_status));
+	close_fd_bin(shell->in, shell->out);
+	printf("exit\n");
+	clean_shell(shell);
+	exit(shell->exit_status);
 }

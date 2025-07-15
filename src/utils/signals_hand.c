@@ -45,6 +45,7 @@ void	handel_sig(int sig)
 
 	write(1, "\n", 1);
 	shell = get_shell();
+	close(shell->her_fd);
 	clean_shell(shell);
 	exit(2);
 }

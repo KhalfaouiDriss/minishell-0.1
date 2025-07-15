@@ -12,25 +12,39 @@
 
 #include "../../include/minishell.h"
 
+
+int *fake_glb()
+{
+	static int n = -1;
+	return (&n);
+}
+
 static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 {
 	t_token	*next;
 
 	next = (*token)->next;
+
 	if (((*token)->type == REDIR_OUT || (*token)->type == REDIR_IN
 			|| (*token)->type == REDIR_APPEND) && !next->ebag && !cmd->flag_amb)
 		return (cmd->flag_amb = 1, *token = next, 0);
 	if ((*token)->type == REDIR_IN)
 	{
+		if(*fake_glb() != -1)
+			close(*fake_glb());
 		cmd->infile = ft_strdup(next->value);
 		redirect_input(cmd->infile, cmd);
+		*fake_glb() = cmd->infile_fd;
 		if (cmd->infile_fd == -1)
 			return (shell->exit_status = 1, *token = next, 1);
 	}
 	else if ((*token)->type == REDIR_HEREDOC)
 	{
+		if(*fake_glb() != -1)
+			close(*fake_glb());
 		cmd->heredoc = ft_strdup(next->value);
 		cmd->heredoc_fd = handle_heredoc(next->value, shell);
+		*fake_glb() = cmd->heredoc_fd;
 		if (cmd->heredoc_fd == -1)
 			return (-1);
 	}
@@ -55,7 +69,6 @@ static t_cmd	*parse_command(t_token **token, t_shell *shell)
 	i = 0;
 	while (*token && (*token)->type != PIPE)
 	{
-		shell->exit_status = 0;
 		if ((*token)->type == WORD || (*token)->type == OPTION)
 			cmd->args[i++] = ft_strdup((*token)->value);
 		else
@@ -68,6 +81,7 @@ static t_cmd	*parse_command(t_token **token, t_shell *shell)
 	}
 	return (cmd->args[i] = NULL, cmd);
 }
+
 
 int	check_syn(t_token *token)
 {
@@ -103,12 +117,12 @@ t_cmd	*parse_tokens(t_shell *shell)
 		if (!cmd)
 			return (NULL);
 		if (!head)
-			head = cmd;
+		head = cmd;
 		else
 			last->next = cmd;
 		last = cmd;
 		if (token && token->type == PIPE)
-			token = token->next;
+		token = token->next;
 	}
 	return (head);
 }

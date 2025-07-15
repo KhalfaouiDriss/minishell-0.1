@@ -16,22 +16,16 @@ int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 {
 	int	in;
 	int	out;
-
+	
 	if (cmd->c_flag == 1 || cmd->flag_amb == 1)
 		return (shell->exit_status);
 	in = -1;
 	out = -1;
 	in = dup(0);
 	out = dup(1);
-	if (cmd->infile)
-	{
-		if (in != -1)
-			close(in);
-		if (out != -1)
-			close(out);
-		return (shell->exit_status = 1, shell->exit_status);
-	}
-	if (cmd->outfile_fd)
+	if (cmd->infile_fd != -1)
+		(dup2(cmd->infile_fd, 0), close(cmd->infile_fd));
+	if (cmd->outfile_fd != -1)
 		(dup2(cmd->outfile_fd, 1), close(cmd->outfile_fd));
 	shell->in = in;
 	shell->out = out;
