@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:37:09 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/13 20:19:14 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/15 12:54:43 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,13 @@ long long	ft_atoll(char *str)
 		res = res * 10 + (*str++ - '0');
 	return (res * sign);
 }
-
+void	close_fd_bin(int in, int out)
+{
+	if(in != -1)
+		close(in);
+	if(out != -1)
+		close(out);
+}
 int	ft_exit(t_shell *shell, char **args)
 {
 	long long	exit_code;
@@ -60,21 +66,23 @@ int	ft_exit(t_shell *shell, char **args)
 		exit_code = ft_atoll(args[1]);
 		if (!is_numeric(ft_itoa(exit_code)) || ft_strlen(ft_itoa(exit_code)) > 19 || !args[1][0])
 		{
-			close_parent_fds(shell->cmd_list, -1);
 			write(2, "exit\n", 5);
 			write(2, args[1], ft_strlen(args[1]));
 			write(2, ": numeric argument required\n", 28);
 			clean_shell(shell);
+			close_fd_bin(shell->in, shell->out);
 			exit(2);
 		}
 		if (args[2])
 			return (write(2, "exit\n", 5), write(2,
 					"minishell: exit: too many arguments\n", 36),
 				shell->exit_status = 1, 1);
+		close_fd_bin(shell->in, shell->out);
 		printf("exit\n");
 		clean_shell(shell);
 		exit((unsigned char)exit_code);
 	}
+	close_fd_bin(shell->in, shell->out);
 	printf("exit\n");
 	clean_shell(shell);
 	exit(shell->exit_status);
