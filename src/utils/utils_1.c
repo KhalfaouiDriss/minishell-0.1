@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_1.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:37:04 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/13 20:37:05 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/15 15:27:00 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ void	init_shell(t_shell *shell)
 	shell->is_heredoc_delimiter = 0;
 	shell->ebag = -1;
 	shell->ebag_final = -1;
+	shell->exp = 0;
 }
 
 void	gc_remove(void *ptr)

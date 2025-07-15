@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   herdoc_util.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:36:27 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/13 20:36:28 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/15 15:34:30 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
 	int		status;
 
 	tmp_fd = open_heredoc_file(&path);
+	shell->her_fd = tmp_fd;
 	if (tmp_fd == -1)
 		return (perror("open"), -1);
 	signal(SIGINT, SIG_IGN);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_variable_token.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:55:57 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/15 10:48:10 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/15 13:23:09 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,12 @@ static char	*extract_var_name(char *str, int *i)
 	return (ft_substr(str, start, *i - start));
 }
 
-static char	*handle_heredoc_case(t_shell *shell, char *var_name, int *i)
+static char	*handle_heredoc_case(t_shell *shell, char *var_name, int *i, char quote)
 {
 	shell->is_heredoc_delimiter = 0;
 	// (*i);
+	if(quote == '\"')
+		shell->exp = 1;
 	return (ft_strjoin("$", var_name));
 }
 
@@ -89,7 +91,7 @@ char	*handle_variable_token(char *str, int *i, t_shell *shell, char quote)
 	if (quote == '\'')
 		return (ft_strjoin("$", var_name));
 	if (shell->is_heredoc_delimiter)
-		return (handle_heredoc_case(shell, var_name, i));
+		return (handle_heredoc_case(shell, var_name, i, quote));
 	var_value = find_env_node(shell->env, var_name);
 	if (!var_value)
 	{

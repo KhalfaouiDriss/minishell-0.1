@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:49:42 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/13 20:16:14 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/15 12:59:11 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ void	execve_fail(t_cmd *cmd)
 	t_shell	*shell;
 
 	perror(cmd->args[0]);
-	printf("----------\n");
 	shell = get_shell();
 	clean_shell(shell);
 	exit(126);

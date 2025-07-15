@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:43:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/13 20:41:09 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/15 15:35:59 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,9 +88,10 @@ void	run_heredoc_loop(int tmp_fd, char *delimiter, t_shell *shell)
 		if (check_delimiter(line, delimiter))
 		{
 			clean_shell(shell);
+			close(tmp_fd);
 			exit(0);
 		}
-		if (ft_strchr(line, '$'))
+		if (ft_strchr(line, '$') && !shell->exp)
 			write_expanded_line(line, shell, tmp_fd);
 		else
 		{
@@ -99,4 +100,5 @@ void	run_heredoc_loop(int tmp_fd, char *delimiter, t_shell *shell)
 		}
 		free(line);
 	}
+	shell->exp = 0;
 }

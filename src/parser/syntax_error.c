@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_error.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:37 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/14 16:50:55 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/15 14:52:50 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ static int	handle_unmatched_quote(char quote, char *input, int *i,
 	{
 		if (shell->pos == 1)
 		{
-			printf("syntax error: unmatched quote\n");
+			write(2, "syntax error: unmatched quote\n", 31);
 			shell->exit_status = 130;
 		}
 		return (1);

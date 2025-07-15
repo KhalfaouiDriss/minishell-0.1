@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 21:59:52 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/14 14:57:38 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/15 15:17:51 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,14 @@ void	parse_key_value(char *arg, char **key, char **value)
 	{
 		key_len = equal - arg;
 		*key = ft_substr(arg, 0, key_len);
-		*value = equal + 1;
+		if(ft_strlen(equal + 1))
+			*value = equal + 1;
+		else
+		{
+			
+			*value = NULL;
+			printf("=====\n");
+		}
 	}
 	else
 	{
