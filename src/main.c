@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:33:06 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/15 11:24:36 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/15 15:42:20 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ void	clean_shell(t_shell *shell)
 {
 	if (shell->new_env)
 		free_new_env(shell->new_env);
-
 	if (shell->env)
 		clean_env(shell->env);
 	gc_free_all();

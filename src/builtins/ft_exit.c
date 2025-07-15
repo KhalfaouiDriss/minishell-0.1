@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:37:09 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/15 12:59:38 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/15 15:45:59 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,13 +49,15 @@ long long	ft_atoll(char *str)
 		res = res * 10 + (*str++ - '0');
 	return (res * sign);
 }
+
 void	close_fd_bin(int in, int out)
 {
-	if(in != -1)
+	if (in != -1)
 		close(in);
-	if(out != -1)
+	if (out != -1)
 		close(out);
 }
+
 int	ft_exit(t_shell *shell, char **args)
 {
 	long long	exit_code;
@@ -81,8 +83,6 @@ int	ft_exit(t_shell *shell, char **args)
 		clean_shell(shell);
 		exit((unsigned char)exit_code);
 	}
-	close_fd_bin(shell->in, shell->out);
-	printf("exit\n");
-	clean_shell(shell);
-	exit(shell->exit_status);
+	(close_fd_bin(shell->in, shell->out), printf("exit\n"));
+	(clean_shell(shell), exit(shell->exit_status));
 }

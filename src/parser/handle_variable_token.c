@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_variable_token.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:55:57 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/15 13:23:09 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/15 15:46:10 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,11 @@ static char	*extract_var_name(char *str, int *i)
 	return (ft_substr(str, start, *i - start));
 }
 
-static char	*handle_heredoc_case(t_shell *shell, char *var_name, int *i, char quote)
+static char	*handle_heredoc_case(t_shell *shell, char *var_name, int *i,
+		char quote)
 {
 	shell->is_heredoc_delimiter = 0;
-	// (*i);
-	if(quote == '\"')
+	if (quote == '\"')
 		shell->exp = 1;
 	return (ft_strjoin("$", var_name));
 }
