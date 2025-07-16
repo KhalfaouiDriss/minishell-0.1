@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_variable_token.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:55:57 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/15 15:46:10 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/16 20:26:52 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static char	*handle_special_cases(char *str, int *i, t_shell *shell, char quote)
 		return (ret);
 	if (str[*i] == '$' && !ft_isalnum(str[*i + 1]))
 	{
-		if (!is_quote(str[*i + 1]) && quote)
+		if (!is_quote(str[*i + 1]) && !quote)
 			(*i)++;
 		return (ft_strdup("$"));
 	}
