@@ -6,7 +6,7 @@
 /*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:04 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/14 16:44:32 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/16 20:18:11 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ void	handle_empty_or_literal_dollar(t_shell *shell, t_lexer_state *state,
 	if (ft_strncmp(value, "$", 1) == 0)
 	{
 		state->current_word = strjoin_free(state->current_word, value);
-		state->i++;
 	}
 	else if (ft_strlen(value) == 0)
 	{
