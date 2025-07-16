@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_cmds.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:24:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/15 15:43:53 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/16 10:38:49 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 	int	in;
 	int	out;
 	
-	if (cmd->c_flag == 1 || cmd->flag_amb == 1)
+	if (cmd->c_flag == 1 || cmd->flag_amb == 1 || cmd->infile_fd == -1 || cmd->outfile == -1)
 		return (shell->exit_status);
 	in = -1;
 	out = -1;
@@ -45,10 +45,10 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 		dupping2(prev_pipe, 0);
 	if (cmd->heredoc_fd != -1)
 		dupping2(cmd->heredoc_fd, 0);
-	if (is_builtin(cmd->args[0]))
-		exit(builtin_free_exit(shell, cmd));
 	if (cmd->infile_fd == -1)
 		exit(clean_exit(shell, 1));
+	if (is_builtin(cmd->args[0]))
+		exit(builtin_free_exit(shell, cmd));
 	if (!cmd->args[0] || cmd->args[0][0] == '$')
 		exit(clean_exit(shell, 0));
 	path = find_command_path(cmd->args[0], shell->env);
@@ -70,7 +70,7 @@ static void	exec_loop(t_shell *shell)
 
 	cmd = shell->cmd_list;
 	prev_pipe = -1;
-	if (is_builtin(cmd->args[0]) && !cmd->next && cmd->outfile_fd != -1)
+	if (is_builtin(cmd->args[0]) && !cmd->next)
 		return (handle_builtin_redirs(cmd, shell), (void)0);
 	while (cmd)
 	{
