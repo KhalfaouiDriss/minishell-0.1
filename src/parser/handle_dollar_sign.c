@@ -6,7 +6,7 @@
 /*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:04 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/16 20:18:11 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/17 13:23:48 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,11 @@ void	handle_non_empty_variable(t_shell *shell, t_lexer_state *state,
 
 	tmp2 = ft_substr(state->str, 0, j);
 	tmp3 = ft_substr(state->str, state->i, ft_strlen(state->str) - state->i);
+	if(shell->not_found)
+	{
+		value = ft_strjoin("'" , value);
+		value = ft_strjoin(value, "'");
+	}
 	shell->input = ft_strjoin(tmp2, value);
 	tmp2 = shell->input;
 	shell->input = ft_strjoin(shell->input, tmp3);

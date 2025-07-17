@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_error.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:37 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/15 14:52:50 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/17 14:05:31 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,16 @@ static int	handle_operator(char *input, int *i, t_shell *shell)
 	op_len = is_operator(input, *i);
 	if (op_len)
 	{
+		if ((input[*i] == '<' && input[*i + 1] == '<' && input[*i + 2] == '<')
+			|| (input[*i] == '>' && input[*i + 1] == '>' && input[*i + 2] == '>'))
+		{
+			if (shell->pos == 1)
+			{
+				write(2, "syntax error near unexpected token `<' or `>'\n", 46);
+				shell->exit_status = 2;
+			}
+			return (1);
+		}
 		*i += op_len;
 		*i = skip_spaces(input, *i);
 		if (!input[*i] || input[0] == '|' || (is_operator(input, *i)
@@ -75,6 +85,7 @@ static int	handle_operator(char *input, int *i, t_shell *shell)
 	}
 	return (0);
 }
+
 
 static int	skip_word(char *input, int *i, t_shell *shell)
 {
