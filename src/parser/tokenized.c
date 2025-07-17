@@ -6,7 +6,7 @@
 /*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:45 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/17 14:05:06 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/17 14:43:31 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,5 +70,6 @@ t_token	*lexer_split_to_tokens(t_shell *shell)
 		return (state.head);
 	while (state.str[state.i])
 		process_token_loop(shell, &state);
+	correct_lexer(shell, &state.head);
 	return (state.head);
 }
