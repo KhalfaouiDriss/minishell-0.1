@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals_hand.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:36:53 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/13 20:41:15 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/17 16:28:40 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	global_state(int set)
 	return (state);
 }
 
-char	*get_variable(t_shell *shell, char *line, int *i, int quot)
+char	*get_variable(t_shell *shell, char *line, int *i)
 {
 	char	*var_name;
 	char	*var_value;
@@ -43,6 +43,7 @@ void	handel_sig(int sig)
 {
 	t_shell	*shell;
 
+	(void) sig;
 	write(1, "\n", 1);
 	shell = get_shell();
 	close(shell->her_fd);

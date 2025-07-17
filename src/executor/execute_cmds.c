@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:24:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/17 16:19:38 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/17 16:31:52 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,6 @@ static void	exec_loop(t_shell *shell)
 void	wait_all(int last_pid, t_shell *shell)
 {
 	int		status;
-	pid_t	pid;
 	int		sigint;
 	int		sigquit;
 	int		sig;
@@ -124,7 +123,7 @@ void	execute_pipeline(t_shell *shell)
 	while (cmd)
 	{
 		if (cmd->flag_amb == 1)
-			handle_ambiguous(cmd, shell);
+			handle_ambiguous(cmd);
 		cmd = cmd->next;
 	}
 	exec_loop(shell);

@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:43:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/15 15:35:59 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/17 16:31:35 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	redirect_input(char *file, t_cmd *cmd)
 	}
 }
 
-void	redirect_output(t_shell *shell, t_cmd *cmd, int append)
+void	redirect_output(t_cmd *cmd, int append)
 {
 	int	fd;
 
@@ -64,7 +64,7 @@ void	write_expanded_line(char *line, t_shell *shell, int tmp_fd)
 	{
 		if (line[i] == '$')
 		{
-			var = get_variable(shell, line, &i, 0);
+			var = get_variable(shell, line, &i);
 			if (var)
 				write(tmp_fd, var, ft_strlen(var));
 		}

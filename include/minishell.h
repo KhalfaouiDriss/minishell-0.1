@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 22:10:08 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/17 14:05:13 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/17 16:31:14 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,7 +214,7 @@ void				init_new_env(t_shell *shell);
 int					global_state(int set);
 void				get_sig(int sig);
 void				handel_sig(int sig);
-char				*get_variable(t_shell *shell, char *line, int *i, int quot);
+char				*get_variable(t_shell *shell, char *line, int *i);
 
 // free_utils.c
 void				free_split(char **lst);
@@ -239,7 +239,7 @@ void				handle_dollar_sign(t_shell *shell, t_lexer_state *state);
 
 t_cmd				*parse_tokens(t_shell *shell);
 int					clean_exit(t_shell *shell, int fexit);
-void				handle_ambiguous(t_cmd *cmd, t_shell *shell);
+void				handle_ambiguous(t_shell *shell);
 void				close_parent_fds(t_cmd *cmd, int prev_pipe);
 char				*find_command_path(char *cmd, t_env *envp);
 char				*full_paths(char *path, char *cmd);
@@ -263,7 +263,7 @@ void				write_expanded_line(char *line, t_shell *shell, int tmp_fd);
 int					handle_builtin_redirs(t_cmd *cmd, t_shell *shell);
 char				*safe_strdup(char *s);
 void				redirect_input(char *file, t_cmd *cmd);
-void				redirect_output(t_shell *shell, t_cmd *cmd, int append);
+void				redirect_output(t_cmd *cmd, int append);
 int					handle_heredoc(char *delimiter, t_shell *shell);
 void				execute_pipeline(t_shell *shell);
 void				wait_all(int last_pid, t_shell *shell);
