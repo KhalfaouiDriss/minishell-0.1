@@ -6,7 +6,7 @@
 /*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:37 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/17 14:05:31 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/17 15:25:13 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ static int	handle_unmatched_quote(char quote, char *input, int *i,
 
 static int	handle_operator(char *input, int *i, t_shell *shell)
 {
-	int	op_len;
+	int		op_len;
 
 	op_len = is_operator(input, *i);
 	if (op_len)
@@ -65,7 +65,19 @@ static int	handle_operator(char *input, int *i, t_shell *shell)
 		{
 			if (shell->pos == 1)
 			{
-				write(2, "syntax error near unexpected token `<' or `>'\n", 46);
+				write(2, "syntax error\n", 14);
+				shell->exit_status = 2;
+			}
+			return (1);
+		}
+		if ((input[*i] == '<' && input[*i + 1] == '<' && input[*i + 2] == '>') ||
+			(input[*i] == '>' && input[*i + 1] == '>' && input[*i + 2] == '<') ||
+			(input[*i] == '<' && input[*i + 1] == '>') ||
+			(input[*i] == '>' && input[*i + 1] == '<'))
+		{
+			if (shell->pos == 1)
+			{
+				write(2, "syntax error\n", 14);
 				shell->exit_status = 2;
 			}
 			return (1);
@@ -77,7 +89,7 @@ static int	handle_operator(char *input, int *i, t_shell *shell)
 		{
 			if (shell->pos == 1)
 			{
-				printf("syntax error \n");
+				write(2, "syntax error\n", 14);
 				shell->exit_status = 2;
 			}
 			return (1);
@@ -85,6 +97,7 @@ static int	handle_operator(char *input, int *i, t_shell *shell)
 	}
 	return (0);
 }
+
 
 
 static int	skip_word(char *input, int *i, t_shell *shell)

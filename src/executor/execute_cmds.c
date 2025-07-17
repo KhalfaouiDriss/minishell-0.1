@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_cmds.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:24:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/16 10:38:49 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/17 13:31:48 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 	int	in;
 	int	out;
 	
-	if (cmd->c_flag == 1 || cmd->flag_amb == 1 || cmd->infile_fd == -1 || cmd->outfile == -1)
+	if (cmd->c_flag == 1 || cmd->flag_amb == 1 || cmd->infile_fd == -1 || cmd->outfile_fd == -1)
 		return (shell->exit_status);
 	in = -1;
 	out = -1;
