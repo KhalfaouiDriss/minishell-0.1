@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:45:02 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/13 20:16:58 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/17 15:30:55 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,11 @@ void	print_not_found_and_exit(t_cmd *cmd, t_shell *shell)
 
 	buffer = ft_strjoin(cmd->args[0], " : command not found\n");
 	write(2, buffer, ft_strlen(buffer));
+	if(cmd->heredoc_fd != -1)
+		close(cmd->heredoc_fd);
 	gc_free_all();
 	free_env(shell->env);
 	free_new_env(shell->new_env);
-	shell->exit_status = 127;
 	exit(127);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_cmds.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:24:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/17 13:31:48 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/17 16:19:38 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 		(dup2(cmd->infile_fd, 0), close(cmd->infile_fd));
 	if (cmd->outfile_fd != -1)
 		(dup2(cmd->outfile_fd, 1), close(cmd->outfile_fd));
+	// if(cmd->heredoc_fd != -1)
+	// 	close(cmd->heredoc_fd);
 	shell->in = in;
 	shell->out = out;
 	shell->exit_status = execute_builtin(shell, cmd->args[0], cmd->args);
@@ -49,7 +51,7 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 		exit(clean_exit(shell, 1));
 	if (is_builtin(cmd->args[0]))
 		exit(builtin_free_exit(shell, cmd));
-	if (!cmd->args[0] || cmd->args[0][0] == '$')
+	if (!cmd->args[0])
 		exit(clean_exit(shell, 0));
 	path = find_command_path(cmd->args[0], shell->env);
 	handle_exec_errors(path, cmd, shell);
