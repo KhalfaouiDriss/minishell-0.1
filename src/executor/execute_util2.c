@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_util2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:45:02 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/17 15:30:55 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/18 18:07:20 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	print_not_found_and_exit(t_cmd *cmd, t_shell *shell)
 
 	buffer = ft_strjoin(cmd->args[0], " : command not found\n");
 	write(2, buffer, ft_strlen(buffer));
-	if(cmd->heredoc_fd != -1)
+	if (cmd->heredoc_fd != -1)
 		close(cmd->heredoc_fd);
 	gc_free_all();
 	free_env(shell->env);
@@ -67,6 +67,6 @@ void	handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd)
 		clean_shell(shell);
 		exit(1);
 	}
-	if(cmd->outfile_fd != -1 && cmd->args[0] == NULL)
+	if (cmd->outfile_fd != -1 && cmd->args[0] == NULL)
 		close(cmd->outfile_fd);
 }

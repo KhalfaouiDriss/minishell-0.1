@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_dollar_sign.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:04 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/18 17:52:27 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/18 18:07:45 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,9 @@ void	handle_non_empty_variable(t_shell *shell, t_lexer_state *state,
 
 	tmp2 = ft_substr(state->str, 0, j);
 	tmp3 = ft_substr(state->str, state->i, ft_strlen(state->str) - state->i);
-	if(shell->not_found == 2)
+	if (shell->not_found == 2)
 	{
-		value = ft_strjoin("\"" , value);
+		value = ft_strjoin("\"", value);
 		value = ft_strjoin(value, "\"");
 	}
 	shell->input = ft_strjoin(tmp2, value);
@@ -66,7 +66,8 @@ void	handle_dollar_variable_expansion(t_shell *shell, t_lexer_state *state,
 	value = handle_variable_token(state->str, &state->i, shell, 0);
 	if (value)
 	{
-		if(!ft_strchr(value, ' ') || ft_strchr(value, '>') || ft_strchr(value, '<') || ft_strchr(value, '|'))
+		if (!ft_strchr(value, ' ') || ft_strchr(value, '>') || ft_strchr(value,
+				'<') || ft_strchr(value, '|'))
 			shell->not_found = 2;
 		if (check_syntax_errors(shell, value, 2))
 			shell->not_found = 2;

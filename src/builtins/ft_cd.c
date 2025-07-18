@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 21:41:04 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/18 17:16:11 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/18 17:59:05 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,6 @@ void	ft_cd(t_shell *shell, char **args)
 	if (!target_dir)
 		return ;
 	oldpwd = find_env_node(shell->env, "PWD");
-	// oldpwd = getcwd(NULL, 0);
 	if (!oldpwd)
 		handle_cd_oldpwd_failure(shell);
 	if (check_cd_errors(shell, target_dir))
@@ -95,7 +94,6 @@ void	ft_cd(t_shell *shell, char **args)
 	if (chdir(target_dir) == -1)
 		return (handle_cd_chdir_fail(shell, target_dir, oldpwd));
 	update_env_var(shell->env, "OLDPWD", oldpwd);
-	// free(oldpwd);
 	update_pwd_after_cd(shell);
 	shell->exit_status = 0;
 }

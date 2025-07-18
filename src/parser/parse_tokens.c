@@ -3,19 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   parse_tokens.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 15:51:13 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/18 16:48:01 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/18 18:03:10 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-
-int *fake_glb()
+int	*fake_glb(void)
 {
-	static int n = -1;
+	static int	n = -1;
+
 	return (&n);
 }
 
@@ -24,13 +24,12 @@ static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 	t_token	*next;
 
 	next = (*token)->next;
-
 	if (((*token)->type == REDIR_OUT || (*token)->type == REDIR_IN
 			|| (*token)->type == REDIR_APPEND) && !next->ebag && !cmd->flag_amb)
 		return (cmd->flag_amb = 1, *token = next, 0);
 	if ((*token)->type == REDIR_IN)
 	{
-		if(*fake_glb() != -1)
+		if (*fake_glb() != -1)
 			close(*fake_glb());
 		cmd->infile = ft_strdup(next->value);
 		redirect_input(cmd->infile, cmd);
@@ -40,7 +39,7 @@ static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 	}
 	else if ((*token)->type == REDIR_HEREDOC)
 	{
-		if(*fake_glb() != -1)
+		if (*fake_glb() != -1)
 			close(*fake_glb());
 		cmd->heredoc = ft_strdup(next->value);
 		cmd->heredoc_fd = handle_heredoc(next->value, shell);
@@ -82,7 +81,6 @@ static t_cmd	*parse_command(t_token **token, t_shell *shell)
 	return (cmd->args[i] = NULL, cmd);
 }
 
-
 int	check_syn(t_token *token)
 {
 	while (token)
@@ -117,12 +115,12 @@ t_cmd	*parse_tokens(t_shell *shell)
 		if (!cmd)
 			return (NULL);
 		if (!head)
-		head = cmd;
+			head = cmd;
 		else
 			last->next = cmd;
 		last = cmd;
 		if (token && token->type == PIPE)
-		token = token->next;
+			token = token->next;
 	}
 	return (head);
 }
