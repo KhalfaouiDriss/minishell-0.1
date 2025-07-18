@@ -30,7 +30,7 @@ push:
 	git add .
 	git status
 	git commit -m "minishell"
-	git -f push
+	git push -f
 
 pull:
 	git pull
