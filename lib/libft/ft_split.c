@@ -6,14 +6,14 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 18:34:17 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/11 20:40:05 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/18 16:38:54 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 #include "libft.h"
 
-static int	count_words(const char *str, char c)
+int	count_words(const char *str, char c)
 {
 	int	count;
 	int	flag;

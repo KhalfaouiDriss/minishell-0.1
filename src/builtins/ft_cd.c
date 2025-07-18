@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 21:41:04 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/15 14:33:45 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/18 17:16:11 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,8 @@ void	ft_cd(t_shell *shell, char **args)
 	target_dir = get_target_dir(shell, args);
 	if (!target_dir)
 		return ;
-	oldpwd = getcwd(NULL, 0);
+	oldpwd = find_env_node(shell->env, "PWD");
+	// oldpwd = getcwd(NULL, 0);
 	if (!oldpwd)
 		handle_cd_oldpwd_failure(shell);
 	if (check_cd_errors(shell, target_dir))
@@ -94,7 +95,7 @@ void	ft_cd(t_shell *shell, char **args)
 	if (chdir(target_dir) == -1)
 		return (handle_cd_chdir_fail(shell, target_dir, oldpwd));
 	update_env_var(shell->env, "OLDPWD", oldpwd);
-	free(oldpwd);
+	// free(oldpwd);
 	update_pwd_after_cd(shell);
 	shell->exit_status = 0;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_quotes.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:14 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/14 14:15:19 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/18 17:10:15 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,8 @@ static void	append_expanded_or_raw(t_shell *shell, t_lexer_state *state,
 
 void	handle_quotes(t_shell *shell, t_lexer_state *state)
 {
+	if(shell->is_heredoc_delimiter)
+		shell->exp = 0;
 	state->quote = state->str[state->i];
 	set_quote_type_explicitly(state, state->quote);
 	state->i++;

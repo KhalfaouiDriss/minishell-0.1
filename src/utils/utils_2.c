@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:43:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/17 16:31:35 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/18 17:13:29 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,11 +87,12 @@ void	run_heredoc_loop(int tmp_fd, char *delimiter, t_shell *shell)
 		line = readline("> ");
 		if (check_delimiter(line, delimiter))
 		{
+			shell->exp = 1;
 			clean_shell(shell);
 			close(tmp_fd);
 			exit(0);
 		}
-		if (ft_strchr(line, '$') && !shell->exp)
+		if (ft_strchr(line, '$') && shell->exp)
 			write_expanded_line(line, shell, tmp_fd);
 		else
 		{
@@ -100,5 +101,4 @@ void	run_heredoc_loop(int tmp_fd, char *delimiter, t_shell *shell)
 		}
 		free(line);
 	}
-	shell->exp = 0;
 }

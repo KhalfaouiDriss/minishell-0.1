@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:33:06 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/17 13:06:13 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/18 17:08:41 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,12 +62,13 @@ void	main_loop(t_shell *shell)
 			add_history(shell->input);
 		shell->token = lexer_split_to_tokens(shell);
 		// print_tokens(shell->token);
-
+		
 		shell->cmd_list = parse_tokens(shell);
 		if (!shell->cmd_list)
 			continue ;
 		global_state(1);
 		execute_pipeline(shell);
+		shell->exp = 1;
 	}
 }
 

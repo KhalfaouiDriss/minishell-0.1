@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:37:09 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/15 15:45:59 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/18 11:14:50 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int	ft_exit(t_shell *shell, char **args)
 
 	if (args[1])
 	{
-		trimmed = ft_strtrim(args[1], " \t\n\v\f\r");
+		trimmed = ft_strtrim(args[1], " ");
 		if (!trimmed || !is_numeric(trimmed) || ft_strlen(trimmed) > 19)
 		{
 			write(2, "exit\n", 5);

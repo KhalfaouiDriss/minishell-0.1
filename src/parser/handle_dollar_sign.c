@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_dollar_sign.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:04 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/17 13:42:35 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/18 16:51:25 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ void	handle_non_empty_variable(t_shell *shell, t_lexer_state *state,
 	shell->input = ft_strjoin(shell->input, tmp3);
 	state->str = shell->input;
 	state->i = j;
-	printf("input : %s \n", shell->input);
 }
 
 void	handle_dollar_variable_expansion(t_shell *shell, t_lexer_state *state,
