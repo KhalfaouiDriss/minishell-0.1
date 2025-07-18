@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals_hand.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:36:53 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/18 18:29:53 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/18 18:37:49 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	handel_sig(int sig)
 {
 	t_shell	*shell;
 
-	(void) sig;
+	(void)sig;
 	write(1, "\n", 1);
 	shell = get_shell();
 	close(shell->her_fd);
@@ -69,7 +69,7 @@ void	get_sig(int sig)
 	}
 }
 
-void in_red(t_cmd *cmd, t_token *token)
+void	in_red(t_cmd *cmd, t_token *token)
 {
 	cmd->infile = ft_strdup(token->next->value);
 	redirect_input(cmd->infile, cmd);

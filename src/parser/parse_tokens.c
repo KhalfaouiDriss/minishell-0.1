@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_tokens.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 15:51:13 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/18 18:26:25 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/18 18:37:06 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ int	*fake_glb(void)
 
 	return (&n);
 }
-
 
 static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 {
@@ -40,8 +39,8 @@ static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 	{
 		if (*fake_glb() != -1)
 			close(*fake_glb());
-		if(her_red(cmd, *token, shell))
-			return -1;
+		if (her_red(cmd, *token, shell))
+			return (-1);
 	}
 	else if ((*token)->type == REDIR_OUT || (*token)->type == REDIR_APPEND)
 		red_out(shell, cmd, (*token));

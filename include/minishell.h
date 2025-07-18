@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 22:10:08 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/18 18:30:14 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/18 18:37:28 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -285,6 +285,6 @@ int					is_quote(char c);
 t_shell				*get_shell(void);
 int					check_syntax_errors(t_shell *shell, char *input, int pos);
 int					*fake_glb(void);
-int					her_red(t_cmd *cmd, t_token *token,t_shell *shell);
+int					her_red(t_cmd *cmd, t_token *token, t_shell *shell);
 void				in_red(t_cmd *cmd, t_token *token);
 #endif
