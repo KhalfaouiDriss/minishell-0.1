@@ -67,6 +67,7 @@ void affiche_err(char *arg, char *trim, t_shell *shell)
 	clean_shell(shell);
 	close_fd_bin(shell->in, shell->out);
 }
+
 int	ft_exit(t_shell *shell, char **args)
 {
 	char		*trimmed;
@@ -76,26 +77,16 @@ int	ft_exit(t_shell *shell, char **args)
 	{
 		trimmed = ft_strtrim(args[1], " ");
 		if (!trimmed || !is_numeric(trimmed) || ft_strlen(trimmed) > 19)
-		{
-			affiche_err(args[1], trimmed, shell);
-			exit(2);
-		}
+			return (affiche_err(args[1], trimmed, shell), exit(2), 0);
 		if (args[2])
-		{
-			free(trimmed);
-			return (write(2, "exit\n", 5), write(2,
-					"minishell: exit: too many arguments\n", 36),
-				shell->exit_status = 1, 1);
-		}
+			return (handle_exit_error(shell, args, trimmed));
 		exit_code = ft_atoll(trimmed);
 		free(trimmed);
-		close_fd_bin(shell->in, shell->out);
-		printf("exit\n");
-		clean_shell(shell);
-		exit((unsigned char)exit_code);
+		exit_success(shell, exit_code);
 	}
 	close_fd_bin(shell->in, shell->out);
 	printf("exit\n");
 	clean_shell(shell);
 	exit(shell->exit_status);
 }
+

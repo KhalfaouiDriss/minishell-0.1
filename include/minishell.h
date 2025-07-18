@@ -277,6 +277,9 @@ void				ft_env(t_env *env, int export);
 int					is_builtin(char *cmd);
 void				redirect_output_builtin(t_cmd *cmd, int append);
 int					execute_builtin(t_shell *shell, char *cmd, char **args);
+void				exit_success(t_shell *shell, long long code);
+int					handle_exit_error(t_shell *shell, char **args, char *trimmed);
+void				close_fd_bin(int in, int out);
 
 char				*ft_strdupv2(const char *str);
 void				free_new_env(char **env);
