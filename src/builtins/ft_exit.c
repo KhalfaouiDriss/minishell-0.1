@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:37:09 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/18 18:08:25 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/18 18:34:08 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,15 @@ void	close_fd_bin(int in, int out)
 		close(out);
 }
 
+void affiche_err(char *arg, char *trim, t_shell *shell)
+{
+	write(2, "exit\n", 5);
+	write(2, arg, ft_strlen(arg));
+	write(2, ": numeric argument required\n", 28);
+	free(trim);
+	clean_shell(shell);
+	close_fd_bin(shell->in, shell->out);
+}
 int	ft_exit(t_shell *shell, char **args)
 {
 	char		*trimmed;
@@ -68,12 +77,7 @@ int	ft_exit(t_shell *shell, char **args)
 		trimmed = ft_strtrim(args[1], " ");
 		if (!trimmed || !is_numeric(trimmed) || ft_strlen(trimmed) > 19)
 		{
-			write(2, "exit\n", 5);
-			write(2, args[1], ft_strlen(args[1]));
-			write(2, ": numeric argument required\n", 28);
-			free(trimmed);
-			clean_shell(shell);
-			close_fd_bin(shell->in, shell->out);
+			affiche_err(args[1], trimmed, shell);
 			exit(2);
 		}
 		if (args[2])

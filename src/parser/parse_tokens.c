@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_tokens.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 15:51:13 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/18 18:03:10 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/18 18:26:25 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ int	*fake_glb(void)
 
 	return (&n);
 }
+
 
 static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 {
@@ -31,9 +32,7 @@ static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 	{
 		if (*fake_glb() != -1)
 			close(*fake_glb());
-		cmd->infile = ft_strdup(next->value);
-		redirect_input(cmd->infile, cmd);
-		*fake_glb() = cmd->infile_fd;
+		in_red(cmd, *token);
 		if (cmd->infile_fd == -1)
 			return (shell->exit_status = 1, *token = next, 1);
 	}
@@ -41,11 +40,8 @@ static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 	{
 		if (*fake_glb() != -1)
 			close(*fake_glb());
-		cmd->heredoc = ft_strdup(next->value);
-		cmd->heredoc_fd = handle_heredoc(next->value, shell);
-		*fake_glb() = cmd->heredoc_fd;
-		if (cmd->heredoc_fd == -1)
-			return (-1);
+		if(her_red(cmd, *token, shell))
+			return -1;
 	}
 	else if ((*token)->type == REDIR_OUT || (*token)->type == REDIR_APPEND)
 		red_out(shell, cmd, (*token));

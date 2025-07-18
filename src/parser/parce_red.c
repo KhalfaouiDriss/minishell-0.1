@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:14:12 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/18 16:48:25 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/18 18:30:57 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,4 +79,14 @@ void	init_str(t_cmd *cmd)
 	cmd->flag_amb = 0;
 	cmd->heredoc_fd = -1;
 	cmd->fod_flag = 0;
+}
+
+int	her_red(t_cmd *cmd, t_token *token, t_shell *shell)
+{
+	cmd->heredoc = ft_strdup(token->next->value);
+	cmd->heredoc_fd = handle_heredoc(token->next->value, shell);
+	*fake_glb() = cmd->heredoc_fd;
+	if (cmd->heredoc_fd == -1)
+		return (1);
+	return (0);
 }
