@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:04 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/18 16:51:25 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/18 17:52:27 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ void	handle_dollar_variable_expansion(t_shell *shell, t_lexer_state *state,
 	value = handle_variable_token(state->str, &state->i, shell, 0);
 	if (value)
 	{
+		if(!ft_strchr(value, ' ') || ft_strchr(value, '>') || ft_strchr(value, '<') || ft_strchr(value, '|'))
+			shell->not_found = 2;
 		if (check_syntax_errors(shell, value, 2))
 			shell->not_found = 2;
 		if (ft_strncmp(value, "$", 1) == 0 || ft_strlen(value) == 0)

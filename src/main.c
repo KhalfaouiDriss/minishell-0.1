@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:33:06 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/18 17:08:41 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/18 17:48:51 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ void	main_loop(t_shell *shell)
 		global_state(1);
 		execute_pipeline(shell);
 		shell->exp = 1;
+		shell->not_found = 0;
 	}
 }
 
