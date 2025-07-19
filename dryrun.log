@@ -1,0 +1,96 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/goinfre/dkhalfao/minishell-0.1'
+make -C ./lib/libft
+ 
+make[1]: Entering directory '/goinfre/dkhalfao/minishell-0.1/lib/libft'
+cc -Wall -Wextra -Werror   -c -o ft_isalpha.o ft_isalpha.c
+cc -Wall -Wextra -Werror   -c -o ft_isdigit.o ft_isdigit.c
+cc -Wall -Wextra -Werror   -c -o ft_isalnum.o ft_isalnum.c
+cc -Wall -Wextra -Werror   -c -o ft_isascii.o ft_isascii.c
+cc -Wall -Wextra -Werror   -c -o ft_isprint.o ft_isprint.c
+cc -Wall -Wextra -Werror   -c -o ft_strlen.o ft_strlen.c
+cc -Wall -Wextra -Werror   -c -o ft_memset.o ft_memset.c
+cc -Wall -Wextra -Werror   -c -o ft_bzero.o ft_bzero.c
+cc -Wall -Wextra -Werror   -c -o ft_memcpy.o ft_memcpy.c
+cc -Wall -Wextra -Werror   -c -o ft_memmove.o ft_memmove.c
+cc -Wall -Wextra -Werror   -c -o ft_strlcpy.o ft_strlcpy.c
+cc -Wall -Wextra -Werror   -c -o ft_strlcat.o ft_strlcat.c
+cc -Wall -Wextra -Werror   -c -o ft_calloc.o ft_calloc.c
+cc -Wall -Wextra -Werror   -c -o ft_strdup.o ft_strdup.c
+cc -Wall -Wextra -Werror   -c -o ft_toupper.o ft_toupper.c
+cc -Wall -Wextra -Werror   -c -o ft_tolower.o ft_tolower.c
+cc -Wall -Wextra -Werror   -c -o ft_strchr.o ft_strchr.c
+cc -Wall -Wextra -Werror   -c -o ft_strncmp.o ft_strncmp.c
+cc -Wall -Wextra -Werror   -c -o ft_memchr.o ft_memchr.c
+cc -Wall -Wextra -Werror   -c -o ft_memcmp.o ft_memcmp.c
+cc -Wall -Wextra -Werror   -c -o ft_strnstr.o ft_strnstr.c
+cc -Wall -Wextra -Werror   -c -o ft_atoi.o ft_atoi.c
+cc -Wall -Wextra -Werror   -c -o ft_strrchr.o ft_strrchr.c
+cc -Wall -Wextra -Werror   -c -o ft_substr.o ft_substr.c
+ 
+cc -Wall -Wextra -Werror   -c -o ft_strjoin.o ft_strjoin.c
+cc -Wall -Wextra -Werror   -c -o ft_strtrim.o ft_strtrim.c
+cc -Wall -Wextra -Werror   -c -o ft_split.o ft_split.c
+cc -Wall -Wextra -Werror   -c -o ft_itoa.o ft_itoa.c
+cc -Wall -Wextra -Werror   -c -o ft_strmapi.o ft_strmapi.c
+cc -Wall -Wextra -Werror   -c -o ft_striteri.o ft_striteri.c
+cc -Wall -Wextra -Werror   -c -o ft_putchar_fd.o ft_putchar_fd.c
+cc -Wall -Wextra -Werror   -c -o ft_putstr_fd.o ft_putstr_fd.c
+cc -Wall -Wextra -Werror   -c -o ft_putendl_fd.o ft_putendl_fd.c
+cc -Wall -Wextra -Werror   -c -o ft_putnbr_fd.o ft_putnbr_fd.c
+ar crs libft.a ft_isalpha.o ft_isdigit.o ft_isalnum.o ft_isascii.o ft_isprint.o ft_strlen.o ft_memset.o ft_bzero.o ft_memcpy.o ft_memmove.o ft_strlcpy.o ft_strlcat.o ft_calloc.o ft_strdup.o ft_toupper.o ft_tolower.o ft_strchr.o ft_strncmp.o ft_memchr.o ft_memcmp.o ft_strnstr.o ft_atoi.o ft_strrchr.o ft_substr.o ft_strjoin.o ft_strtrim.o ft_split.o ft_itoa.o ft_strmapi.o ft_striteri.o ft_putchar_fd.o ft_putstr_fd.o ft_putendl_fd.o ft_putnbr_fd.o
+make[1]: Leaving directory '/goinfre/dkhalfao/minishell-0.1/lib/libft'
+ 
+cc -g    -c -o src/free_all.o src/free_all.c
+cc -g    -c -o src/main.o src/main.c
+cc -g    -c -o src/utils_test.o src/utils_test.c
+cc -g    -c -o src/executor/execute_cmds.o src/executor/execute_cmds.c
+cc -g    -c -o src/executor/execute_util1.o src/executor/execute_util1.c
+ 
+cc -g    -c -o src/executor/execute_util2.o src/executor/execute_util2.c
+ 
+cc -g    -c -o src/executor/execute_util3.o src/executor/execute_util3.c
+ 
+cc -g    -c -o src/utils/builtins_utils_1.o src/utils/builtins_utils_1.c
+cc -g    -c -o src/utils/builtins_utils_2.o src/utils/builtins_utils_2.c
+cc -g    -c -o src/utils/free_utils.o src/utils/free_utils.c
+ 
+cc -g    -c -o src/utils/herdoc_util.o src/utils/herdoc_util.c
+ 
+cc -g    -c -o src/utils/init_env.o src/utils/init_env.c
+cc -g    -c -o src/utils/linkd_list_utils.o src/utils/linkd_list_utils.c
+cc -g    -c -o src/utils/signals_hand.o src/utils/signals_hand.c
+cc -g    -c -o src/utils/utils_1.o src/utils/utils_1.c
+ 
+cc -g    -c -o src/utils/utils_2.o src/utils/utils_2.c
+ 
+cc -g    -c -o src/utils/utils_toenized.o src/utils/utils_toenized.c
+cc -g    -c -o src/utils/utils_variable.o src/utils/utils_variable.c
+cc -g    -c -o src/parser/correct_lexer.o src/parser/correct_lexer.c
+cc -g    -c -o src/parser/handle_dollar_sign.o src/parser/handle_dollar_sign.c
+ 
+cc -g    -c -o src/parser/handle_normal_word.o src/parser/handle_normal_word.c
+ 
+cc -g    -c -o src/parser/handle_quotes.o src/parser/handle_quotes.c
+cc -g    -c -o src/parser/handle_special_token.o src/parser/handle_special_token.c
+cc -g    -c -o src/parser/handle_variable_token.o src/parser/handle_variable_token.c
+cc -g    -c -o src/parser/parce_red.o src/parser/parce_red.c
+cc -g    -c -o src/parser/parse_tokens.o src/parser/parse_tokens.c
+ 
+cc -g    -c -o src/parser/syntax_error.o src/parser/syntax_error.c
+cc -g    -c -o src/parser/tokenized.o src/parser/tokenized.c
+ 
+cc -g    -c -o src/builtins/built_in_utils.o src/builtins/built_in_utils.c
+cc -g    -c -o src/builtins/builtins.o src/builtins/builtins.c
+cc -g    -c -o src/builtins/ft_cd.o src/builtins/ft_cd.c
+cc -g    -c -o src/builtins/ft_echo.o src/builtins/ft_echo.c
+cc -g    -c -o src/builtins/ft_env.o src/builtins/ft_env.c
+cc -g    -c -o src/builtins/ft_exit.o src/builtins/ft_exit.c
+ 
+cc -g    -c -o src/builtins/ft_export.o src/builtins/ft_export.c
+cc -g    -c -o src/builtins/ft_pwd.o src/builtins/ft_pwd.c
+ 
+cc -g    -c -o src/builtins/ft_unset.o src/builtins/ft_unset.c
+cc -g  -o minishell src/free_all.o src/main.o src/utils_test.o src/executor/execute_cmds.o src/executor/execute_util1.o src/executor/execute_util2.o src/executor/execute_util3.o src/utils/builtins_utils_1.o src/utils/builtins_utils_2.o src/utils/free_utils.o src/utils/herdoc_util.o src/utils/init_env.o src/utils/linkd_list_utils.o src/utils/signals_hand.o src/utils/utils_1.o src/utils/utils_2.o src/utils/utils_toenized.o src/utils/utils_variable.o src/parser/correct_lexer.o src/parser/handle_dollar_sign.o src/parser/handle_normal_word.o src/parser/handle_quotes.o src/parser/handle_special_token.o src/parser/handle_variable_token.o src/parser/parce_red.o src/parser/parse_tokens.o src/parser/syntax_error.o src/parser/tokenized.o src/builtins/built_in_utils.o src/builtins/builtins.o src/builtins/ft_cd.o src/builtins/ft_echo.o src/builtins/ft_env.o src/builtins/ft_exit.o src/builtins/ft_export.o src/builtins/ft_pwd.o src/builtins/ft_unset.o -lreadline  lib/libft/libft.a
+make: Leaving directory '/goinfre/dkhalfao/minishell-0.1'
+ 

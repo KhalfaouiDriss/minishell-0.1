@@ -6,7 +6,7 @@
 /*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:33:06 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/18 17:58:43 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/19 10:19:19 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ void	main_loop(t_shell *shell)
 			add_history(shell->input);
 		shell->token = lexer_split_to_tokens(shell);
 		shell->cmd_list = parse_tokens(shell);
+		print_tokens(shell->token);
 		if (!shell->cmd_list)
 			continue ;
 		global_state(1);
