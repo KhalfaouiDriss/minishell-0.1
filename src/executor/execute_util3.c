@@ -17,6 +17,7 @@ void	dupping2(int fd, int a)
 {
 	dup2(fd, a);
 	close(fd);
+	fd = -1;
 }
 
 void	dupping(int in, int out)

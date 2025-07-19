@@ -16,7 +16,7 @@ void	redirect_input(char *file, t_cmd *cmd)
 {
 	int	fd;
 
-	if (cmd->infile_fd != -1)
+	if (cmd->infile_fd != -1 || !cmd->flag_amb)
 	{
 		fd = open(file, O_RDONLY);
 		cmd->infile_fd = fd;
@@ -37,10 +37,7 @@ void	redirect_output(t_cmd *cmd, int append)
 			fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 		cmd->outfile_fd = fd;
 		if (fd < 0)
-		{
 			perror("open outfile");
-			return ;
-		}
 	}
 }
 

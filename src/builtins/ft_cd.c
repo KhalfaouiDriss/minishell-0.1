@@ -92,7 +92,7 @@ void	ft_cd(t_shell *shell, char **args)
 		return ;
 	}
 	if (chdir(target_dir) == -1)
-		return (handle_cd_chdir_fail(shell, target_dir, oldpwd));
+		return (handle_cd_chdir_fail(shell, target_dir));
 	update_env_var(shell->env, "OLDPWD", oldpwd);
 	update_pwd_after_cd(shell);
 	shell->exit_status = 0;

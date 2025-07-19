@@ -73,8 +73,7 @@ int	check_cd_errors(t_shell *shell, const char *target_dir)
 	return (0);
 }
 
-void	handle_cd_chdir_fail(t_shell *shell, const char *target_dir,
-		char *oldpwd)
+void	handle_cd_chdir_fail(t_shell *shell, const char *target_dir)
 {
 	char	*buffer;
 

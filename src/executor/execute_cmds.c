@@ -56,9 +56,9 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 		exit(clean_exit(cmd, shell, 0));
 	path = find_command_path(cmd->args[0], shell->env);
 	handle_exec_errors(path, cmd, shell);
-	if (cmd->outfile_fd)
+	if (cmd->outfile_fd > 2)
 		dupping2(cmd->outfile_fd, 1);
-	if (cmd->infile_fd)
+	if (cmd->infile_fd > 2)
 		dupping2(cmd->infile_fd, 0);
 	execve(path, cmd->args, shell->new_env);
 	execve_fail(cmd);

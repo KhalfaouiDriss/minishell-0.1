@@ -71,6 +71,10 @@ void	handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd, int prev_pipe, in
 			close(fd[0]);
 			close(fd[1]);
 		}
+		if (cmd->infile_fd > 2)
+			close(cmd->infile_fd);
+		if (cmd->outfile_fd > 2)
+			close(cmd->outfile_fd);
 		clean_shell(shell);
 		exit(1);
 	}

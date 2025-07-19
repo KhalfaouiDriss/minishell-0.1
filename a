@@ -1,0 +1,10 @@
+42_minishell_tester
+a
+include
+lib
+Makefile
+minishell
+minishell_tester
+readline.supp
+s
+src

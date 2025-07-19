@@ -192,8 +192,7 @@ void				ft_cd(t_shell *shell, char **args);
 const char			*get_target_dir(t_shell *shell, char **args);
 void				handle_cd_oldpwd_failure(t_shell *shell);
 int					check_cd_errors(t_shell *shell, const char *target_dir);
-void				handle_cd_chdir_fail(t_shell *shell, const char *target_dir,
-						char *oldpwd);
+void				handle_cd_chdir_fail(t_shell *shell, const char *target_dir);
 void				update_pwd_after_cd(t_shell *shell);
 
 // builtins_utils_1.c
