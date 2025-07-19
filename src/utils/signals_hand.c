@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals_hand.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:36:53 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/18 18:37:49 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/19 11:48:13 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,11 +67,4 @@ void	get_sig(int sig)
 		rl_on_new_line();
 		rl_redisplay();
 	}
-}
-
-void	in_red(t_cmd *cmd, t_token *token)
-{
-	cmd->infile = ft_strdup(token->next->value);
-	redirect_input(cmd->infile, cmd);
-	*fake_glb() = cmd->infile_fd;
 }

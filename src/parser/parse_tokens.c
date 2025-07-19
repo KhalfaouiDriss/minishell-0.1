@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_tokens.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 15:51:13 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/18 18:37:06 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/19 13:17:12 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,23 +19,26 @@ int	*fake_glb(void)
 	return (&n);
 }
 
+void	in_red(t_cmd *cmd, t_token *token)
+{
+	cmd->infile = ft_strdup(token->next->value);
+	redirect_input(cmd->infile, cmd);
+	*fake_glb() = cmd->infile_fd;
+}
+
 static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 {
-	t_token	*next;
-
-	next = (*token)->next;
 	if (((*token)->type == REDIR_OUT || (*token)->type == REDIR_IN
-			|| (*token)->type == REDIR_APPEND) && !next->ebag && !cmd->flag_amb)
-		return (cmd->flag_amb = 1, *token = next, 0);
-	if ((*token)->type == REDIR_IN)
+			|| (*token)->type == REDIR_APPEND) && !(*token)->next->ebag
+		&& !cmd->flag_amb)
+		return (cmd->flag_amb = 1, *token = (*token)->next, 0);
+	if ((*token)->type == REDIR_IN && !cmd->flag_amb)
 	{
 		if (*fake_glb() != -1)
 			close(*fake_glb());
-		cmd->infile = ft_strdup(next->value);
-		redirect_input(cmd->infile, cmd);
-		*fake_glb() = cmd->infile_fd;
+		in_red(cmd, *token);
 		if (cmd->infile_fd == -1)
-			return (shell->exit_status = 1, *token = next, 1);
+			return (shell->exit_status = 1, *token = (*token)->next, 1);
 	}
 	else if ((*token)->type == REDIR_HEREDOC)
 	{
@@ -44,9 +47,10 @@ static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 		if (her_red(cmd, *token, shell))
 			return (-1);
 	}
-	else if ((*token)->type == REDIR_OUT || (*token)->type == REDIR_APPEND)
+	else if (((*token)->type == REDIR_OUT || (*token)->type == REDIR_APPEND)
+		&& !cmd->flag_amb)
 		red_out(shell, cmd, (*token));
-	*token = next;
+	*token = (*token)->next;
 	return (1);
 }
 
@@ -77,6 +81,7 @@ static t_cmd	*parse_command(t_token **token, t_shell *shell)
 	}
 	return (cmd->args[i] = NULL, cmd);
 }
+
 t_cmd	*parse_tokens(t_shell *shell)
 {
 	t_cmd	*head;

@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:37:09 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/18 18:34:08 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/19 11:28:28 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	close_fd_bin(int in, int out)
 		close(out);
 }
 
-void affiche_err(char *arg, char *trim, t_shell *shell)
+void	affiche_err(char *arg, char *trim, t_shell *shell)
 {
 	write(2, "exit\n", 5);
 	write(2, arg, ft_strlen(arg));
@@ -89,4 +89,3 @@ int	ft_exit(t_shell *shell, char **args)
 	clean_shell(shell);
 	exit(shell->exit_status);
 }
-
