@@ -6,7 +6,7 @@
 /*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 22:10:08 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/18 18:37:28 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/19 13:36:58 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,10 +132,6 @@ typedef struct s_lexer_state
 	const char		*input;
 
 }					t_lexer_state;
-
-// galbege_collecter
-
-// ptr -> list
 
 typedef struct s_mlc
 {
@@ -278,7 +274,8 @@ int					is_builtin(char *cmd);
 void				redirect_output_builtin(t_cmd *cmd, int append);
 int					execute_builtin(t_shell *shell, char *cmd, char **args);
 void				exit_success(t_shell *shell, long long code);
-int					handle_exit_error(t_shell *shell, char **args, char *trimmed);
+int					handle_exit_error(t_shell *shell, char **args,
+						char *trimmed);
 void				close_fd_bin(int in, int out);
 
 char				*ft_strdupv2(const char *str);
@@ -290,4 +287,6 @@ int					check_syntax_errors(t_shell *shell, char *input, int pos);
 int					*fake_glb(void);
 int					her_red(t_cmd *cmd, t_token *token, t_shell *shell);
 void				in_red(t_cmd *cmd, t_token *token);
+int					handle_operator(char *input, int *i, t_shell *shell);
+int					is_operator(char *str, int i);
 #endif

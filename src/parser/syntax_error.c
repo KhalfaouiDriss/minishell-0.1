@@ -6,7 +6,7 @@
 /*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:37 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/18 18:02:33 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/19 13:37:44 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,53 +52,6 @@ static int	handle_unmatched_quote(char quote, char *input, int *i,
 	(*i)++;
 	return (0);
 }
-
-static int	handle_operator(char *input, int *i, t_shell *shell)
-{
-	int		op_len;
-
-	op_len = is_operator(input, *i);
-	if (op_len)
-	{
-		if ((input[*i] == '<' && input[*i + 1] == '<' && input[*i + 2] == '<')
-			|| (input[*i] == '>' && input[*i + 1] == '>' && input[*i + 2] == '>'))
-		{
-			if (shell->pos == 1)
-			{
-				write(2, "syntax error\n", 14);
-				shell->exit_status = 2;
-			}
-			return (1);
-		}
-		if ((input[*i] == '<' && input[*i + 1] == '<' && input[*i + 2] == '>') ||
-			(input[*i] == '>' && input[*i + 1] == '>' && input[*i + 2] == '<') ||
-			(input[*i] == '<' && input[*i + 1] == '>') ||
-			(input[*i] == '>' && input[*i + 1] == '<'))
-		{
-			if (shell->pos == 1)
-			{
-				write(2, "syntax error\n", 14);
-				shell->exit_status = 2;
-			}
-			return (1);
-		}
-		*i += op_len;
-		*i = skip_spaces(input, *i);
-		if (!input[*i] || input[0] == '|' || (is_operator(input, *i)
-				&& !((input[*i] == '<') || (input[*i] == '>'))))
-		{
-			if (shell->pos == 1)
-			{
-				write(2, "syntax error\n", 14);
-				shell->exit_status = 2;
-			}
-			return (1);
-		}
-	}
-	return (0);
-}
-
-
 
 static int	skip_word(char *input, int *i, t_shell *shell)
 {
