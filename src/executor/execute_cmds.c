@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_cmds.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:24:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/18 18:00:10 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/19 16:20:26 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 {
 	char	*path;
 
-	handle_signals_and_exit_cases(shell, cmd);
+	handle_signals_and_exit_cases(shell, cmd, fd[0], fd[1]);
 	if (cmd->next)
 		(dupping2(fd[1], 1), close(fd[0]));
 	if (prev_pipe != -1)
@@ -66,7 +66,7 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 
 static void	exec_loop(t_shell *shell)
 {
-	int		fd[2];
+	int		fd[2] = {0, 0};
 	int		prev_pipe;
 	int		pid;
 	t_cmd	*cmd;

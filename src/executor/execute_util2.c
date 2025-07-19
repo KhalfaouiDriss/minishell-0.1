@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:45:02 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/19 13:14:37 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/19 16:32:46 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,11 +59,13 @@ void	handle_exec_errors(char *path, t_cmd *cmd, t_shell *shell)
 		print_not_found_and_exit(cmd, shell);
 }
 
-void	handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd)
+void	handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd, int a, int b)
 {
 	signal(SIGQUIT, SIG_DFL);
 	if (cmd->flag_amb == 1 || cmd->outfile_fd == -1)
 	{
+		close(a);
+		close(b);
 		clean_shell(shell);
 		exit(1);
 	}

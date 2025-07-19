@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:32:29 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/13 09:16:01 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/19 16:28:06 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	ft_echo(char **args)
 		j = 1;
 		while (args[i][j] == 'n')
 			j++;
-		if (args[i][j] == '\0')
+		if (args[i][j] == '\0' && args[i][j-1] == 'n')
 		{
 			no_newline = 1;
 			i++;

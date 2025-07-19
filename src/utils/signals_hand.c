@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:36:53 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/19 11:48:13 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/19 15:01:41 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	handel_sig(int sig)
 	shell = get_shell();
 	close(shell->her_fd);
 	clean_shell(shell);
-	exit(2);
+	exit(130);
 }
 
 void	get_sig(int sig)

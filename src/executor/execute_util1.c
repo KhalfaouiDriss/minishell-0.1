@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:40:33 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/17 16:25:31 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/19 16:07:24 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ void	close_parent_fds(t_cmd *cmd, int prev_pipe)
 void	handle_ambiguous(t_shell *shell)
 {
 	shell->exit_status = 1;
+	
 	write(2, "ambiguous redirect\n", 20);
 }
 
