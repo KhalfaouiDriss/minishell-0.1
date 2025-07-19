@@ -48,7 +48,7 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 		dupping2(prev_pipe, 0);
 	if (cmd->heredoc_fd != -1)
 		dupping2(cmd->heredoc_fd, 0);
-	if (cmd->infile_fd == -1)
+	if (cmd->infile_fd == -1 || cmd->outfile_fd == -1)
 		exit(clean_exit(cmd, shell, 1));
 	if (is_builtin(cmd->args[0]))
 		exit(builtin_free_exit(shell, cmd));
@@ -57,10 +57,7 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 	path = find_command_path(cmd->args[0], shell->env);
 	handle_exec_errors(path, cmd, shell);
 	if (cmd->outfile_fd)
-	{
-		printf("==========hhh============\n");
 		dupping2(cmd->outfile_fd, 1);
-	}
 	if (cmd->infile_fd)
 		dupping2(cmd->infile_fd, 0);
 	execve(path, cmd->args, shell->new_env);
