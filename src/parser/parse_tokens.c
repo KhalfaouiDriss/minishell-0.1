@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 15:51:13 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/19 13:17:12 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/19 13:49:31 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,6 @@ int	*fake_glb(void)
 	static int	n = -1;
 
 	return (&n);
-}
-
-void	in_red(t_cmd *cmd, t_token *token)
-{
-	cmd->infile = ft_strdup(token->next->value);
-	redirect_input(cmd->infile, cmd);
-	*fake_glb() = cmd->infile_fd;
 }
 
 static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)

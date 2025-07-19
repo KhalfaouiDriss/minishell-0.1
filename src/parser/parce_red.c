@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:14:12 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/19 12:55:50 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/19 13:49:38 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,29 +23,6 @@ void	red_out(t_shell *shell, t_cmd *cmd, t_token *token)
 	if (token->next->next && (token->next->next->type == REDIR_OUT
 			|| token->next->next->type == REDIR_APPEND))
 		close(cmd->outfile_fd);
-}
-
-int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
-{
-	t_token	*next;
-
-	next = (*token)->next;
-	if (((*token)->type == REDIR_OUT || (*token)->type == REDIR_IN
-			|| (*token)->type == REDIR_APPEND) && !next->ebag && !cmd->flag_amb)
-		return (cmd->flag_amb = 1, *token = next, 0);
-	if ((*token)->type == REDIR_IN)
-		return (cmd->infile = ft_strdup(next->value), *token = next, 1);
-	else if ((*token)->type == REDIR_HEREDOC)
-	{
-		cmd->heredoc = ft_strdup(next->value);
-		cmd->heredoc_fd = handle_heredoc(next->value, shell);
-		if (cmd->heredoc_fd == -1)
-			return (-1);
-	}
-	else if ((*token)->type == REDIR_OUT || (*token)->type == REDIR_APPEND)
-		red_out(shell, cmd, (*token));
-	*token = next;
-	return (1);
 }
 
 int	count_args(t_token *token)
@@ -89,4 +66,11 @@ int	her_red(t_cmd *cmd, t_token *token, t_shell *shell)
 	if (cmd->heredoc_fd == -1)
 		return (1);
 	return (0);
+}
+
+void	in_red(t_cmd *cmd, t_token *token)
+{
+	cmd->infile = ft_strdup(token->next->value);
+	redirect_input(cmd->infile, cmd);
+	*fake_glb() = cmd->infile_fd;
 }

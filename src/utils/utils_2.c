@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:43:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/19 13:32:49 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/19 14:37:48 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,12 @@ void	redirect_output(t_cmd *cmd, int append)
 			fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
 		else
 			fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+		cmd->outfile_fd = fd;
 		if (fd < 0)
 		{
 			perror("open outfile");
-			cmd->outfile_fd = fd;
 			return ;
 		}
-		cmd->outfile_fd = fd;
 	}
 }
 
