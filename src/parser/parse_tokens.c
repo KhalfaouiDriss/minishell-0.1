@@ -31,7 +31,9 @@ static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 	{
 		if (*fake_glb() != -1)
 			close(*fake_glb());
-		in_red(cmd, *token);
+		cmd->infile = ft_strdup(next->value);
+		redirect_input(cmd->infile, cmd);
+		*fake_glb() = cmd->infile_fd;
 		if (cmd->infile_fd == -1)
 			return (shell->exit_status = 1, *token = next, 1);
 	}
@@ -75,22 +77,6 @@ static t_cmd	*parse_command(t_token **token, t_shell *shell)
 	}
 	return (cmd->args[i] = NULL, cmd);
 }
-
-int	check_syn(t_token *token)
-{
-	while (token)
-	{
-		if (!token->type)
-		{
-			ft_putstr_fd(token->value, 2);
-			printf("\n");
-			return (1);
-		}
-		token = token->next;
-	}
-	return (0);
-}
-
 t_cmd	*parse_tokens(t_shell *shell)
 {
 	t_cmd	*head;
@@ -100,9 +86,6 @@ t_cmd	*parse_tokens(t_shell *shell)
 
 	head = NULL;
 	last = NULL;
-	token = shell->token;
-	if (check_syn(token))
-		return (NULL);
 	token = shell->token;
 	while (token)
 	{
