@@ -14,11 +14,14 @@
 
 int	is_embg_befor(t_shell *shell, int i)
 {
+	if (i <= 0)
+		return (1);
 	i--;
 	if (is_quote(shell->input[i]))
 		return (0);
 	return (1);
 }
+
 
 int	last_is_redir(t_shell *shell, int i)
 {

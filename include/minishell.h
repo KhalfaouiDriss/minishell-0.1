@@ -234,7 +234,7 @@ void				finalize_current_word(t_shell *shell, t_lexer_state *state);
 void				handle_dollar_sign(t_shell *shell, t_lexer_state *state);
 
 t_cmd				*parse_tokens(t_shell *shell);
-int					clean_exit(t_shell *shell, int fexit);
+int					clean_exit(t_cmd *cmd, t_shell *shell, int fexit);
 void				handle_ambiguous(t_shell *shell);
 void				close_parent_fds(t_cmd *cmd, int prev_pipe);
 char				*find_command_path(char *cmd, t_env *envp);
@@ -245,7 +245,7 @@ void				execve_fail(t_cmd *cmd);
 int					builtin_free_exit(t_shell *shell, t_cmd *cmd);
 void				print_not_found_and_exit(t_cmd *cmd, t_shell *shell);
 void				handle_exec_errors(char *path, t_cmd *cmd, t_shell *shell);
-void				handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd, int a, int b);
+void				handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd, int prev_pipe, int *fd);
 void				dupping2(int fd, int a);
 void				dupping(int in, int out);
 void				handle_pipes_and_fds(t_cmd *cmd, int prev_pipe, int *fd);

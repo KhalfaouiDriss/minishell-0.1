@@ -59,16 +59,19 @@ void	handle_exec_errors(char *path, t_cmd *cmd, t_shell *shell)
 		print_not_found_and_exit(cmd, shell);
 }
 
-void	handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd, int a, int b)
+void	handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd, int prev_pipe, int *fd)
 {
 	signal(SIGQUIT, SIG_DFL);
-	if (cmd->flag_amb == 1 || cmd->outfile_fd == -1)
+	if (cmd->flag_amb == 1)
 	{
-		close(a);
-		close(b);
+		if (prev_pipe != -1)
+			close(prev_pipe);
+		if (cmd->next)
+		{
+			close(fd[0]);
+			close(fd[1]);
+		}
 		clean_shell(shell);
 		exit(1);
 	}
-	if (cmd->outfile_fd != -1 && cmd->args[0] == NULL)
-		close(cmd->outfile_fd);
 }

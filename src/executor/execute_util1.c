@@ -81,8 +81,12 @@ void	handle_ambiguous(t_shell *shell)
 	write(2, "ambiguous redirect\n", 20);
 }
 
-int	clean_exit(t_shell *shell, int fexit)
+int	clean_exit(t_cmd *cmd,t_shell *shell, int fexit)
 {
+	if	(cmd->outfile_fd != -1)
+			close(cmd->outfile_fd);
+	if (cmd->infile_fd != -1)
+		close(cmd->infile_fd);
 	clean_shell(shell);
 	return (fexit);
 }
