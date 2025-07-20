@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 22:10:08 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/20 08:47:05 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/20 17:52:20 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -249,6 +249,7 @@ void				handle_exec_errors(char *path, t_cmd *cmd, t_shell *shell);
 void				handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd,
 						int prev_pipe, int *fd);
 void				dupping2(int fd, int a);
+void				 close_all(t_cmd *cmd);
 void				dupping(int in, int out);
 void				handle_pipes_and_fds(t_cmd *cmd, int prev_pipe, int *fd);
 void				init_str(t_cmd *cmd);

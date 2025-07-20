@@ -3,21 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   execute_util3.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:49:42 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/20 10:49:16 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/20 18:04:57 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-void	dupping2(int fd, int a)
-{
-	dup2(fd, a);
-	close(fd);
-	fd = -1;
-}
 
 void	dupping(int in, int out)
 {
@@ -63,4 +56,16 @@ int	builtin_free_exit(t_shell *shell, t_cmd *cmd)
 	n = execute_builtin(shell, cmd->args[0], cmd->args);
 	clean_shell(shell);
 	return (n);
+}
+
+void close_all(t_cmd *cmd)
+{
+	while(cmd)
+	{
+		if (cmd->outfile_fd > 2)
+			close(cmd->outfile_fd);
+		if (cmd->infile_fd > 2)
+			close(cmd->infile_fd);
+		cmd = cmd->next;
+	}
 }

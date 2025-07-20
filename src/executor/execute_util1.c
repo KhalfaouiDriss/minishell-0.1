@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_util1.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:40:33 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/20 10:49:03 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/20 17:52:52 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ void	close_parent_fds(t_cmd *cmd, int prev_pipe)
 {
 	if (cmd->outfile_fd > 2)
 	{
+		printf("here\n");
 		close(cmd->outfile_fd);
 		cmd->outfile_fd = -1;
 	}
@@ -72,6 +73,7 @@ void	close_parent_fds(t_cmd *cmd, int prev_pipe)
 	}
 	if (prev_pipe != -1)
 		close(prev_pipe);
+	
 }
 
 void	handle_ambiguous(t_shell *shell)
@@ -82,10 +84,7 @@ void	handle_ambiguous(t_shell *shell)
 
 int	clean_exit(t_cmd *cmd, t_shell *shell, int fexit)
 {
-	if (cmd->outfile_fd != -1)
-		close(cmd->outfile_fd);
-	if (cmd->infile_fd != -1)
-		close(cmd->infile_fd);
+	close_all(cmd);
 	clean_shell(shell);
 	return (fexit);
 }

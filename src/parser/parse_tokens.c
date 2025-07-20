@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 15:51:13 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/19 13:49:31 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/20 14:57:56 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ static t_cmd	*parse_command(t_token **token, t_shell *shell)
 	{
 		if ((*token)->type == WORD || (*token)->type == OPTION)
 			cmd->args[i++] = ft_strdup((*token)->value);
-		else
+		else if ((*token)->type >= REDIR_IN && (*token)->type <= REDIR_APPEND)
 		{
 			if (parse_redirections(token, cmd, shell) == -1)
 				return (NULL);

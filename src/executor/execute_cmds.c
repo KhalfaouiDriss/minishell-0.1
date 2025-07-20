@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_cmds.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:24:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/20 10:48:39 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/20 18:07:51 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,13 @@ int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 	return (shell->exit_status);
 }
 
+void	dupping2(int fd, int a)
+{
+	dup2(fd, a);
+	close(fd);
+	fd = -1;
+}
+
 static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 {
 	char	*path;
@@ -57,7 +64,7 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 	if (!cmd->args[0])
 		exit(clean_exit(cmd, shell, 0));
 	if (is_builtin(cmd->args[0]))
-		exit(builtin_free_exit(shell, cmd));
+		(signal(SIGPIPE, SIG_IGN), close_all(cmd), exit(builtin_free_exit(shell, cmd)));
 	path = find_command_path(cmd->args[0], shell->env);
 	handle_exec_errors(path, cmd, shell);
 	execve(path, cmd->args, shell->new_env);
