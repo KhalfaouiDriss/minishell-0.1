@@ -19,6 +19,21 @@ t_gc	*get_gc(void)
 	return (&gc);
 }
 
+void	gc_add_back(t_gc *gc, t_mlc *new)
+{
+	t_mlc	*tmp;
+
+	if (!gc->value)
+	{
+		gc->value = new;
+		return ;
+	}
+	tmp = gc->value;
+	while (tmp->next)
+		tmp = tmp->next;
+	tmp->next = new;
+}
+
 void	*ft_malloc(size_t size)
 {
 	t_gc	*gc;
@@ -33,8 +48,8 @@ void	*ft_malloc(size_t size)
 	if (!new)
 		return (NULL);
 	new->ptr = ptr;
-	new->next = gc->head;
-	gc->head = new;
+	new->next = NULL;
+	gc_add_back(gc, new);
 	return (ptr);
 }
 
@@ -44,14 +59,12 @@ void	gc_free_all(void)
 	t_mlc	*tmp;
 
 	gc = get_gc();
-	while (gc->head)
+	while (gc->value)
 	{
-		tmp = gc->head;
-		gc->head = gc->head->next;
-		if (tmp->ptr)
-			free(tmp->ptr);
-		if (tmp)
-			free(tmp);
+		tmp = gc->value;
+		gc->value = gc->value->next;
+		free(tmp->ptr);
+		free(tmp);
 	}
-	gc->head = NULL;
+	gc->value = NULL;
 }

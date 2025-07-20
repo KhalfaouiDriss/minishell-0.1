@@ -141,7 +141,7 @@ typedef struct s_mlc
 
 typedef struct s_gc
 {
-	t_mlc			*head;
+	t_mlc			*value;
 }					t_gc;
 
 void				*ft_malloc(size_t size);
