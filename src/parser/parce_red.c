@@ -21,7 +21,7 @@ void	red_out(t_shell *shell, t_cmd *cmd, t_token *token)
 		cmd->append = 1;
 	redirect_output(cmd, cmd->append);
 	if (token->next->next && (token->next->next->type == REDIR_OUT
-			|| token->next->next->type == REDIR_APPEND))
+			|| token->next->next->type == REDIR_APPEND) && cmd->outfile_fd != -1)
 		close(cmd->outfile_fd);
 }
 

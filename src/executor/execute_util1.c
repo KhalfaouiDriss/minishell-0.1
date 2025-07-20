@@ -77,7 +77,6 @@ void	close_parent_fds(t_cmd *cmd, int prev_pipe)
 void	handle_ambiguous(t_shell *shell)
 {
 	shell->exit_status = 1;
-	
 	write(2, "ambiguous redirect\n", 20);
 }
 

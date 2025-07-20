@@ -21,7 +21,10 @@ void	redirect_input(char *file, t_cmd *cmd)
 		fd = open(file, O_RDONLY);
 		cmd->infile_fd = fd;
 		if (fd < 0)
+		{
 			perror("open infile");
+			cmd->infile_fd = -1;
+		}
 	}
 }
 
@@ -29,7 +32,7 @@ void	redirect_output(t_cmd *cmd, int append)
 {
 	int	fd;
 
-	if (!cmd->flag_amb && cmd->infile_fd != -1)
+	if (!cmd->flag_amb && cmd->infile_fd != -1 && cmd->outfile_fd != -1)
 	{
 		if (append)
 			fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
@@ -37,7 +40,10 @@ void	redirect_output(t_cmd *cmd, int append)
 			fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 		cmd->outfile_fd = fd;
 		if (fd < 0)
+		{
 			perror("open outfile");
+			cmd->outfile_fd = -1;
+		}
 	}
 }
 

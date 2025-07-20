@@ -61,7 +61,7 @@ int	builtin_free_exit(t_shell *shell, t_cmd *cmd)
 	int	n;
 
 	n = 0;
-	n = handle_builtin_redirs(cmd, shell);
+	n = execute_builtin(shell, cmd->args[0], cmd->args);
 	clean_shell(shell);
 	return (n);
 }
