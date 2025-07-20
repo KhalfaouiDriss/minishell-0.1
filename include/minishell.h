@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 22:10:08 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/19 16:18:15 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/20 08:47:05 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,7 +192,8 @@ void				ft_cd(t_shell *shell, char **args);
 const char			*get_target_dir(t_shell *shell, char **args);
 void				handle_cd_oldpwd_failure(t_shell *shell);
 int					check_cd_errors(t_shell *shell, const char *target_dir);
-void				handle_cd_chdir_fail(t_shell *shell, const char *target_dir);
+void				handle_cd_chdir_fail(t_shell *shell,
+						const char *target_dir);
 void				update_pwd_after_cd(t_shell *shell);
 
 // builtins_utils_1.c
@@ -244,7 +245,8 @@ void				execve_fail(t_cmd *cmd);
 int					builtin_free_exit(t_shell *shell, t_cmd *cmd);
 void				print_not_found_and_exit(t_cmd *cmd, t_shell *shell);
 void				handle_exec_errors(char *path, t_cmd *cmd, t_shell *shell);
-void				handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd, int prev_pipe, int *fd);
+void				handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd,
+						int prev_pipe, int *fd);
 void				dupping2(int fd, int a);
 void				dupping(int in, int out);
 void				handle_pipes_and_fds(t_cmd *cmd, int prev_pipe, int *fd);

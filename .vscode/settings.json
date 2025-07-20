@@ -12,7 +12,8 @@
         "type_traits": "c",
         "utility": "c",
         "minishell.h": "c",
-        "sstream": "c"
+        "sstream": "c",
+        "libft.h": "c"
     },
     "makefile.configureOnOpen": true
 }

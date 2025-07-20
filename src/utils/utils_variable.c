@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_variable.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:57:20 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/16 20:12:00 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/20 08:47:32 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ int	is_embg_befor(t_shell *shell, int i)
 		return (0);
 	return (1);
 }
-
 
 int	last_is_redir(t_shell *shell, int i)
 {
