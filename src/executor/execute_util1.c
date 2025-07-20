@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:40:33 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/20 17:52:52 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/20 18:53:58 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ void	close_parent_fds(t_cmd *cmd, int prev_pipe)
 {
 	if (cmd->outfile_fd > 2)
 	{
-		printf("here\n");
 		close(cmd->outfile_fd);
 		cmd->outfile_fd = -1;
 	}
