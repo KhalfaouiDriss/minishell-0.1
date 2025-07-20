@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_util2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:45:02 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/20 10:48:58 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/20 19:38:38 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,10 +72,7 @@ void	handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd, int prev_pipe,
 			close(fd[0]);
 			close(fd[1]);
 		}
-		if (cmd->infile_fd > 2)
-			close(cmd->infile_fd);
-		if (cmd->outfile_fd > 2)
-			close(cmd->outfile_fd);
+		close_all(cmd);
 		clean_shell(shell);
 		exit(1);
 	}
