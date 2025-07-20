@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_util2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:45:02 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/19 16:32:46 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/20 10:48:58 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,8 @@ void	handle_exec_errors(char *path, t_cmd *cmd, t_shell *shell)
 		print_not_found_and_exit(cmd, shell);
 }
 
-void	handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd, int prev_pipe, int *fd)
+void	handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd, int prev_pipe,
+		int *fd)
 {
 	signal(SIGQUIT, SIG_DFL);
 	if (cmd->flag_amb == 1)

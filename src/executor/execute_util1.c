@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_util1.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:40:33 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/19 16:07:24 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/20 10:49:03 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,9 +80,9 @@ void	handle_ambiguous(t_shell *shell)
 	write(2, "ambiguous redirect\n", 20);
 }
 
-int	clean_exit(t_cmd *cmd,t_shell *shell, int fexit)
+int	clean_exit(t_cmd *cmd, t_shell *shell, int fexit)
 {
-	if(cmd->outfile_fd != -1)
+	if (cmd->outfile_fd != -1)
 		close(cmd->outfile_fd);
 	if (cmd->infile_fd != -1)
 		close(cmd->infile_fd);

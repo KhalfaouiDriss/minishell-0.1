@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_cmds.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:24:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/19 16:20:26 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/20 10:48:39 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 {
 	char	*path;
 
-	handle_signals_and_exit_cases(shell, cmd, prev_pipe ,fd);
+	handle_signals_and_exit_cases(shell, cmd, prev_pipe, fd);
 	if (cmd->next)
 		(dupping2(fd[1], 1), close(fd[0]));
 	if (prev_pipe != -1)
@@ -52,20 +52,16 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 		dupping2(cmd->outfile_fd, 1);
 	if (cmd->infile_fd > 2)
 		dupping2(cmd->infile_fd, 0);
-
 	if (cmd->infile_fd == -1 || cmd->outfile_fd == -1)
 		exit(clean_exit(cmd, shell, 1));
 	if (!cmd->args[0])
 		exit(clean_exit(cmd, shell, 0));
-
 	if (is_builtin(cmd->args[0]))
 		exit(builtin_free_exit(shell, cmd));
-
 	path = find_command_path(cmd->args[0], shell->env);
 	handle_exec_errors(path, cmd, shell);
 	execve(path, cmd->args, shell->new_env);
 	execve_fail(cmd);
-
 }
 
 static void	exec_loop(t_shell *shell)
