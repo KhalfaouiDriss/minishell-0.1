@@ -6,7 +6,7 @@
 /*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:55:57 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/20 08:46:58 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/20 10:57:35 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ static char	*handle_special_cases(char *str, int *i, t_shell *shell, char quote)
 {
 	char	*ret;
 
+	(void)quote;
 	ret = handle_special_cases_utile(str, i, shell);
 	if (ret)
 		return (ret);
@@ -52,6 +53,7 @@ static char	*extract_var_name(char *str, int *i)
 static char	*handle_heredoc_case(t_shell *shell, char *var_name, int *i,
 		char quote)
 {
+	(void)i;
 	shell->is_heredoc_delimiter = 0;
 	if (quote == '\"' || quote == '\'')
 		shell->exp = 0;
@@ -61,6 +63,8 @@ static char	*handle_heredoc_case(t_shell *shell, char *var_name, int *i,
 static char	*handle_no_var_value(t_shell *shell, char *var_name, int start,
 		int *i)
 {
+	(void)i;
+	(void)var_name;
 	if (last_is_redir(shell, start))
 	{
 		if (is_embg_befor(shell, start - 1) && !is_quote(shell->input[*i]))

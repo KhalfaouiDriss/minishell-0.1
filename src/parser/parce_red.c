@@ -6,7 +6,7 @@
 /*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:14:12 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/20 10:51:34 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/20 10:54:46 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 void	red_out(t_shell *shell, t_cmd *cmd, t_token *token)
 {
+	(void)shell;
 	cmd->outfile = ft_strdup(token->next->value);
 	if (token->type == REDIR_OUT)
 		cmd->append = 0;

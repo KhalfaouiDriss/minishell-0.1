@@ -6,7 +6,7 @@
 /*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 21:59:52 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/15 15:42:51 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/20 10:53:02 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,6 @@ void	handle_export_key(t_shell *shell, char *key, char *value)
 void	ft_export(t_shell *shell, char **args)
 {
 	int		i;
-	t_env	*tmp;
 	char	*key;
 	char	*value;
 

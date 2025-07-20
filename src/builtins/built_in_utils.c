@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   built_in_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 11:27:39 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/19 11:28:04 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/20 10:53:52 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 int	handle_exit_error(t_shell *shell, char **args, char *trimmed)
 {
+	(void)shell;
+	(void)args;
 	free(trimmed);
 	return (write(2, "exit\n", 5), write(2,
 			"minishell: exit: too many arguments\n", 36),

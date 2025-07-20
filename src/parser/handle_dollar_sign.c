@@ -6,7 +6,7 @@
 /*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:04 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/19 10:22:16 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/20 10:58:26 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ void	handle_dollar_in_single_quotes(t_lexer_state *state)
 void	handle_empty_or_literal_dollar(t_shell *shell, t_lexer_state *state,
 		char *value)
 {
+	(void)shell;
 	if (ft_strncmp(value, "$", 1) == 0)
 	{
 		state->current_word = strjoin_free(state->current_word, value);

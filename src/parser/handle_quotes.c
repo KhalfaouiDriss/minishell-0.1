@@ -6,7 +6,7 @@
 /*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:14 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/18 18:07:35 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/20 10:58:05 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ void	handle_invalid_quote(t_shell *shell, t_lexer_state *state)
 
 static void	handle_empty_quotes(t_shell *shell, t_lexer_state *state)
 {
+	(void)shell;
 	if (state->start == state->i && state->str[state->i])
 	{
 		if (!state->current_word)

@@ -6,7 +6,7 @@
 /*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:26 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/19 10:23:37 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/20 10:56:47 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ void	handle_special_token(t_shell *shell, const char *input, int *i,
 	int		type;
 	char	*val;
 
+	type = 0;
 	start = *i;
 	if ((input[*i] == '<' || input[*i] == '>') && input[*i + 1] == input[*i])
 		*i += 2;

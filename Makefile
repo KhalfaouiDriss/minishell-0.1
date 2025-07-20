@@ -3,7 +3,8 @@ CC = cc -g
 LIBFT = lib/libft/libft.a
 MFLAGS = -lreadline
 
-# CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror
+# CFLAGS = -Wall -Wextra
 SRCS = $(wildcard src/*.c src/executor/*.c src/utils/*.c src/parser/*.c src/builtins/*.c)
 
 OBJS = $(SRCS:.c=.o)
