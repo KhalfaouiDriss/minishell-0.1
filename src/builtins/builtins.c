@@ -36,7 +36,7 @@ int	execute_builtin(t_shell *shell, char *cmd, char **args)
 	else if (ft_strncmp(cmd, "cd", 3) == 0)
 		return (ft_cd(shell, args), shell->exit_status);
 	else if (ft_strncmp(cmd, "pwd", 4) == 0)
-		return (ft_pwd(shell, args), shell->exit_status);
+		return (ft_pwd(shell, args), 0);
 	else if (ft_strncmp(cmd, "export", 6) == 0)
 		return (ft_export(shell, args), shell->exit_status);
 	else if (ft_strncmp(cmd, "unset", 5) == 0)
