@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 21:41:04 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/18 17:59:05 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/21 20:03:53 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,12 @@ void	update_env_var(t_env *env, const char *name, const char *value)
 	add_new_env_var(env, name, value);
 }
 
-void	handle_cd_args_error(t_shell *shell)
+void	handle_cd_args_error(t_shell *shell, int too)
 {
-	write(2, "cd: too many arguments\n", 24);
+	if(too)
+		write(2, "cd: too many arguments\n", 24);
+	else
+		write(2, "cd: need argument\n", 19);
 	shell->exit_status = 1;
 }
 
@@ -79,7 +82,9 @@ void	ft_cd(t_shell *shell, char **args)
 	char		*oldpwd;
 
 	if (args[1] && args[2])
-		return (handle_cd_args_error(shell));
+		return (handle_cd_args_error(shell, 1));
+	if(!args[1])
+		return (handle_cd_args_error(shell, 0));	
 	target_dir = get_target_dir(shell, args);
 	if (!target_dir)
 		return ;

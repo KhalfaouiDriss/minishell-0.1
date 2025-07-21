@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 22:10:08 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/21 16:07:52 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/21 20:03:34 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,7 @@ void				add_new_env_var(t_env *env, const char *name,
 						const char *value);
 void				update_env_var(t_env *env, const char *name,
 						const char *value);
-void				handle_cd_args_error(t_shell *shell);
+void				handle_cd_args_error(t_shell *shell, int too);
 void				ft_cd(t_shell *shell, char **args);
 
 // builtins_utils_1.c
