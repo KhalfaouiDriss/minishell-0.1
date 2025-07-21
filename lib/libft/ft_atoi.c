@@ -14,7 +14,7 @@
 
 int	ft_atoi(const char *str)
 {
-	int	sign;
+	int		sign;
 	long	value;
 
 	sign = 1;
@@ -30,9 +30,9 @@ int	ft_atoi(const char *str)
 		value = value * 10 + (*str - '0');
 		str++;
 	}
-	if(!ft_isdigit(*str) && *str != '\0')
-		return -1;
-	if(value > 2147483647 && sign == 1)
+	if (!ft_isdigit(*str) && *str != '\0')
+		return (-1);
+	if (value > 2147483647 && sign == 1)
 		return (-1);
 	value = sign * value;
 	return (value);

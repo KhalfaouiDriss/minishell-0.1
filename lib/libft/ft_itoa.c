@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 08:30:22 by dkhalfao          #+#    #+#             */
-/*   Updated: 2024/11/13 18:44:36 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/12 21:50:32 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include "../../include/minishell.h"
 
 static int	int_len(int nbr)
 {
@@ -62,9 +63,10 @@ char	*ft_itoa(int nbr)
 	char	*res;
 	long	r;
 
-	res = malloc(sizeof(char) * (int_len(nbr) + 1));
+	res = ft_malloc(sizeof(char) * (int_len(nbr) + 1));
 	if (!res)
 		return (0);
+	res[0] = '\0';
 	r = nbr;
 	if (nbr == 0)
 		return (ft_strdup("0"));

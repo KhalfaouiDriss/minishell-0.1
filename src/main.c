@@ -1,120 +1,88 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/13 20:33:06 by dkhalfao          #+#    #+#             */
+/*   Updated: 2025/07/19 13:40:39 by dkhalfao         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/minishell.h"
 
-int		blocked = 0;
-
-void	get_sig(int sig)
+void	clean_env(t_env *env)
 {
-	if (blocked == 1)
-		return ;
-	if (sig == SIGINT)
+	t_env	*tmp;
+
+	while (env)
 	{
-		blocked = 2;
-		write(1, "\n", 1);
-		rl_replace_line("", 0);
-		rl_on_new_line();
-		rl_redisplay();
+		tmp = env;
+		env = env->next;
+		free(tmp->name);
+		free(tmp->value);
+		free(tmp);
 	}
-	// else if (sig == SIGUSR1)
-	// {
-	// 	blocked = 2;
-	// 	write(1, "\n", 1);
-	// 	rl_replace_line("", 0);
-	// 	rl_on_new_line();
-	// 	// rl_redisplay();
-	// }
 }
 
-void	init_env(t_shell *shell, char **envp)
+t_shell	*get_shell(void)
 {
-	int		i;
-	char	*name;
-	char	*value;
-	char	*egl;
-	t_env	*new_env;
-	t_env	*last;
+	static t_shell	shell;
 
-	i = 0;
+	return (&shell);
+}
+
+void	clean_shell(t_shell *shell)
+{
+	if (shell->new_env)
+		free_new_env(shell->new_env);
+	if (shell->env)
+		clean_env(shell->env);
+	gc_free_all();
+	shell->new_env = NULL;
 	shell->env = NULL;
-	while (envp[i])
+}
+
+void	main_loop(t_shell *shell)
+{
+	while (1)
 	{
-		egl = ft_strchr(envp[i], '=');
-		if(egl)
+		global_state(0);
+		shell->input = readline("➜ Minishell $/~ ");
+		if (global_state(-1) == 2)
+			shell->exit_status = 130;
+		if (!shell->input)
 		{
-			name = ft_substr(envp[i], 0, ft_strlen(envp[i]) - ft_strlen(egl));
-			value = egl + 1;
+			ft_putendl_fd("exit", 1);
+			clean_shell(shell);
+			exit(shell->exit_status);
 		}
-		if (!name)
-			return ;
-		new_env = malloc(sizeof(t_env));
-		if (!new_env)
-			return ;
-		new_env->name = ft_strdup(name);
-		new_env->value = ft_strdup(value);
-		new_env->next = NULL;
-		if (!shell->env)
-			shell->env = new_env;
-		else
-		{
-			last = shell->env;
-			while (last->next)
-				last = last->next;
-			last->next = new_env;
-		}
-		free(name);
-		i++;
+		if (shell->input[0])
+			add_history(shell->input);
+		shell->token = lexer_split_to_tokens(shell);
+		shell->cmd_list = parse_tokens(shell);
+		if (!shell->cmd_list)
+			continue ;
+		global_state(1);
+		execute_pipeline(shell);
+		shell->exp = 1;
+		shell->not_found = 0;
 	}
 }
 
 int	main(int ac, char **av, char **envp)
 {
-	t_shell	shell;
-	int		exit_status;
-	char	*pwd;
+	t_shell	*shell;
 
-	shell.exit_status = 0;
+	shell = get_shell();
 	(void)ac;
 	(void)av;
-	init_shell(&shell);
+	init_shell(shell);
+	init_env(shell, envp);
 	signal(SIGINT, get_sig);
+	signal(SIGTSTP, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
-	pwd = getcwd(NULL, 0);
-	if (!pwd)
-	{
-		perror("getcwd");
-		exit(1);
-	}
-	free(pwd);
-	init_env(&shell, envp);
-	shell.exit_status = 0;
-	while (1)
-	{
-		if (shell.blocked == 12)
-			get_sig(12);
-		shell.input = readline("➜ Minishell $/~ ");
-		if (!shell.input)
-		{
-			printf("exit\n");
-			free_all(&shell);
-			free_env(shell.env);
-			break ;
-		}
-		if (shell.input[0] != '\0')
-			add_history(shell.input);
-		if (blocked == 2)
-			shell.exit_status = 130;
-		shell.token = lexer_split_to_tokens(&shell);
-		shell.cmd_list = parse_tokens(&shell);
-		if (!shell.cmd_list)
-		{
-			free_all(&shell);
-			continue ;
-		}
-		blocked = 1;
-		if (shell.cmd_list)
-			execute_pipeline(&shell, envp);
-		blocked = 0;
-		free_all(&shell);
-		usleep(500);
-	}
+	main_loop(shell);
 	return (0);
 }

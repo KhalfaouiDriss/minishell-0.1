@@ -1,104 +1,90 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils_1.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/13 20:37:04 by dkhalfao          #+#    #+#             */
+/*   Updated: 2025/07/19 10:20:25 by dkhalfao         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/minishell.h"
 
-void	free_split(char **lst)
+void	init_shell(t_shell *shell)
 {
-	int	i;
+	shell->arg_count = 0;
+	shell->args = NULL;
+	shell->input = NULL;
+	shell->token = NULL;
+	shell->cmd_list = NULL;
+	shell->exit_status = 0;
+	shell->env = NULL;
+	shell->input = NULL;
+	shell->pip_count = 0;
+	shell->is_heredoc_delimiter = 0;
+	shell->ebag = -1;
+	shell->ebag_final = -1;
+	shell->exp = 1;
+}
 
-	i = 0;
-	if (!lst)
-		return ;
-	while (lst[i])
+void	gc_remove(void *ptr)
+{
+	t_gc	*gc;
+	t_mlc	*curr;
+	t_mlc	*prev;
+
+	gc = get_gc();
+	curr = gc->value;
+	prev = NULL;
+	while (curr)
 	{
-		free(lst[i]);
-		i++;
+		if (curr->ptr == ptr)
+		{
+			if (prev)
+				prev->next = curr->next;
+			else
+				gc->value = curr->next;
+			free(curr->ptr);
+			free(curr);
+			return ;
+		}
+		prev = curr;
+		curr = curr->next;
 	}
-	free(lst);
 }
 
-
-void init_shell(t_shell *shell)
+char	*strjoin_free(char *s1, char *s2)
 {
-    shell->arg_count = 0;
-    shell->args = NULL;
-    shell->input = NULL;
-    shell->token = NULL;
-    shell->cmd_list = NULL;
-    shell->exit_status = 0;
-    shell->env = NULL;
-    shell->input = NULL;
-    shell->pip_count = 0;
-}
+	char	*new_str;
 
-void free_tokens(t_token *tokens)
-{
-    t_token *tmp;
-
-    while (tokens)
-    {
-        tmp = tokens->next;
-        if (tokens->value)
-            free(tokens->value);
-        free(tokens);
-        tokens = tmp;
-    }
-}
-
-void free_env(t_env *env)
-{
-    t_env *tmp;
-
-    while (env)
-    {
-        tmp = env->next;
-        if (env->name)
-            free(env->name);
-        if (env->value)
-            free(env->value);
-        free(env);
-        env = tmp;
-    }
-}
-
-
-void free_all(t_shell *shell)
-{
-    if (!shell)
-        return;
-
-    if (shell->input)
-    {
-        free(shell->input);
-        shell->input = NULL;
-    }
-
-    if (shell->token)
-    {
-        free_tokens(shell->token);
-        shell->token = NULL;
-    }
-
-    if (shell->args)
-    {
-        free_split(shell->args);
-        shell->args = NULL;
-    }
-    if (shell->cmd_list)
-    {
-        free_cmds(shell->cmd_list);
-        shell->cmd_list = NULL;
-    }
-
-}
-
-
-t_token	*new_node(char *value)
-{
-	t_token	*new;
-
-	new = malloc(sizeof(*new));
-	if (!new)
+	if (!s1 && !s2)
 		return (NULL);
-    new->value = value;
-	new->next = NULL;
-	return (new);
+	if (!s1)
+		return (s2);
+	if (!s2)
+		return (s1);
+	new_str = ft_strjoin(s1, s2);
+	return (new_str);
+}
+
+int	ft_nodelen(t_token *head)
+{
+	int		i;
+	t_token	*tmp;
+
+	tmp = head;
+	i = 0;
+	while (tmp)
+	{
+		i++;
+		tmp = tmp->next;
+	}
+	return (i);
+}
+
+int	is_space(char c)
+{
+	return (c == ' ' || c == '\t' || c == '\n');
 }

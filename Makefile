@@ -1,9 +1,9 @@
 NAME = minishell
-CC = cc -g
+CC = cc
 LIBFT = lib/libft/libft.a
 MFLAGS = -lreadline
 
-# CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror
 SRCS = $(wildcard src/*.c src/executor/*.c src/utils/*.c src/parser/*.c src/builtins/*.c)
 
 OBJS = $(SRCS:.c=.o)
@@ -30,7 +30,7 @@ push:
 	git add .
 	git status
 	git commit -m "minishell"
-	git push
+	git push -f
 
 pull:
 	git pull

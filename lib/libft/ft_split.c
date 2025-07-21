@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 18:34:17 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/04/10 14:30:59 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/18 16:38:54 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../../include/minishell.h"
 #include "libft.h"
 
-static int	count_words(const char *str, char c)
+int	count_words(const char *str, char c)
 {
 	int	count;
 	int	flag;
@@ -33,20 +34,47 @@ static int	count_words(const char *str, char c)
 	return (count);
 }
 
-static void	free_split(char **lst)
+char	*ft_substr2(const char *str, unsigned int start, size_t n)
 {
-	int	i;
+	size_t	i;
+	char	*dest;
+	size_t	size;
 
+	if (!str)
+		return (NULL);
+	size = ft_strlen(str);
+	if (start >= size)
+		return (ft_strdup(""));
+	if (start + n > size)
+		n = size - start;
+	dest = ft_malloc(n + 1);
+	if (!dest)
+		return (NULL);
 	i = 0;
-	if (!lst)
-		return ;
-	while (lst[i])
+	while (str[start] && i < n)
 	{
-		free(lst[i]);
+		dest[i] = str[start];
 		i++;
+		start++;
 	}
-	free(lst);
+	dest[i] = '\0';
+	return (dest);
 }
+
+// static void	free_split(char **lst)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	if (!lst)
+// 		return ;
+// 	while (lst[i])
+// 	{
+// 		free(lst[i]);
+// 		i++;
+// 	}
+// 	free(lst);
+// }
 
 static void	fill(char const *s, char c, char **lst)
 {
@@ -82,7 +110,7 @@ char	**ft_split(char const *s, char c)
 
 	if (!s)
 		return (NULL);
-	lst = malloc((count_words(s, c) + 1) * sizeof(char *));
+	lst = ft_malloc((count_words(s, c) + 1) * sizeof(char *));
 	if (!lst)
 		return (NULL);
 	fill(s, c, lst);

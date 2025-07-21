@@ -1,96 +1,98 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_export.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/13 21:59:52 by dkhalfao          #+#    #+#             */
+/*   Updated: 2025/07/20 10:53:02 by dkhalfao         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/minishell.h"
 
-void add_env_node(t_env **env, const char *key, const char *value)
+int	is_valid_export_key_start(char *str)
 {
-    t_env *new_node = malloc(sizeof(t_env));
-    t_env *tmp;
-    
-    if (!new_node)
-        return;
-    new_node->name = ft_strdup(key);
-    new_node->value = NULL;
-    if(value)
-        new_node->value = ft_strdup(value);
-    new_node->next = NULL;
+	int	c;
 
-    if (*env == NULL)
-    {
-        *env = new_node;
-        return;
-    }
-
-    tmp = *env;
-    while (tmp->next)
-        tmp = tmp->next;
-    tmp->next = new_node;
+	c = (ft_isalpha(str[0]) || str[0] == '_');
+	return (c);
 }
 
-void ft_export(t_shell *shell, char **args)
+void	print_export_error(t_shell *shell, char *arg, int *i)
 {
-    int i = 1;
-    char *key;
-    t_env *tmp = shell->env;
-    char *value;
+	ft_putstr_fd("minishell: export: ", 2);
+	ft_putstr_fd(arg, 2);
+	ft_putstr_fd(": not a valid identifier\n", 2);
+	shell->exit_status = 1;
+	(*i)++;
+}
 
-    if(args[i] == NULL)
-    {
-        ft_env(shell->env, 0);
-        return;
-    }
-    else
-    {
-        while (args[i])
-        {
-            if(!(args[i][0] >= 97 && args[i][0] <= 122) && !(args[i][0] >= 65 && args[i][0] <= 90) && args[i][0] != '_')
-            {
-                ft_putstr_fd("minishell: export: ", 2);
-                ft_putstr_fd(args[i], 2);
-                ft_putstr_fd(" not a valid identifier\n", 2);
-                shell->exit_status = 1;
-                i++;
-                continue;
-            }
-            char *equal_sign = ft_strchr(args[i], '=');
-            if(equal_sign)
-            {
-                int key_len = equal_sign - args[i];
-                key = ft_substr(args[i], 0, key_len);
-                value = ft_strdup(equal_sign + 1);
-            }
-            else
-            {
-                key = ft_strdup(args[i]);
-                value = NULL;
-            }
-            if (key)
-            {
-                if(ft_strchr(key, '-'))
-                {
-                    ft_putstr_fd("minishell: export: ", 2);
-                    ft_putstr_fd(args[i], 2);
-                    ft_putstr_fd(" not a valid identifier\n", 2);
-                    shell->exit_status = 1;
-                    i++;
-                    continue;
-                }
-                while (tmp)
-                {
-                    if (ft_strncmp(tmp->name, key, ft_strlen(key) + 1) == 0)
-                    {
-                        if(value)
-                        free(tmp->value);      
-                        tmp->value = ft_strdup(value);
-                        break;
-                    }
-                    tmp = tmp->next;
-                }
-                if (!tmp)
-                    add_env_node(&(shell->env), key, value);
-            }
-            free(key);
-            if(value)
-                free(value);
-            i++;
-        }
-    }
+void	parse_key_value(char *arg, char **key, char **value)
+{
+	char	*equal;
+	int		key_len;
+
+	equal = ft_strchr(arg, '=');
+	if (equal)
+	{
+		key_len = equal - arg;
+		*key = ft_substr(arg, 0, key_len);
+		if (ft_strlen(equal + 1))
+			*value = equal + 1;
+		else
+			*value = NULL;
+	}
+	else
+	{
+		*key = ft_strdup(arg);
+		*value = NULL;
+	}
+}
+
+void	handle_export_key(t_shell *shell, char *key, char *value)
+{
+	t_env	*tmp;
+
+	tmp = shell->env;
+	while (tmp && ft_strncmp(tmp->name, key, ft_strlen(key) + 1))
+		tmp = tmp->next;
+	if (tmp)
+	{
+		if (value)
+		{
+			free(tmp->value);
+			tmp->value = ft_strdupv2(value);
+		}
+	}
+	else
+		add_env_node(shell, &(shell->env), key, value);
+}
+
+void	ft_export(t_shell *shell, char **args)
+{
+	int		i;
+	char	*key;
+	char	*value;
+
+	i = 1;
+	if (!args[i])
+		return (ft_env(shell->env, 0));
+	while (args[i])
+	{
+		if (!is_valid_export_key_start(args[i]))
+		{
+			print_export_error(shell, args[i], &i);
+			continue ;
+		}
+		parse_key_value(args[i], &key, &value);
+		if (ft_strchr(key, '-'))
+		{
+			print_export_error(shell, args[i], &i);
+			continue ;
+		}
+		handle_export_key(shell, key, value);
+		i++;
+	}
 }

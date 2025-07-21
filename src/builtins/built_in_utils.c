@@ -1,37 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_env.c                                           :+:      :+:    :+:   */
+/*   built_in_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/11 20:35:16 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/13 22:10:37 by dkhalfao         ###   ########.fr       */
+/*   Created: 2025/07/19 11:27:39 by sel-bech          #+#    #+#             */
+/*   Updated: 2025/07/20 10:53:52 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void	ft_env(t_env *env, int print_as_env)
+int	handle_exit_error(t_shell *shell, char **args, char *trimmed)
 {
-	while (env)
-	{
-		if (print_as_env)
-		{
-			if (env->value)
-				printf("%s=%s\n", env->name, env->value);
-		}
-		else
-		{
-			if (env->value)
-			{
-				printf("declare -x %s=\"%s\"\n", env->name, env->value);
-			}
-			else
-			{
-				printf("declare -x %s\n", env->name);
-			}
-		}
-		env = env->next;
-	}
+	(void)shell;
+	(void)args;
+	free(trimmed);
+	return (write(2, "exit\n", 5), write(2,
+			"minishell: exit: too many arguments\n", 36),
+		shell->exit_status = 1, 1);
+}
+
+void	exit_success(t_shell *shell, long long code)
+{
+	close_fd_bin(shell->in, shell->out);
+	printf("exit\n");
+	clean_shell(shell);
+	exit((unsigned char)code);
 }
