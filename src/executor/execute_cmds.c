@@ -98,23 +98,28 @@ void	wait_all(int last_pid, t_shell *shell)
 	int	status;
 	int	sigint;
 	int	sigquit;
+	int	pid;
 	int	sig;
 
 	sigint = 0;
 	sigquit = 0;
-	waitpid(last_pid, &status, 0);
-	while (wait(NULL) > 0)
-		;
-	if (WIFEXITED(status))
-		shell->exit_status = WEXITSTATUS(status);
-	else if (WIFSIGNALED(status))
+	pid = waitpid(-1, &status, 0);
+	while (pid != -1)
 	{
-		shell->exit_status = 128 + WTERMSIG(status);
-		sig = WTERMSIG(status);
-		sig_val(sig, &sigquit, &sigint);
+		if (WIFEXITED(status) && pid == last_pid)
+			shell->exit_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+		{
+			if (pid == last_pid)
+				shell->exit_status = 128 + WTERMSIG(status);
+			sig = WTERMSIG(status);
+			sig_val(sig, &sigquit, &sigint);
+		}
+		pid = waitpid(-1, &status, 0);
 	}
 	affiche_sig(sigquit, sigint);
 }
+
 
 void	execute_pipeline(t_shell *shell)
 {
