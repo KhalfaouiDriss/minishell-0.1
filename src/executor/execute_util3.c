@@ -66,6 +66,8 @@ void close_all(t_cmd *cmd)
 			close(cmd->outfile_fd);
 		if (cmd->infile_fd > 2)
 			close(cmd->infile_fd);
+		if (cmd->heredoc_fd > 2)
+			close(cmd->heredoc_fd);
 		cmd = cmd->next;
 	}
 }

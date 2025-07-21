@@ -31,20 +31,20 @@ static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 			close(*fake_glb());
 		in_red(cmd, *token);
 		if (cmd->infile_fd == -1)
-			return (shell->exit_status = 1, *token = (*token)->next, 1);
+			return (shell->exit_status = 1, *token = (*token)->next, 0);
 	}
 	else if ((*token)->type == REDIR_HEREDOC)
 	{
 		if (*fake_glb() != -1)
 			close(*fake_glb());
 		if (her_red(cmd, *token, shell))
-			return (-1);
+			return (1);
 	}
 	else if (((*token)->type == REDIR_OUT || (*token)->type == REDIR_APPEND)
 		&& !cmd->flag_amb)
 		red_out(shell, cmd, (*token));
 	*token = (*token)->next;
-	return (1);
+	return (0);
 }
 
 static t_cmd	*parse_command(t_token **token, t_shell *shell)
@@ -66,7 +66,7 @@ static t_cmd	*parse_command(t_token **token, t_shell *shell)
 			cmd->args[i++] = ft_strdup((*token)->value);
 		else
 		{
-			if (parse_redirections(token, cmd, shell) == -1)
+			if (parse_redirections(token, cmd, shell))
 				return (NULL);
 		}
 		if (*token)

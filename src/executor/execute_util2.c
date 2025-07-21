@@ -46,15 +46,26 @@ void	handle_exec_errors(char *path, t_cmd *cmd, t_shell *shell)
 {
 	struct stat	sb;
 
-	if (path && access(path, X_OK) == 0 && stat(path, &sb) == 0
-		&& S_ISDIR(sb.st_mode))
+	if (path)
 	{
-		write(1, path, ft_strlen(path));
-		write(1, ": Is a directory\n", 18);
-		clean_shell(shell);
-		shell->exit_status = 126;
-		exit(126);
+		if (stat(path, &sb) != 0)
+		{
+			write(2, path, ft_strlen(path));
+			write(2, ": No such file or directory\n", 29);
+			clean_shell(shell);
+			shell->exit_status = 127;
+			exit(127);
+		}
+		if (S_ISDIR(sb.st_mode))
+		{
+			write(2, path, ft_strlen(path));
+			write(2, ": Is a directory\n", 18);
+			clean_shell(shell);
+			shell->exit_status = 126;
+			exit(126);
+		}
 	}
+
 	if (!path)
 		print_not_found_and_exit(cmd, shell);
 }
