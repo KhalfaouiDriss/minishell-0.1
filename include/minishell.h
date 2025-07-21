@@ -259,7 +259,7 @@ int					handle_heredoc(char *delimiter, t_shell *shell);
 void				run_heredoc_loop(int tmp_fd, char *delimiter,
 						t_shell *shell);
 void				write_expanded_line(char *line, t_shell *shell, int tmp_fd);
-int					handle_builtin_redirs(t_cmd *cmd, t_shell *shell);
+void				handle_builtin_redirs(t_cmd *cmd, t_shell *shell);
 char				*safe_strdup(char *s);
 void				redirect_input(char *file, t_cmd *cmd);
 void				redirect_output(t_cmd *cmd, int append);

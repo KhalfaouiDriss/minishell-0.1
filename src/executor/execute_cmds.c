@@ -12,21 +12,21 @@
 
 #include "../../include/minishell.h"
 
-int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
+void	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 {
 	int	in;
 	int	out;
 
 	if (cmd->c_flag == 1 || cmd->flag_amb == 1 || cmd->infile_fd == -1
 		|| cmd->outfile_fd == -1)
-		return (shell->exit_status);
+		return (shell->exit_status = 1, (void)0);
 	in = -1;
 	out = -1;
 	in = dup(0);
 	out = dup(1);
-	if (cmd->infile_fd != -1)
+	if (cmd->infile_fd > 2)
 		(dup2(cmd->infile_fd, 0), close(cmd->infile_fd));
-	if (cmd->outfile_fd != -1)
+	if (cmd->outfile_fd > 2)
 		(dup2(cmd->outfile_fd, 1), close(cmd->outfile_fd));
 	if (cmd->heredoc_fd != -1)
 		close(cmd->heredoc_fd);
@@ -34,7 +34,6 @@ int	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 	shell->out = out;
 	shell->exit_status = execute_builtin(shell, cmd->args[0], cmd->args);
 	dupping(in, out);
-	return (shell->exit_status);
 }
 
 void	dupping2(int fd, int a)
@@ -57,12 +56,12 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 		dupping2(prev_pipe, 0);
 	if (cmd->heredoc_fd != -1)
 		dupping2(cmd->heredoc_fd, 0);
-	if (is_builtin(cmd->args[0]))
-		(close_all(cmd), exit(builtin_free_exit(shell, cmd)));
 	if (cmd->outfile_fd > 2)
 		dupping2(cmd->outfile_fd, 1);
 	if (cmd->infile_fd > 2)
 		dupping2(cmd->infile_fd, 0);
+	if (is_builtin(cmd->args[0]))
+		(close_all(cmd), exit(builtin_free_exit(shell, cmd)));
 	if (!cmd->args[0])
 		exit(clean_exit(cmd, shell, 0));
 	path = find_command_path(cmd->args[0], shell->env);
@@ -85,7 +84,7 @@ static void	exec_loop(t_shell *shell)
 	while (cmd)
 	{
 		if (cmd->next && pipe(fd) == -1)
-			return (perror("pipe error"), gc_free_all(), (void)0);
+			return (perror("pipe error"), clean_shell(shell), (void)0);
 		pid = fork();
 		if (pid == 0)
 			handle_child(cmd, shell, prev_pipe, fd);

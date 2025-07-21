@@ -16,7 +16,7 @@ void	redirect_input(char *file, t_cmd *cmd)
 {
 	int	fd;
 
-	if (cmd->infile_fd != -1 || !cmd->flag_amb)
+	if (cmd->infile_fd != -1 && !cmd->flag_amb)
 	{
 		fd = open(file, O_RDONLY);
 		cmd->infile_fd = fd;
