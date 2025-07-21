@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins_utils_1.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 21:37:44 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/19 13:26:44 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/21 19:05:13 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	handle_cd_oldpwd_failure(t_shell *shell)
 
 	fallback = get_env_value(shell->env, "PWD");
 	attempts = 10;
-	if (chdir(fallback) == -1 && attempts--)
+	if (fallback && chdir(fallback) == -1 && attempts--)
 	{
 		tmp = fallback;
 		fallback = ft_strjoin(tmp, "/..");
