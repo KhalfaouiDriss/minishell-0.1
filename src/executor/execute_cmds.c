@@ -45,8 +45,6 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 		(dup2(fd[1], 1), close(fd[1]), close(fd[0]));
 	if (prev_pipe != -1)
 		(dup2(prev_pipe, 0), close(prev_pipe));
-	if (cmd->infile_fd == -1 || cmd->outfile_fd == -1)
-		exit(clean_exit(cmd, shell, 1));
 	if (!cmd->args[0])
 		(close_all(shell->cmd_list, cmd), exit(clean_exit(cmd, shell, 0)));
 	if (cmd->heredoc_fd > 2)
@@ -78,6 +76,8 @@ static void	exec_loop(t_shell *shell)
 	{
 		if (cmd->next && pipe(fd) == -1)
 			return (perror("pipe error"), clean_shell(shell), (void)0);
+		if (cmd->next == NULL)
+			close_all(shell->cmd_list, cmd);
 		pid = fork();
 		if (pid == 0)
 			handle_child(cmd, shell, prev_pipe, fd);
@@ -135,4 +135,5 @@ void	execute_pipeline(t_shell *shell)
 		cmd = cmd->next;
 	}
 	exec_loop(shell);
+	close_all(shell->cmd_list, cmd);
 }

@@ -264,6 +264,7 @@ void				ft_pwd(t_shell *shell, char **args);
 void				ft_export(t_shell *shell, char **args);
 void				ft_unset(t_env **env, char **args);
 int					ft_exit(t_shell *shell, char **args);
+void				ft_env(t_env *env, int export);
 int					is_builtin(char *cmd);
 int					execute_builtin(t_shell *shell, char *cmd, char **args);
 void				exit_success(t_shell *shell, long long code);

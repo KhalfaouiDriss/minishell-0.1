@@ -51,17 +51,14 @@ void	close_all(t_cmd *head, t_cmd *curr)
 			if (tmp->infile_fd > 2)
 			{
 				close(tmp->infile_fd);
-				tmp->infile_fd = -1;
 			}
 			if (tmp->outfile_fd > 2)
 			{
 				close(tmp->outfile_fd);
-				tmp->outfile_fd = -1;
 			}
 			if (tmp->heredoc_fd > 2)
 			{
 				close(tmp->heredoc_fd);
-				tmp->heredoc_fd = -1;
 			}
 			
 		}
