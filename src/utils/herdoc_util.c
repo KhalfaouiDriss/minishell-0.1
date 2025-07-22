@@ -37,9 +37,14 @@ static int	open_heredoc_file(char **path)
 	char	*base;
 	char	*rand;
 
-	base = "/tmp/.heredoc_tmp";
-	rand = gen_random();
-	*path = ft_strjoin(base, rand);
+	while(1)
+	{
+		base = "/tmp/.heredoc_tmp";
+		rand = gen_random();
+		*path = ft_strjoin(base, rand);
+		if (access(*path, F_OK) < 0)
+			break;
+	}
 	return (open(*path, O_CREAT | O_WRONLY | O_TRUNC, 0600));
 }
 
@@ -66,7 +71,7 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
 {
 	char	*path;
 	int		tmp_fd;
-	pid_t	pid;
+	int		pid;
 	int		status;
 
 	tmp_fd = open_heredoc_file(&path);
@@ -75,8 +80,6 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
 		return (perror("open"), -1);
 	signal(SIGINT, SIG_IGN);
 	pid = fork();
-	if (pid == -1)
-		return (signal(SIGINT, get_sig), close(tmp_fd), perror("fork"), -1);
 	if (pid == 0)
 		handle_fork_child(tmp_fd, delimiter, shell);
 	close(tmp_fd);

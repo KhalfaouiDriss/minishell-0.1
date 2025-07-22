@@ -83,7 +83,6 @@ void	handle_ambiguous(t_shell *shell)
 int	clean_exit(t_cmd *cmd, t_shell *shell, int fexit)
 {
 	
-	close_all(cmd);
 	clean_shell(shell);
 	return (fexit);
 }

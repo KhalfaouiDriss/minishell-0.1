@@ -12,6 +12,7 @@
 
 #include "../../include/minishell.h"
 
+
 void	red_out(t_shell *shell, t_cmd *cmd, t_token *token)
 {
 	(void)shell;
@@ -21,10 +22,6 @@ void	red_out(t_shell *shell, t_cmd *cmd, t_token *token)
 	else if (token->type == REDIR_APPEND)
 		cmd->append = 1;
 	redirect_output(cmd, cmd->append);
-	if (token->next->next && (token->next->next->type == REDIR_OUT
-			|| token->next->next->type == REDIR_APPEND)
-		&& cmd->outfile_fd != -1)
-		close(cmd->outfile_fd);
 }
 
 int	count_args(t_token *token)
@@ -64,7 +61,6 @@ int	her_red(t_cmd *cmd, t_token *token, t_shell *shell)
 {
 	cmd->heredoc = ft_strdup(token->next->value);
 	cmd->heredoc_fd = handle_heredoc(token->next->value, shell);
-	*fake_glb() = cmd->heredoc_fd;
 	if (cmd->heredoc_fd == -1)
 		return (1);
 	return (0);
@@ -74,5 +70,4 @@ void	in_red(t_cmd *cmd, t_token *token)
 {
 	cmd->infile = ft_strdup(token->next->value);
 	redirect_input(cmd->infile, cmd);
-	*fake_glb() = cmd->infile_fd;
 }

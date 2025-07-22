@@ -80,7 +80,7 @@ void	handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd, int prev_pipe,
 			close(fd[0]);
 			close(fd[1]);
 		}
-		close_all(cmd);
+		close_all(shell->cmd_list, cmd);
 		clean_shell(shell);
 		exit(1);
 	}

@@ -152,14 +152,10 @@ t_gc				*get_gc(void);
 t_token				*lexer_split_to_tokens(t_shell *shell);
 char				*handle_variable_token(char *str, int *i, t_shell *shell,
 						char qte);
-int					handle_option_token(t_shell *shell, const char *input,
-						int *i, t_token **head);
 void				handle_special_token(t_shell *shell, const char *input,
 						int *i, t_token **head);
 
 // tokenized Utils
-void				print_tokens(t_token *head);
-void				correct_lexer(t_shell *shell, t_token **token);
 int					pips_coount(char *input);
 void				set_quote_type_explicitly(t_lexer_state *state, char quote);
 int					skip_spaces(char *str, int i);
@@ -247,10 +243,8 @@ void				print_not_found_and_exit(t_cmd *cmd, t_shell *shell);
 void				handle_exec_errors(char *path, t_cmd *cmd, t_shell *shell);
 void				handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd,
 						int prev_pipe, int *fd);
-void				dupping2(int fd, int a);
-void				close_all(t_cmd *cmd);
+void				close_all(t_cmd *head, t_cmd *curr);
 void				dupping(int in, int out);
-void				handle_pipes_and_fds(t_cmd *cmd, int prev_pipe, int *fd);
 void				init_str(t_cmd *cmd);
 void				red_out(t_shell *shell, t_cmd *cmd, t_token *token);
 int					count_args(t_token *token);
@@ -259,7 +253,6 @@ void				run_heredoc_loop(int tmp_fd, char *delimiter,
 						t_shell *shell);
 void				write_expanded_line(char *line, t_shell *shell, int tmp_fd);
 void				handle_builtin_redirs(t_cmd *cmd, t_shell *shell);
-char				*safe_strdup(char *s);
 void				redirect_input(char *file, t_cmd *cmd);
 void				redirect_output(t_cmd *cmd, int append);
 int					handle_heredoc(char *delimiter, t_shell *shell);
@@ -271,9 +264,7 @@ void				ft_pwd(t_shell *shell, char **args);
 void				ft_export(t_shell *shell, char **args);
 void				ft_unset(t_env **env, char **args);
 int					ft_exit(t_shell *shell, char **args);
-void				ft_env(t_env *env, int export);
 int					is_builtin(char *cmd);
-void				redirect_output_builtin(t_cmd *cmd, int append);
 int					execute_builtin(t_shell *shell, char *cmd, char **args);
 void				exit_success(t_shell *shell, long long code);
 int					handle_exit_error(t_shell *shell, char **args,
@@ -286,9 +277,9 @@ void				clean_shell(t_shell *shell);
 int					is_quote(char c);
 t_shell				*get_shell(void);
 int					check_syntax_errors(t_shell *shell, char *input, int pos);
-int					*fake_glb(void);
 int					her_red(t_cmd *cmd, t_token *token, t_shell *shell);
 void				in_red(t_cmd *cmd, t_token *token);
 int					handle_operator(char *input, int *i, t_shell *shell);
 int					is_operator(char *str, int i);
+
 #endif

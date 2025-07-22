@@ -40,16 +40,32 @@ int	builtin_free_exit(t_shell *shell, t_cmd *cmd)
 	return (n);
 }
 
-void	close_all(t_cmd *cmd)
+void	close_all(t_cmd *head, t_cmd *curr)
 {
-	while (cmd)
+	t_cmd *tmp = head;
+
+	while (tmp)
 	{
-		if (cmd->outfile_fd > 2)
-			close(cmd->outfile_fd);
-		if (cmd->infile_fd > 2)
-			close(cmd->infile_fd);
-		if (cmd->heredoc_fd > 2)
-			close(cmd->heredoc_fd);
-		cmd = cmd->next;
+		if(tmp != curr)
+		{
+			if (tmp->infile_fd > 2)
+			{
+				close(tmp->infile_fd);
+				tmp->infile_fd = -1;
+			}
+			if (tmp->outfile_fd > 2)
+			{
+				close(tmp->outfile_fd);
+				tmp->outfile_fd = -1;
+			}
+			if (tmp->heredoc_fd > 2)
+			{
+				close(tmp->heredoc_fd);
+				tmp->heredoc_fd = -1;
+			}
+			
+		}
+		
+		tmp = tmp->next;
 	}
 }
