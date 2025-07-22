@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 22:10:08 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/21 20:03:34 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/22 18:26:21 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,6 +244,8 @@ void				handle_exec_errors(char *path, t_cmd *cmd, t_shell *shell);
 void				handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd,
 						int prev_pipe, int *fd);
 void				close_all(t_cmd *head, t_cmd *curr);
+int *fake_gl();
+
 void				dupping(int in, int out);
 void				init_str(t_cmd *cmd);
 void				red_out(t_shell *shell, t_cmd *cmd, t_token *token);
@@ -282,5 +284,7 @@ int					her_red(t_cmd *cmd, t_token *token, t_shell *shell);
 void				in_red(t_cmd *cmd, t_token *token);
 int					handle_operator(char *input, int *i, t_shell *shell);
 int					is_operator(char *str, int i);
+
+int spaces_is(char *value);
 
 #endif

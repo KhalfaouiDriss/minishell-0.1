@@ -3,14 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   utils_toenized.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 21:15:41 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/14 12:46:50 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/22 16:33:27 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+int spaces_is(char *value)
+{
+	int i = 0;
+	
+	while (value[i])
+	{
+		if(value[i] != ' ')
+			return 1;
+		i++;
+	}
+	return 0;
+}
 
 int	check_embag(char *var_value)
 {
@@ -19,14 +32,14 @@ int	check_embag(char *var_value)
 
 	if (!var_value)
 		return (0);
+	if(!spaces_is(var_value))
+		return 0;
 	value = ft_split(var_value, ' ');
 	i = 0;
 	while (value[i])
 		i++;
 	if (i > 1)
-	{
 		return (0);
-	}
 	return (1);
 }
 

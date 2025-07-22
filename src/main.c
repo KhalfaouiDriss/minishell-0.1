@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:33:06 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/19 13:40:39 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/22 18:14:30 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	clean_shell(t_shell *shell)
 	shell->new_env = NULL;
 	shell->env = NULL;
 }
-
+t_cmd	*head_dd;
 void	main_loop(t_shell *shell)
 {
 	while (1)
@@ -61,7 +61,8 @@ void	main_loop(t_shell *shell)
 		if (shell->input[0])
 			add_history(shell->input);
 		shell->token = lexer_split_to_tokens(shell);
-		shell->cmd_list = parse_tokens(shell);
+		head_dd = parse_tokens(shell);
+		shell->cmd_list = head_dd;
 		if (!shell->cmd_list)
 			continue ;
 		global_state(1);

@@ -6,42 +6,50 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 15:51:13 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/20 18:50:11 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/22 18:28:10 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+void closing(int fd)
+{
+	if(fd > 2)
+		close(fd);
+}
+
+int *fake_gl()
+{
+	static int n=0;
+	return (&n);
+}
+
 static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 {
-	if (((*token)->type == REDIR_OUT || (*token)->type == REDIR_IN
-			|| (*token)->type == REDIR_APPEND) && !(*token)->next->ebag
-		&& !cmd->flag_amb)
+	if (((*token)->type && (*token)->type != REDIR_HEREDOC) && 
+	!(*token)->next->ebag && !cmd->flag_amb)
 		return (cmd->flag_amb = 1, *token = (*token)->next, 0);
 	if ((*token)->type == REDIR_IN && !cmd->flag_amb)
 	{
-		if(cmd->infile_fd > 2)
-			close(cmd->infile_fd);
+		closing(cmd->infile_fd);
 		in_red(cmd, *token);
 		if (cmd->infile_fd == -1)
 			return (shell->exit_status = 1, *token = (*token)->next, 0);
 	}
 	else if ((*token)->type == REDIR_HEREDOC)
 	{
-		if(cmd->heredoc_fd > 2)
-			close(cmd->heredoc_fd);
+		if(*fake_gl() > 2)
+			close(*fake_gl());
 		if (her_red(cmd, *token, shell))
 			return (1);
 	}
 	else if (((*token)->type == REDIR_OUT || (*token)->type == REDIR_APPEND)
 		&& !cmd->flag_amb)
 		{
-			if(cmd->outfile_fd > 2)
-				close(cmd->outfile_fd);
+			closing(cmd->outfile_fd);
 			red_out(shell, cmd, (*token));
 		}
-	*token = (*token)->next;
-	return (0);
+	return (*token = (*token)->next, 0);
 }
 
 static t_cmd	*parse_command(t_token **token, t_shell *shell)

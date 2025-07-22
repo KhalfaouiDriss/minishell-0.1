@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   utils_variable.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:57:20 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/20 08:47:32 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/22 16:32:59 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+
 
 int	is_embg_befor(t_shell *shell, int i)
 {

@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:36:27 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/19 15:01:53 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/22 18:25:02 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ static int	check_exit_status(int status, t_shell *shell)
 	}
 	return (0);
 }
-
 int	handle_heredoc(char *delimiter, t_shell *shell)
 {
 	char	*path;
