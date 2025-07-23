@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:36:27 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/22 18:25:02 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/23 14:46:42 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,13 @@ static int	open_heredoc_file(char **path)
 	char	*base;
 	char	*rand;
 
-	while(1)
+	while (1)
 	{
 		base = "/tmp/.heredoc_tmp";
 		rand = gen_random();
 		*path = ft_strjoin(base, rand);
 		if (access(*path, F_OK) < 0)
-			break;
+			break ;
 	}
 	return (open(*path, O_CREAT | O_WRONLY | O_TRUNC, 0600));
 }
@@ -66,6 +66,7 @@ static int	check_exit_status(int status, t_shell *shell)
 	}
 	return (0);
 }
+
 int	handle_heredoc(char *delimiter, t_shell *shell)
 {
 	char	*path;

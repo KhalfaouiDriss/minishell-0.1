@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:04 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/22 16:34:22 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/23 14:42:37 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,11 @@ void	handle_non_empty_variable(t_shell *shell, t_lexer_state *state,
 {
 	char	*tmp2;
 	char	*tmp3;
-	
+
 	tmp2 = ft_substr(state->str, 0, j);
 	tmp3 = ft_substr(state->str, state->i, ft_strlen(state->str) - state->i);
 	if (shell->not_found == 2 || !spaces_is(value))
 	{
-		
 		value = ft_strjoin("\"", value);
 		value = ft_strjoin(value, "\"");
 	}

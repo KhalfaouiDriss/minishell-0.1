@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:36:53 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/23 13:59:58 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/23 14:41:23 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ char	*get_variable(t_shell *shell, char *line, int *i)
 
 	(*i)++;
 	start = *i;
-	if(line[*i] == '?')
+	if (line[*i] == '?')
 	{
 		(*i)++;
 		return (ft_strdup(ft_itoa(shell->exit_status)));

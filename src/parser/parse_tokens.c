@@ -12,22 +12,23 @@
 
 #include "../../include/minishell.h"
 
-void closing(int fd)
+void	closing(int fd)
 {
-	if(fd > 2)
+	if (fd > 2)
 		close(fd);
 }
 
-int *fake_gl()
+int	*fake_gl(void)
 {
-	static int n=0;
+	static int	n = 0;
+
 	return (&n);
 }
 
 static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 {
-	if (((*token)->type && (*token)->type != REDIR_HEREDOC) && 
-	!(*token)->next->ebag && !cmd->flag_amb)
+	if (((*token)->type && (*token)->type != REDIR_HEREDOC)
+		&& !(*token)->next->ebag && !cmd->flag_amb)
 		return (cmd->flag_amb = 1, *token = (*token)->next, 0);
 	if ((*token)->type == REDIR_IN && !cmd->flag_amb)
 	{
@@ -38,17 +39,17 @@ static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 	}
 	else if ((*token)->type == REDIR_HEREDOC)
 	{
-		if(*fake_gl() > 2)
+		if (*fake_gl() > 2)
 			close(*fake_gl());
 		if (her_red(cmd, *token, shell))
 			return (1);
 	}
 	else if (((*token)->type == REDIR_OUT || (*token)->type == REDIR_APPEND)
 		&& !cmd->flag_amb)
-		{
-			closing(cmd->outfile_fd);
-			red_out(shell, cmd, (*token));
-		}
+	{
+		closing(cmd->outfile_fd);
+		red_out(shell, cmd, (*token));
+	}
 	return (*token = (*token)->next, 0);
 }
 

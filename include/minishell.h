@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 22:10:08 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/22 18:26:21 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/23 18:27:49 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,7 +230,7 @@ void				finalize_current_word(t_shell *shell, t_lexer_state *state);
 void				handle_dollar_sign(t_shell *shell, t_lexer_state *state);
 
 t_cmd				*parse_tokens(t_shell *shell);
-int					clean_exit(t_cmd *cmd, t_shell *shell, int fexit);
+int					clean_exit(t_shell *shell, int fexit);
 void				handle_ambiguous(t_shell *shell);
 void				close_parent_fds(t_cmd *cmd, int prev_pipe);
 char				*find_command_path(char *cmd, t_env *envp);
@@ -244,7 +244,7 @@ void				handle_exec_errors(char *path, t_cmd *cmd, t_shell *shell);
 void				handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd,
 						int prev_pipe, int *fd);
 void				close_all(t_cmd *head, t_cmd *curr);
-int *fake_gl();
+int					*fake_gl(void);
 
 void				dupping(int in, int out);
 void				init_str(t_cmd *cmd);
@@ -285,6 +285,6 @@ void				in_red(t_cmd *cmd, t_token *token);
 int					handle_operator(char *input, int *i, t_shell *shell);
 int					is_operator(char *str, int i);
 
-int spaces_is(char *value);
+int					spaces_is(char *value);
 
 #endif

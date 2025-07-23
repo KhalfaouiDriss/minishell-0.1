@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 21:41:04 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/21 20:03:53 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/23 18:43:23 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void	update_env_var(t_env *env, const char *name, const char *value)
 
 void	handle_cd_args_error(t_shell *shell, int too)
 {
-	if(too)
+	if (too)
 		write(2, "cd: too many arguments\n", 24);
 	else
 		write(2, "cd: need argument\n", 19);
@@ -83,8 +83,8 @@ void	ft_cd(t_shell *shell, char **args)
 
 	if (args[1] && args[2])
 		return (handle_cd_args_error(shell, 1));
-	if(!args[1])
-		return (handle_cd_args_error(shell, 0));	
+	if (!args[1])
+		return (handle_cd_args_error(shell, 0));
 	target_dir = get_target_dir(shell, args);
 	if (!target_dir)
 		return ;

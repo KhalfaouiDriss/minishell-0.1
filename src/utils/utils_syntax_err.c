@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_syntax_err.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 13:32:43 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/19 13:41:55 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/23 14:47:29 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,4 +49,22 @@ int	handle_operator(char *input, int *i, t_shell *shell)
 			&& !(input[*i] == '<' || input[*i] == '>')))
 		return (check_and_report_error(shell));
 	return (0);
+}
+
+int	check_embag(char *var_value)
+{
+	char	**value;
+	int		i;
+
+	if (!var_value)
+		return (0);
+	if (!spaces_is(var_value))
+		return (0);
+	value = ft_split(var_value, ' ');
+	i = 0;
+	while (value[i])
+		i++;
+	if (i > 1)
+		return (0);
+	return (1);
 }

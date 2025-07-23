@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:40:33 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/21 16:15:58 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/23 19:02:33 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,9 +77,8 @@ void	handle_ambiguous(t_shell *shell)
 	write(2, "ambiguous redirect\n", 20);
 }
 
-int	clean_exit(t_cmd *cmd, t_shell *shell, int fexit)
+int	clean_exit(t_shell *shell, int fexit)
 {
-	
 	clean_shell(shell);
 	return (fexit);
 }

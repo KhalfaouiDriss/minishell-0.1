@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:49:42 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/23 14:09:18 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/23 14:45:27 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,23 +40,21 @@ int	builtin_free_exit(t_shell *shell, t_cmd *cmd)
 	return (n);
 }
 
-extern	t_cmd *head_dd;
-
 void	close_all(t_cmd *head, t_cmd *curr)
 {
-	t_cmd *tmp;
+	t_cmd	*tmp;
 
 	tmp = head;
 	while (tmp)
 	{
-		if(tmp != curr)
+		if (tmp != curr)
 		{
 			if (tmp->infile_fd > 2)
 				close(tmp->infile_fd);
 			if (tmp->outfile_fd > 2)
 				close(tmp->outfile_fd);
 			if (tmp->heredoc_fd > 2)
-				close(tmp->heredoc_fd);	
+				close(tmp->heredoc_fd);
 		}
 		tmp = tmp->next;
 	}

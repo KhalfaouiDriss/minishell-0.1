@@ -6,41 +6,24 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 21:15:41 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/22 16:33:27 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/23 14:47:47 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int spaces_is(char *value)
+int	spaces_is(char *value)
 {
-	int i = 0;
-	
-	while (value[i])
-	{
-		if(value[i] != ' ')
-			return 1;
-		i++;
-	}
-	return 0;
-}
+	int	i;
 
-int	check_embag(char *var_value)
-{
-	char	**value;
-	int		i;
-
-	if (!var_value)
-		return (0);
-	if(!spaces_is(var_value))
-		return 0;
-	value = ft_split(var_value, ' ');
 	i = 0;
 	while (value[i])
+	{
+		if (value[i] != ' ')
+			return (1);
 		i++;
-	if (i > 1)
-		return (0);
-	return (1);
+	}
+	return (0);
 }
 
 int	pips_coount(char *input)
