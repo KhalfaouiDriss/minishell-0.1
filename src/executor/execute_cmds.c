@@ -47,14 +47,14 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 		(dup2(prev_pipe, 0), close(prev_pipe));
 	if (cmd->infile_fd == -1 || cmd->outfile_fd == -1)
 		(close_all(shell->cmd_list, cmd), exit(clean_exit(shell, 1)));
-	if (!cmd->args[0])
-		(close_no_args(cmd), exit(clean_exit(shell, 0)));
 	if (cmd->heredoc_fd > 2)
 		(dup2(cmd->heredoc_fd, 0), close(cmd->heredoc_fd));
 	if (cmd->outfile_fd > 2)
 		(dup2(cmd->outfile_fd, 1), close(cmd->outfile_fd));
 	if (cmd->infile_fd > 2)
 		(dup2(cmd->infile_fd, 0), close(cmd->infile_fd));
+	if (!cmd->args[0])
+		(close_no_args(cmd), exit(clean_exit(shell, 0)));
 	if (is_builtin(cmd->args[0]))
 		(close_all(shell->cmd_list, cmd), exit(builtin_free_exit(shell, cmd)));
 	path = find_command_path(cmd->args[0], shell->env);
