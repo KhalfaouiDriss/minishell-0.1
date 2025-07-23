@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:33:06 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/23 18:43:06 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/23 20:14:58 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ void	main_loop(t_shell *shell)
 		execute_pipeline(shell);
 		shell->exp = 1;
 		shell->not_found = 0;
+		shell->is_heredoc_delimiter = 0;
 	}
 }
 

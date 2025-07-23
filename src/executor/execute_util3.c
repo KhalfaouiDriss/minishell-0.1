@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:49:42 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/23 14:45:27 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/23 20:17:28 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,4 +58,14 @@ void	close_all(t_cmd *head, t_cmd *curr)
 		}
 		tmp = tmp->next;
 	}
+}
+
+void	close_no_args(t_cmd *cmd)
+{
+	if (cmd->infile_fd > 2)
+		close(cmd->infile_fd);
+	if (cmd->outfile_fd > 2)
+		close(cmd->outfile_fd);
+	if (cmd->heredoc_fd > 2)
+		close(cmd->heredoc_fd);
 }

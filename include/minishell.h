@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 22:10:08 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/23 18:27:49 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/23 20:16:09 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -284,7 +284,7 @@ int					her_red(t_cmd *cmd, t_token *token, t_shell *shell);
 void				in_red(t_cmd *cmd, t_token *token);
 int					handle_operator(char *input, int *i, t_shell *shell);
 int					is_operator(char *str, int i);
-
+void				close_no_args(t_cmd *cmd);
 int					spaces_is(char *value);
 
 #endif
