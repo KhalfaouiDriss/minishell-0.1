@@ -6,6 +6,13 @@ MFLAGS = -lreadline
 CFLAGS = -Wall -Wextra -Werror
 SRCS = $(wildcard src/*.c src/executor/*.c src/utils/*.c src/parser/*.c src/builtins/*.c)
 
+# SRCS =  src/builtins/built_in_utils.c src/builtins/builtins.c src/builtins/ft_cd.c src/builtins/ft_echo.c
+# 		src/builtins/ft_env.c src/builtins/ft_exit.c src/builtins/ft_export.c src/builtins/ft_pwd.c src/builtins/ft_unset.c
+# 		 src/executor/execute_cmds.c src/executor/execute_util1.c src/executor/execute_util2.c src/executor/execute_util3.c
+# 		 src/utils/handle_dollar_sign.c  src/utils/handle_normal_word.c  src/utils/handke_quotes.c  src/utils/handle_dollar_sign.c
+# 		 src/parser/*.c 
+# 		 src/builtins/*.c
+
 OBJS = $(SRCS:.c=.o)
 
 all: $(LIBFT) $(NAME)
