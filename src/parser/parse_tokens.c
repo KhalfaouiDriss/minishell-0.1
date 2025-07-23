@@ -39,8 +39,8 @@ static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 	}
 	else if ((*token)->type == REDIR_HEREDOC)
 	{
-		if (*fake_gl() > 2)
-			close(*fake_gl());
+		if (cmd->heredoc_fd > 2)
+			close(cmd->heredoc_fd);
 		if (her_red(cmd, *token, shell))
 			return (1);
 	}

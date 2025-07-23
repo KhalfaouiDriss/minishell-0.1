@@ -54,7 +54,7 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 	if (cmd->infile_fd > 2)
 		(dup2(cmd->infile_fd, 0), close(cmd->infile_fd));
 	if (!cmd->args[0])
-		(close_no_args(cmd), exit(clean_exit(shell, 0)));
+		(close_no_args(cmd) ,exit(clean_exit(shell, 0)));
 	if (is_builtin(cmd->args[0]))
 		(close_all(shell->cmd_list, cmd), exit(builtin_free_exit(shell, cmd)));
 	path = find_command_path(cmd->args[0], shell->env);
@@ -74,6 +74,7 @@ static void	exec_loop(t_shell *shell)
 	prev_pipe = -1;
 	if (is_builtin(cmd->args[0]) && !cmd->next)
 		return (handle_builtin_redirs(cmd, shell), (void)0);
+	cmd = shell->cmd_list;
 	while (cmd)
 	{
 		if (cmd->next && pipe(fd) == -1)
