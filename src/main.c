@@ -69,6 +69,7 @@ void	main_loop(t_shell *shell)
 		shell->exp = 1;
 		shell->not_found = 0;
 		shell->is_heredoc_delimiter = 0;
+		*fake_gl() = 0;
 	}
 }
 

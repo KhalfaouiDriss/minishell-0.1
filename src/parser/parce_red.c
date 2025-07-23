@@ -54,12 +54,14 @@ void	init_str(t_cmd *cmd)
 	cmd->flag_amb = 0;
 	cmd->heredoc_fd = 0;
 	cmd->fod_flag = 0;
+
 }
 
 int	her_red(t_cmd *cmd, t_token *token, t_shell *shell)
 {
 	cmd->heredoc = ft_strdup(token->next->value);
 	cmd->heredoc_fd = handle_heredoc(token->next->value, shell);
+	*fake_gl() = cmd->heredoc_fd;
 	if (cmd->heredoc_fd == -1)
 		return (1);
 	return (0);
