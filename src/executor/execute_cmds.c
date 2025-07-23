@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:24:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/22 18:35:05 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/23 14:17:18 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 		(dup2(fd[1], 1), close(fd[1]), close(fd[0]));
 	if (prev_pipe != -1)
 		(dup2(prev_pipe, 0), close(prev_pipe));
+	if (cmd->infile_fd == -1 || cmd->outfile_fd == -1)
+		exit(clean_exit(cmd, shell, 1));
 	if (cmd->heredoc_fd > 2)
 		(dup2(cmd->heredoc_fd, 0), close(cmd->heredoc_fd));
 	if (cmd->outfile_fd > 2)
@@ -74,7 +76,6 @@ static void	exec_loop(t_shell *shell)
 		return (handle_builtin_redirs(cmd, shell), (void)0);
 	while (cmd)
 	{
-		close_all(shell->cmd_list, cmd);
 		if (cmd->next && pipe(fd) == -1)
 			return (perror("pipe error"), clean_shell(shell), (void)0);
 		pid = fork();

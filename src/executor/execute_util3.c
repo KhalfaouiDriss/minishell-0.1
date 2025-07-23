@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:49:42 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/22 18:31:49 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/23 14:09:18 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	close_all(t_cmd *head, t_cmd *curr)
 {
 	t_cmd *tmp;
 
-	tmp = head_dd;
+	tmp = head;
 	while (tmp)
 	{
 		if(tmp != curr)

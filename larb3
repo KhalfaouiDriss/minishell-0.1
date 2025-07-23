@@ -1,0 +1,7 @@
+include
+larb3
+lib
+Makefile
+minishell
+readline.supp
+src
