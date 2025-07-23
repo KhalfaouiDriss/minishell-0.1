@@ -56,17 +56,11 @@ char	*find_command_path(char *cmd, t_env *envp)
 void	close_parent_fds(t_cmd *cmd, int prev_pipe)
 {
 	if (cmd->outfile_fd > 2)
-	{
 		close(cmd->outfile_fd);
-	}
 	if (cmd->heredoc_fd > 2)
-	{
 		close(cmd->heredoc_fd);
-	}
 	if (cmd->infile_fd > 2)
-	{
 		close(cmd->infile_fd);
-	}
 	if (prev_pipe != -1)
 		close(prev_pipe);
 }
