@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:49:42 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/23 20:17:28 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/24 13:44:55 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,16 @@
 
 void	dupping(int in, int out)
 {
-	dup2(in, 0);
-	close(in);
-	dup2(out, 1);
-	close(out);
+	if (in > 2)
+	{
+		dup2(in, 0);
+		close(in);
+	}
+	if (out > 2)
+	{
+		dup2(out, 1);
+		close(out);
+	}
 }
 
 void	execve_fail(t_cmd *cmd)

@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:43:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/23 20:01:00 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/24 11:47:17 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	redirect_input(char *file, t_cmd *cmd)
 		cmd->infile_fd = fd;
 		if (fd < 0)
 			perror("open infile");
-		}
+	}
 }
 
 void	redirect_output(t_cmd *cmd, int append)
@@ -41,7 +41,7 @@ void	redirect_output(t_cmd *cmd, int append)
 	}
 }
 
-	int	check_delimiter(char *line, char *delimiter)
+int	check_delimiter(char *line, char *delimiter)
 {
 	if (!line)
 		return (1);

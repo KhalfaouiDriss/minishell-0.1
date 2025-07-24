@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:30:32 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/20 15:09:52 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/24 13:41:26 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,7 @@ int	execute_builtin(t_shell *shell, char *cmd, char **args)
 	else if (ft_strncmp(cmd, "unset", 5) == 0)
 		return (ft_unset(&(shell->env), args), 0);
 	else if (ft_strncmp(cmd, "env", 3) == 0)
-	{
-		i = 0;
-		while (args[i] && ft_strncmp(args[i], "env", 3) == 0)
-			i++;
-		ft_env(shell->env, 1);
-		return (shell->exit_status);
-	}
+		return (ft_env(shell->env, 1), shell->exit_status);
 	else if (ft_strncmp(cmd, "exit", 5) == 0)
 		return (ft_exit(shell, args));
 	return (127);

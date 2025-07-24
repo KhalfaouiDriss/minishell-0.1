@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:36:53 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/23 14:41:23 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/24 14:27:51 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,8 @@ void	get_sig(int sig)
 	if (state == 1)
 		return ;
 	if (sig == SIGINT)
-		global_state(2);
-	if (state != 3)
 	{
+		global_state(2);
 		write(1, "\n", 1);
 		rl_replace_line("", 0);
 		rl_on_new_line();

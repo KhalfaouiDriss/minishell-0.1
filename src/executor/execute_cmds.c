@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:24:35 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/23 20:15:36 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/24 14:30:35 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,7 @@ void	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 	int	in;
 	int	out;
 
-	if (cmd->c_flag == 1 || cmd->flag_amb == 1 || cmd->infile_fd == -1
-		|| cmd->outfile_fd == -1)
+	if (cmd->flag_amb == 1 || cmd->infile_fd == -1 || cmd->outfile_fd == -1)
 		return (shell->exit_status = 1, (void)0);
 	in = -1;
 	out = -1;
@@ -28,8 +27,8 @@ void	handle_builtin_redirs(t_cmd *cmd, t_shell *shell)
 		(dup2(cmd->infile_fd, 0), close(cmd->infile_fd));
 	if (cmd->outfile_fd > 2)
 		(dup2(cmd->outfile_fd, 1), close(cmd->outfile_fd));
-	if (cmd->heredoc_fd != -1)
-		close(cmd->heredoc_fd);
+	if (cmd->heredoc_fd > 2)
+		(dup2(cmd->heredoc_fd, 0), close(cmd->heredoc_fd));
 	shell->in = in;
 	shell->out = out;
 	shell->exit_status = execute_builtin(shell, cmd->args[0], cmd->args);
@@ -74,7 +73,6 @@ static void	exec_loop(t_shell *shell)
 	prev_pipe = -1;
 	if (is_builtin(cmd->args[0]) && !cmd->next)
 		return (handle_builtin_redirs(cmd, shell), (void)0);
-	cmd = shell->cmd_list;
 	while (cmd)
 	{
 		if (cmd->next && pipe(fd) == -1)

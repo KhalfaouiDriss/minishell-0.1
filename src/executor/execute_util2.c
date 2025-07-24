@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:45:02 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/22 18:02:23 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/24 15:24:20 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,8 @@ void	print_not_found_and_exit(t_cmd *cmd, t_shell *shell)
 
 	buffer = ft_strjoin(cmd->args[0], " : command not found\n");
 	write(2, buffer, ft_strlen(buffer));
-	if (cmd->heredoc_fd != -1)
-		close(cmd->heredoc_fd);
-	gc_free_all();
-	free_env(shell->env);
-	free_new_env(shell->new_env);
+	close_all(shell->cmd_list, cmd);
+	clean_shell(shell);
 	exit(127);
 }
 
@@ -52,6 +49,7 @@ void	handle_exec_errors(char *path, t_cmd *cmd, t_shell *shell)
 		{
 			write(2, path, ft_strlen(path));
 			write(2, ": No such file or directory\n", 29);
+			close_all(shell->cmd_list, cmd);
 			clean_shell(shell);
 			exit(127);
 		}
@@ -59,6 +57,7 @@ void	handle_exec_errors(char *path, t_cmd *cmd, t_shell *shell)
 		{
 			write(2, path, ft_strlen(path));
 			write(2, ": Is a directory\n", 18);
+			close_all(shell->cmd_list, cmd);
 			clean_shell(shell);
 			exit(126);
 		}
@@ -70,6 +69,7 @@ void	handle_exec_errors(char *path, t_cmd *cmd, t_shell *shell)
 void	handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd, int prev_pipe,
 		int *fd)
 {
+	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	if (cmd->flag_amb == 1)
 	{

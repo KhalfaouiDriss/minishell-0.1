@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 22:10:08 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/23 20:16:09 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/24 13:09:00 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ typedef struct s_cmd
 	char			*heredoc;
 	int				infile_fd;
 	int				heredoc_fd;
-	int				c_flag;
 	int				fd_builtin;
 	int				flag_amb;
 	int				fod_flag;
