@@ -58,7 +58,7 @@ static void	handle_fork_child(int fd, char *delimiter, t_shell *shell)
 
 static int	check_exit_status(int status, t_shell *shell)
 {
-	if (WIFEXITED(status) && WEXITSTATUS(status) == 130)
+	if (WEXITSTATUS(status) == 130)
 	{
 		shell->exit_status = 130;
 		signal(SIGINT, get_sig);

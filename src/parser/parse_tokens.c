@@ -20,7 +20,7 @@ void	closing(int fd)
 
 int	*fake_gl(void)
 {
-	static int	n = 0;
+	static int	n;
 
 	return (&n);
 }
@@ -30,7 +30,7 @@ static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 	if (((*token)->type && (*token)->type != REDIR_HEREDOC)
 		&& !(*token)->next->ebag && !cmd->flag_amb)
 		return (cmd->flag_amb = 1, *token = (*token)->next, 0);
-	if ((*token)->type == REDIR_IN && !cmd->flag_amb)
+	if ((*token)->type == REDIR_IN)
 	{
 		closing(cmd->infile_fd);
 		in_red(cmd, *token);
@@ -44,8 +44,7 @@ static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 		if (her_red(cmd, *token, shell))
 			return (1);
 	}
-	else if (((*token)->type == REDIR_OUT || (*token)->type == REDIR_APPEND)
-		&& !cmd->flag_amb)
+	else if (((*token)->type == REDIR_OUT || (*token)->type == REDIR_APPEND))
 	{
 		closing(cmd->outfile_fd);
 		red_out(shell, cmd, (*token));

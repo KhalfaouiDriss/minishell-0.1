@@ -48,7 +48,6 @@ void	main_loop(t_shell *shell)
 {
 	while (1)
 	{
-		global_state(0);
 		shell->input = readline("➜ Minishell $/~ ");
 		if (global_state(-1) == 2)
 			shell->exit_status = 130;
@@ -66,6 +65,7 @@ void	main_loop(t_shell *shell)
 			continue ;
 		global_state(1);
 		execute_pipeline(shell);
+		global_state(0);
 		shell->exp = 1;
 		shell->not_found = 0;
 		shell->is_heredoc_delimiter = 0;
