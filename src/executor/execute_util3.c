@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:49:42 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/24 13:44:55 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/24 16:33:20 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void	execve_fail(t_cmd *cmd)
 
 	perror(cmd->args[0]);
 	shell = get_shell();
+	close_all(shell->cmd_list, cmd);
 	clean_shell(shell);
 	exit(126);
 }
