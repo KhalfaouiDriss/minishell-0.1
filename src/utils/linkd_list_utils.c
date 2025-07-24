@@ -44,7 +44,7 @@ t_token	*new_token(int *ebag, char *val, int type, int error_type)
 	}
 	else
 	{
-		t->value = ft_strdup("");
+		t->value = NULL;
 	}
 	t->ebag = *ebag;
 	t->type = type;

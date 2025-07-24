@@ -28,9 +28,7 @@ int	is_builtin(char *cmd)
 
 int	execute_builtin(t_shell *shell, char *cmd, char **args)
 {
-	int	i;
 
-	i = 0;
 	if (ft_strncmp(cmd, "echo", 5) == 0)
 		return (ft_echo(args), 0);
 	else if (ft_strncmp(cmd, "cd", 3) == 0)

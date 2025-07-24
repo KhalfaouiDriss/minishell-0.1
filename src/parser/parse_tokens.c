@@ -52,6 +52,13 @@ static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 	return (*token = (*token)->next, 0);
 }
 
+char *safe_ft_strdup(const char *str)
+{
+	if (!str)
+		return (NULL);
+	return (ft_strdup(str));
+}
+
 static t_cmd	*parse_command(t_token **token, t_shell *shell)
 {
 	t_cmd	*cmd;
@@ -68,7 +75,7 @@ static t_cmd	*parse_command(t_token **token, t_shell *shell)
 	while (*token && (*token)->type != PIPE)
 	{
 		if ((*token)->type == WORD || (*token)->type == OPTION)
-			cmd->args[i++] = ft_strdup((*token)->value);
+			cmd->args[i++] = safe_ft_strdup((*token)->value);
 		else
 		{
 			if (parse_redirections(token, cmd, shell))
@@ -100,6 +107,7 @@ t_cmd	*parse_tokens(t_shell *shell)
 		else
 			last->next = cmd;
 		last = cmd;
+		shell->cmd_list = head;
 		if (token && token->type == PIPE)
 			token = token->next;
 	}

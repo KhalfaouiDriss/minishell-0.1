@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_dollar_sign.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:04 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/23 14:42:37 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/24 19:02:45 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,20 @@ void	handle_dollar_variable_expansion(t_shell *shell, t_lexer_state *state,
 	char	*value;
 
 	value = handle_variable_token(state->str, &state->i, shell, 0);
+	if(!value)
+	{
+		if (state->current_word)
+		{
+			state->t_tmp = new_token(&(shell->ebag), state->current_word, WORD, 0);
+			state->t_tmp->quot_type = state->current_quote_type;
+			add_token(&state->head, state->t_tmp);
+			state->current_word = NULL;
+		}
+		state->t_tmp = new_token(&(shell->ebag), state->current_word, WORD, 0);
+		state->t_tmp->quot_type = state->current_quote_type;
+		add_token(&state->head, state->t_tmp);
+		state->current_word = NULL;
+	}
 	if (value)
 	{
 		if (!ft_strchr(value, ' ') || ft_strchr(value, '>') || ft_strchr(value,
@@ -77,6 +91,7 @@ void	handle_dollar_variable_expansion(t_shell *shell, t_lexer_state *state,
 		else
 			handle_non_empty_variable(shell, state, value, j);
 	}
+		
 }
 
 void	handle_dollar_sign(t_shell *shell, t_lexer_state *state)
