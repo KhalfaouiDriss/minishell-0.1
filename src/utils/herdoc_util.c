@@ -51,15 +51,6 @@ static int	open_heredoc_file(char **path)
 static void	handle_fork_child(int fd, char *delimiter, t_shell *shell)
 {
 	run_heredoc_loop(fd, delimiter, shell);
-	t_cmd	*cmd = shell->cmd_list;
-	while(cmd)
-	{
-		if(cmd->outfile_fd > 2)
-			close(cmd->outfile_fd);
-		if(cmd->infile_fd > 2)
-			close(cmd->infile_fd);
-		cmd = cmd->next;
-	}
 	close(fd);
 	clean_shell(shell);
 	exit(shell->exit_status);

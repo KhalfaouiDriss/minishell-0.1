@@ -107,7 +107,6 @@ t_cmd	*parse_tokens(t_shell *shell)
 		else
 			last->next = cmd;
 		last = cmd;
-		shell->cmd_list = head;
 		if (token && token->type == PIPE)
 			token = token->next;
 	}
