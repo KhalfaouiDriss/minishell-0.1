@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 22:10:08 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/25 06:11:32 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/25 15:43:45 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -303,6 +303,7 @@ int					global_state(int set);
 void				get_sig(int sig);
 void				handel_sig(int sig);
 char				*get_variable(t_shell *shell, char *line, int *i);
+char				*safe_ft_strdup(const char *str);
 
 // ╰───────────────────────────────────────────────────────────╯
 

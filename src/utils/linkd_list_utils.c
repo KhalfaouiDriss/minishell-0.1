@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   linkd_list_utils.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:36:44 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/25 06:11:47 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/25 18:06:54 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,18 +16,6 @@ int	is_special(char c)
 {
 	return (c == '|' || c == '>' || c == '<');
 }
-
-// t_token	*new_node(char *value)
-// {
-// 	t_token	*new;
-
-// 	new = ft_malloc(sizeof(*new));
-// 	if (!new)
-// 		return (NULL);
-// 	new->value = value;
-// 	new->next = NULL;
-// 	return (new);
-// }
 
 void	append_to_token(t_shell *shell, t_lexer_state *state, int type)
 {
@@ -51,9 +39,7 @@ t_token	*new_token(int *ebag, char *val, int type, int error_type)
 			return (NULL);
 	}
 	else
-	{
 		t->value = NULL;
-	}
 	t->ebag = *ebag;
 	t->type = type;
 	t->error = error_type;

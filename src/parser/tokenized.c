@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenized.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:45 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/19 09:30:18 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/25 18:43:13 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	check_initial_dollar_error(t_shell *shell, t_lexer_state *state)
 	if (state->str[0] == '$' && (!state->str[1] || state->str[1] == ' '))
 	{
 		add_token(&state->head, new_token(&(shell->ebag),
-				"minishell: '$' command not found", 0, NOT_FOUND));
+				"$", WORD, 0));
 		shell->exit_status = 127;
 		return (1);
 	}
@@ -56,7 +56,6 @@ void	init_lexer_vars(t_shell *shell, t_lexer_state *state)
 	state->token_type = 0;
 	state->str = shell->input;
 	state->start = 0;
-	shell->pip_count = pips_coount(shell->input);
 }
 
 t_token	*lexer_split_to_tokens(t_shell *shell)
@@ -66,8 +65,6 @@ t_token	*lexer_split_to_tokens(t_shell *shell)
 	if (check_syntax_errors(shell, shell->input, 1))
 		return (NULL);
 	init_lexer_vars(shell, &state);
-	if (check_initial_dollar_error(shell, &state))
-		return (state.head);
 	while (state.str[state.i])
 		process_token_loop(shell, &state);
 	return (state.head);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_1.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:37:04 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/19 10:20:25 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/25 17:42:24 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ void	init_shell(t_shell *shell)
 	shell->exit_status = 0;
 	shell->env = NULL;
 	shell->input = NULL;
-	shell->pip_count = 0;
 	shell->is_heredoc_delimiter = 0;
 	shell->ebag = -1;
 	shell->ebag_final = -1;

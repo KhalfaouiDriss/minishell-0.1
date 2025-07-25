@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:40:33 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/24 15:32:26 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/25 22:16:37 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ char	*find_command_path(char *cmd, t_env *envp)
 	while (paths[i])
 	{
 		full_path = full_paths(paths[i], cmd);
-		if (access(full_path, X_OK) == 0 && stat(full_path, &sb) == 0
+		if (access(full_path, F_OK) == 0 && stat(full_path, &sb) == 0
 			&& !S_ISDIR(sb.st_mode))
 			return (full_path);
 		i++;

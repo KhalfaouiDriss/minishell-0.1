@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:37 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/21 15:05:50 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/25 18:52:54 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,7 @@ int	is_operator(char *str, int i)
 			return (1);
 	}
 	else if (str[i] == '|')
-	{
 		return (1);
-	}
 	return (0);
 }
 

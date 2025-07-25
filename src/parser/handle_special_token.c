@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_special_token.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:26 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/20 10:56:47 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/25 18:16:42 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@ int	get_type(char *val, int type)
 		type = REDIR_IN;
 	else if (ft_strncmp(val, ">", 1) == 0)
 		type = REDIR_OUT;
-	else
-		type = ERROR;
 	return (type);
 }
 
@@ -42,9 +40,6 @@ void	handle_special_token(t_shell *shell, const char *input, int *i,
 		*i += 2;
 	else if (input[*i] == '|' || input[*i] == '<' || input[*i] == '>')
 		(*i)++;
-	else
-		return ((*i)++, val = ft_substr(input, start, *i - start),
-			add_token(head, new_token(&(shell->ebag), val, ERROR, 0)), (void)0);
 	val = ft_substr(input, start, *i - start);
 	type = get_type(val, type);
 	if (shell->not_found == 2 && !shell->exp)

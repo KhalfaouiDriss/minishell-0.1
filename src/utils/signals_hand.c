@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:36:53 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/24 14:27:51 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/25 17:15:30 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,4 +71,11 @@ void	get_sig(int sig)
 		rl_on_new_line();
 		rl_redisplay();
 	}
+}
+
+char	*safe_ft_strdup(const char *str)
+{
+	if (!str)
+		return (NULL);
+	return (ft_strdup(str));
 }

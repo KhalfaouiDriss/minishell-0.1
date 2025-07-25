@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_tokens.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 15:51:13 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/25 05:47:31 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/25 16:51:39 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,13 +52,6 @@ static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 	return (*token = (*token)->next, 0);
 }
 
-char	*safe_ft_strdup(const char *str)
-{
-	if (!str)
-		return (NULL);
-	return (ft_strdup(str));
-}
-
 static t_cmd	*parse_command(t_token **token, t_shell *shell)
 {
 	t_cmd	*cmd;
@@ -74,9 +67,10 @@ static t_cmd	*parse_command(t_token **token, t_shell *shell)
 	i = 0;
 	while (*token && (*token)->type != PIPE)
 	{
-		if ((*token)->type == WORD || (*token)->type == OPTION)
+		if (((*token)->type == WORD || (*token)->type == OPTION)
+			&& (*token)->value)
 			cmd->args[i++] = safe_ft_strdup((*token)->value);
-		else
+		else if ((*token)->value)
 		{
 			if (parse_redirections(token, cmd, shell))
 				return (NULL);
