@@ -26,6 +26,7 @@ void	init_shell(t_shell *shell)
 	shell->ebag = -1;
 	shell->ebag_final = -1;
 	shell->exp = 1;
+	shell->is_dir = 0;
 }
 
 void	gc_remove(void *ptr)

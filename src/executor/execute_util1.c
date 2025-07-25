@@ -25,7 +25,7 @@ char	*full_paths(char *path, char *cmd)
 	return (full_path);
 }
 
-char	*find_command_path(char *cmd, t_env *envp)
+char	*find_command_path(t_shell *shell, char *cmd, t_env *envp)
 {
 	char		**paths;
 	char		*full_path;
@@ -39,7 +39,7 @@ char	*find_command_path(char *cmd, t_env *envp)
 		return (ft_strdup(cmd));
 	envp_value = find_env_node(envp, "PATH");
 	if (!envp_value)
-		return (NULL);
+		return (shell->is_dir = 1, NULL);
 	paths = ft_split(envp_value, ':');
 	i = 0;
 	while (paths[i])

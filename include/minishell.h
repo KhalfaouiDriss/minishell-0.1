@@ -111,6 +111,7 @@ typedef struct s_shell
 	int				exp;
 	int				her_fd;
 	int				is_null;
+	int				is_dir;
 }					t_shell;
 
 typedef struct s_lexer_state
@@ -250,7 +251,7 @@ void				wait_all(int last_pid, t_shell *shell);
 int					clean_exit(t_shell *shell, int fexit);
 void				handle_ambiguous(t_shell *shell);
 void				close_parent_fds(t_cmd *cmd, int prev_pipe);
-char				*find_command_path(char *cmd, t_env *envp);
+char				*find_command_path(t_shell *shell, char *cmd, t_env *envp);
 char				*full_paths(char *path, char *cmd);
 
 // ╰───────────────────────────────────────────────────────────╯

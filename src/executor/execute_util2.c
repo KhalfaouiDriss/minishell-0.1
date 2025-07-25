@@ -32,7 +32,10 @@ void	print_not_found_and_exit(t_cmd *cmd, t_shell *shell)
 {
 	char	*buffer;
 
-	buffer = ft_strjoin(cmd->args[0], " : command not found\n");
+	if (!shell->is_dir)
+		buffer = ft_strjoin(cmd->args[0], " : command not found\n");
+	else if (shell->is_dir == 1)
+		buffer = ft_strjoin(cmd->args[0], ": No such file or directory\n");
 	write(2, buffer, ft_strlen(buffer));
 	close_all(shell->cmd_list, cmd);
 	clean_shell(shell);
@@ -43,6 +46,8 @@ void	handle_exec_errors(char *path, t_cmd *cmd, t_shell *shell)
 {
 	struct stat	sb;
 
+	if (!path)
+		print_not_found_and_exit(cmd, shell);
 	if (path)
 	{
 		if (stat(path, &sb) != 0)
@@ -62,8 +67,6 @@ void	handle_exec_errors(char *path, t_cmd *cmd, t_shell *shell)
 			exit(126);
 		}
 	}
-	if (!path)
-		print_not_found_and_exit(cmd, shell);
 }
 
 void	handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd, int prev_pipe,

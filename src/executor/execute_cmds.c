@@ -56,7 +56,7 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 		(close_all(shell->cmd_list, cmd), exit(clean_exit(shell, 0)));
 	if (is_builtin(cmd->args[0]))
 		(close_all(shell->cmd_list, cmd), exit(builtin_free_exit(shell, cmd)));
-	path = find_command_path(cmd->args[0], shell->env);
+	path = find_command_path(shell, cmd->args[0], shell->env);
 	handle_exec_errors(path, cmd, shell);
 	execve(path, cmd->args, shell->new_env);
 	execve_fail(cmd);
