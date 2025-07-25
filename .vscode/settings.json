@@ -11,7 +11,8 @@
         "functional": "c",
         "tuple": "c",
         "utility": "c",
-        "variant": "c"
+        "variant": "c",
+        "libft.h": "c"
     },
     "makefile.configureOnOpen": true
 }
