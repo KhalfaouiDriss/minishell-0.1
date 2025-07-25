@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_tokens.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 15:51:13 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/22 18:28:10 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/25 05:47:31 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ static int	parse_redirections(t_token **token, t_cmd *cmd, t_shell *shell)
 	return (*token = (*token)->next, 0);
 }
 
-char *safe_ft_strdup(const char *str)
+char	*safe_ft_strdup(const char *str)
 {
 	if (!str)
 		return (NULL);

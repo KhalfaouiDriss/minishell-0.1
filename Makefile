@@ -31,7 +31,6 @@ SRCS = src/main.c \
 	src/executor/execute_util3.c \
 	src/utils/builtins_utils_1.c \
 	src/utils/builtins_utils_2.c \
-	src/utils/free_utils.c \
 	src/utils/herdoc_util.c \
 	src/utils/init_env.c \
 	src/utils/linkd_list_utils.c \

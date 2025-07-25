@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_normal_word.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:09 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/18 15:58:17 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/25 06:09:11 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,7 @@ void	finalize_current_word(t_shell *shell, t_lexer_state *state)
 			state->token_type = OPTION;
 		else
 			state->token_type = WORD;
-		state->t_tmp = new_token(&(shell->ebag), state->current_word, WORD, 0);
-		state->t_tmp->quot_type = state->current_quote_type;
-		add_token(&state->head, state->t_tmp);
-		state->current_word = NULL;
+		append_to_token(shell, state, WORD);
 	}
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:30:32 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/24 13:41:26 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/25 06:12:07 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ int	is_builtin(char *cmd)
 
 int	execute_builtin(t_shell *shell, char *cmd, char **args)
 {
-
 	if (ft_strncmp(cmd, "echo", 5) == 0)
 		return (ft_echo(args), 0);
 	else if (ft_strncmp(cmd, "cd", 3) == 0)

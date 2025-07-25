@@ -6,7 +6,7 @@
 /*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:04 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/24 19:02:45 by khalfaoui47      ###   ########.fr       */
+/*   Updated: 2025/07/25 06:12:23 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,19 +65,11 @@ void	handle_dollar_variable_expansion(t_shell *shell, t_lexer_state *state,
 	char	*value;
 
 	value = handle_variable_token(state->str, &state->i, shell, 0);
-	if(!value)
+	if (!value)
 	{
 		if (state->current_word)
-		{
-			state->t_tmp = new_token(&(shell->ebag), state->current_word, WORD, 0);
-			state->t_tmp->quot_type = state->current_quote_type;
-			add_token(&state->head, state->t_tmp);
-			state->current_word = NULL;
-		}
-		state->t_tmp = new_token(&(shell->ebag), state->current_word, WORD, 0);
-		state->t_tmp->quot_type = state->current_quote_type;
-		add_token(&state->head, state->t_tmp);
-		state->current_word = NULL;
+			append_to_token(shell, state, WORD);
+		append_to_token(shell, state, WORD);
 	}
 	if (value)
 	{
@@ -91,7 +83,6 @@ void	handle_dollar_variable_expansion(t_shell *shell, t_lexer_state *state,
 		else
 			handle_non_empty_variable(shell, state, value, j);
 	}
-		
 }
 
 void	handle_dollar_sign(t_shell *shell, t_lexer_state *state)

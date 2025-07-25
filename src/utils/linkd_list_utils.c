@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   linkd_list_utils.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:36:44 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/13 21:52:03 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/25 06:11:47 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,24 @@ int	is_special(char c)
 	return (c == '|' || c == '>' || c == '<');
 }
 
-t_token	*new_node(char *value)
-{
-	t_token	*new;
+// t_token	*new_node(char *value)
+// {
+// 	t_token	*new;
 
-	new = ft_malloc(sizeof(*new));
-	if (!new)
-		return (NULL);
-	new->value = value;
-	new->next = NULL;
-	return (new);
+// 	new = ft_malloc(sizeof(*new));
+// 	if (!new)
+// 		return (NULL);
+// 	new->value = value;
+// 	new->next = NULL;
+// 	return (new);
+// }
+
+void	append_to_token(t_shell *shell, t_lexer_state *state, int type)
+{
+	state->t_tmp = new_token(&(shell->ebag), state->current_word, type, 0);
+	state->t_tmp->quot_type = state->current_quote_type;
+	add_token(&state->head, state->t_tmp);
+	state->current_word = NULL;
 }
 
 t_token	*new_token(int *ebag, char *val, int type, int error_type)

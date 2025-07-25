@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: khalfaoui47 <khalfaoui47@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 18:34:17 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/18 16:38:54 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/25 05:52:53 by khalfaoui47      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,20 +61,20 @@ char	*ft_substr2(const char *str, unsigned int start, size_t n)
 	return (dest);
 }
 
-// static void	free_split(char **lst)
-// {
-// 	int	i;
+static void	free_split(char **lst)
+{
+	int	i;
 
-// 	i = 0;
-// 	if (!lst)
-// 		return ;
-// 	while (lst[i])
-// 	{
-// 		free(lst[i]);
-// 		i++;
-// 	}
-// 	free(lst);
-// }
+	i = 0;
+	if (!lst)
+		return ;
+	while (lst[i])
+	{
+		free(lst[i]);
+		i++;
+	}
+	free(lst);
+}
 
 static void	fill(char const *s, char c, char **lst)
 {
