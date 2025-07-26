@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 21:59:52 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/26 18:06:26 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/26 21:26:37 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ int	is_valid_export_key_start(char *str)
 		c = (ft_isalnum(str[i]) || str[i] == '_');
 		i++;
 	}
-	
 	return (c);
 }
 

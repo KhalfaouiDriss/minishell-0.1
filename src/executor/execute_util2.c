@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:45:02 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/26 16:23:28 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/26 21:24:51 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,14 @@ void	print_not_found_and_exit(t_cmd *cmd, t_shell *shell)
 {
 	char	*buffer;
 
+	if (ft_strncmp(cmd->args[0], "sudo", 5) == 0)
+	{
+		buffer = ft_strjoin(cmd->args[0], ": Permission denied\n");
+		write(2, buffer, ft_strlen(buffer));
+		close_all(shell->cmd_list, cmd);
+		clean_shell(shell);
+		exit(126);
+	}
 	if (!shell->is_dir)
 		buffer = ft_strjoin(cmd->args[0], " : command not found\n");
 	else if (shell->is_dir == 1)
