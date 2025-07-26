@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_syntax_err.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 13:32:43 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/25 18:40:55 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/26 12:52:55 by dkhalfao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,7 @@ int	handle_operator(char *input, int *i, t_shell *shell)
 		return (1);
 	*i += op_len;
 	*i = skip_spaces(input, *i);
-	if (!input[*i] || input[0] == '|' || (is_operator(input, *i)
-			&& !(input[*i] == '<' || input[*i] == '>')))
+	if (!input[*i] || input[0] == '|' || is_operator(input, *i))
 		return (check_and_report_error(shell));
 	return (0);
 }
