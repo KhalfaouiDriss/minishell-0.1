@@ -143,7 +143,7 @@ typedef struct s_mlc
 
 typedef struct s_gc
 {
-	t_mlc			*value;
+	t_mlc			*head;
 }					t_gc;
 
 /* ************************************************************************** */

@@ -36,7 +36,7 @@ void	gc_remove(void *ptr)
 	t_mlc	*prev;
 
 	gc = get_gc();
-	curr = gc->value;
+	curr = gc->head;
 	prev = NULL;
 	while (curr)
 	{
@@ -45,7 +45,7 @@ void	gc_remove(void *ptr)
 			if (prev)
 				prev->next = curr->next;
 			else
-				gc->value = curr->next;
+				gc->head = curr->next;
 			free(curr->ptr);
 			free(curr);
 			return ;

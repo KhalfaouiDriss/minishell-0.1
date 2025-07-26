@@ -23,12 +23,12 @@ void	gc_add_back(t_gc *gc, t_mlc *new)
 {
 	t_mlc	*tmp;
 
-	if (!gc->value)
+	if (!gc->head)
 	{
-		gc->value = new;
+		gc->head = new;
 		return ;
 	}
-	tmp = gc->value;
+	tmp = gc->head;
 	while (tmp->next)
 		tmp = tmp->next;
 	tmp->next = new;
@@ -59,12 +59,12 @@ void	gc_free_all(void)
 	t_mlc	*tmp;
 
 	gc = get_gc();
-	while (gc->value)
+	while (gc->head)
 	{
-		tmp = gc->value;
-		gc->value = gc->value->next;
+		tmp = gc->head;
+		gc->head = gc->head->next;
 		free(tmp->ptr);
 		free(tmp);
 	}
-	gc->value = NULL;
+	gc->head = NULL;
 }
