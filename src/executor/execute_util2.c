@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 09:45:02 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/25 22:23:39 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/26 16:23:28 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@ void	sig_val(int sig, int *sigquit, int *sigint)
 void	affiche_sig(int sigquit, int sigint)
 {
 	if (sigquit)
-		ft_putstr_fd("Quit (core dumped)\n", 2);
+		ft_putstr_fd("Quit (core dumped)\n", 1);
 	if (sigint)
-		ft_putchar_fd('\n', 2);
+		ft_putchar_fd('\n', 1);
 }
 
 void	print_not_found_and_exit(t_cmd *cmd, t_shell *shell)

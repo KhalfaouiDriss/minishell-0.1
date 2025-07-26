@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 16:14:12 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/24 12:51:34 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/26 13:56:55 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	count_args(t_token *token)
 	i = 0;
 	while (token && token->type != PIPE)
 	{
-		if (token->type == OPTION || token->type == WORD)
+		if (token->type == WORD)
 			i++;
 		if (token->type >= REDIR_IN && token->type <= REDIR_HEREDOC)
 			token = token->next;

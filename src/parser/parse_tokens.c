@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 15:51:13 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/25 16:51:39 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/26 13:59:22 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,8 @@ static t_cmd	*parse_command(t_token **token, t_shell *shell)
 	i = 0;
 	while (*token && (*token)->type != PIPE)
 	{
-		if (((*token)->type == WORD || (*token)->type == OPTION)
-			&& (*token)->value)
-			cmd->args[i++] = safe_ft_strdup((*token)->value);
+		if (((*token)->type == WORD) && (*token)->value)
+			cmd->args[i++] = ft_strdup((*token)->value);
 		else if ((*token)->value)
 		{
 			if (parse_redirections(token, cmd, shell))

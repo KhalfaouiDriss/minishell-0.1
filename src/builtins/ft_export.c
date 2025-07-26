@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 21:59:52 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/20 10:53:02 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/26 18:06:26 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,16 @@
 int	is_valid_export_key_start(char *str)
 {
 	int	c;
+	int	i;
 
+	i = 1;
 	c = (ft_isalpha(str[0]) || str[0] == '_');
+	while (str[i] && c && str[i] != '=')
+	{
+		c = (ft_isalnum(str[i]) || str[i] == '_');
+		i++;
+	}
+	
 	return (c);
 }
 

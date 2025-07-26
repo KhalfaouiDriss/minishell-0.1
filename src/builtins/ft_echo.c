@@ -6,13 +6,13 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:32:29 by sel-bech          #+#    #+#             */
-/*   Updated: 2025/07/25 17:58:47 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/26 16:07:37 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void	ft_strchar(char *s, int f)
+void	ft_space(char *s, int f)
 {
 	int	len;
 
@@ -42,7 +42,7 @@ void	ft_echo(char **args)
 	}
 	while (args[i])
 	{
-		ft_strchar(args[i], args[i + 1] != NULL);
+		ft_space(args[i], args[i + 1] != NULL);
 		i++;
 	}
 	if (i == 1 || !no_newline)
