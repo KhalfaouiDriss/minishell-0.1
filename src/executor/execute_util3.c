@@ -26,15 +26,26 @@ void	dupping(int in, int out)
 	}
 }
 
-void	execve_fail(t_cmd *cmd)
+void	execve_fail(t_cmd *cmd, char *path)
 {
 	t_shell	*shell;
 
-	perror(cmd->args[0]);
-	shell = get_shell();
-	close_all(shell->cmd_list, cmd);
-	clean_shell(shell);
-	exit(126);
+	if (access(path, X_OK))
+	{
+		perror(cmd->args[0]);
+		shell = get_shell();
+		close_all(shell->cmd_list, cmd);
+		clean_shell(shell);
+		exit(126);
+	}
+	else
+	{
+		perror(cmd->args[0]);
+		shell = get_shell();
+		close_all(shell->cmd_list, cmd);
+		clean_shell(shell);
+		exit(0);
+	}
 }
 
 int	builtin_free_exit(t_shell *shell, t_cmd *cmd)

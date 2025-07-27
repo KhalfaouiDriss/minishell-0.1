@@ -269,7 +269,7 @@ void				handle_signals_and_exit_cases(t_shell *shell, t_cmd *cmd,
 
 // ╭───────────────────── execute_utils3.c ────────────────────╮
 
-void				execve_fail(t_cmd *cmd);
+void				execve_fail(t_cmd *cmd, char *path);
 int					builtin_free_exit(t_shell *shell, t_cmd *cmd);
 void				close_all(t_cmd *head, t_cmd *curr);
 void				dupping(int in, int out);
@@ -439,10 +439,11 @@ int					execute_builtin(t_shell *shell, char *cmd, char **args);
 // ╭───────────────────── built_in_utils.c ─────────────────────╮
 
 void				exit_success(t_shell *shell, long long code);
-int					handle_exit_error(t_shell *shell, char **args,
-						char *trimmed);
+int					print_too_many_args(t_shell *shell);
+long long			ft_atoll(char *str);
 char				*ft_strdupv2(const char *str);
 void				free_new_env(char **env);
+void				close_fd_bin(int in, int out);
 
 // ╰────────────────────────────────────────────────────────────╯
 

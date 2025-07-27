@@ -58,8 +58,9 @@ static void	handle_child(t_cmd *cmd, t_shell *shell, int prev_pipe, int *fd)
 		(close_all(shell->cmd_list, cmd), exit(builtin_free_exit(shell, cmd)));
 	path = find_command_path(shell, cmd->args[0], shell->env);
 	handle_exec_errors(path, cmd, shell);
-	execve(path, cmd->args, shell->new_env);
-	execve_fail(cmd);
+	if (!access(path, X_OK))
+		execve(path, cmd->args, shell->new_env);
+	execve_fail(cmd, path);
 }
 
 static void	exec_loop(t_shell *shell)
@@ -102,7 +103,7 @@ void	wait_all(int last_pid, t_shell *shell)
 	sigint = 0;
 	sigquit = 0;
 	pid = waitpid(-1, &status, 0);
-	while (pid != -1)
+	while (pid > 0)
 	{
 		if (WIFEXITED(status) && pid == last_pid)
 			shell->exit_status = WEXITSTATUS(status);

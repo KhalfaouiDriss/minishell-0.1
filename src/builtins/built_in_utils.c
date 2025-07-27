@@ -12,14 +12,12 @@
 
 #include "../../include/minishell.h"
 
-int	handle_exit_error(t_shell *shell, char **args, char *trimmed)
+int	print_too_many_args(t_shell *shell)
 {
-	(void)shell;
-	(void)args;
-	free(trimmed);
-	return (write(2, "exit\n", 5), write(2,
-			"minishell: exit: too many arguments\n", 36),
-		shell->exit_status = 1, 1);
+	write(2, "exit\n", 5);
+	write(2, "exit: too many arguments\n", 26);
+	shell->exit_status = 1;
+	return (1);
 }
 
 void	exit_success(t_shell *shell, long long code)
@@ -28,4 +26,30 @@ void	exit_success(t_shell *shell, long long code)
 	printf("exit\n");
 	clean_shell(shell);
 	exit((unsigned char)code);
+}
+
+long long	ft_atoll(char *str)
+{
+	long long	res;
+	int			sign;
+
+	res = 0;
+	sign = 1;
+	if (*str == '+' || *str == '-')
+	{
+		if (*str == '-')
+			sign = -1;
+		str++;
+	}
+	while (*str >= '0' && *str <= '9')
+		res = res * 10 + (*str++ - '0');
+	return (res * sign);
+}
+
+void	close_fd_bin(int in, int out)
+{
+	if (in != -1)
+		close(in);
+	if (out != -1)
+		close(out);
 }

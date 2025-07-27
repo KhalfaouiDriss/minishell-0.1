@@ -12,15 +12,16 @@
 
 #include "../../include/minishell.h"
 
-static int	is_numeric(const char *str)
+static int	is_numeric(char *str)
 {
-	int	i;
+	int	i = 0;
 
-	i = 0;
-	if (!str)
+	if (!str || !*str)
 		return (0);
 	if (str[i] == '+' || str[i] == '-')
 		i++;
+	if (!str[i])
+		return (0);
 	while (str[i])
 	{
 		if (!ft_isdigit(str[i]))
@@ -30,42 +31,33 @@ static int	is_numeric(const char *str)
 	return (1);
 }
 
-long long	ft_atoll(char *str)
+static int	is_overflow(char *str)
 {
-	long long	res;
-	int			sign;
+	long long	n;
+	char		*end;
 
-	res = 0;
-	sign = 1;
-	while (*str == ' ' || (*str >= 9 && *str <= 13))
-		str++;
-	if (*str == '+' || *str == '-')
-	{
-		if (*str == '-')
-			sign = -1;
-		str++;
-	}
-	while (*str >= '0' && *str <= '9')
-		res = res * 10 + (*str++ - '0');
-	return (res * sign);
+	n = ft_atoll(str);
+	end = str;
+	if (*end == '+' || *end == '-')
+		end++;
+	while (*end == '0')
+		end++;
+	if (ft_strlen(end) > 19)
+		return (1);
+	if (n > LLONG_MAX || n < LLONG_MIN)
+		return (1);
+	return (0);
 }
 
-void	close_fd_bin(int in, int out)
-{
-	if (in != -1)
-		close(in);
-	if (out != -1)
-		close(out);
-}
-
-void	affiche_err(char *arg, char *trim, t_shell *shell)
+static void	print_numeric_error(char *arg, t_shell *shell)
 {
 	write(2, "exit\n", 5);
+	write(2, "exit: ", 6);
 	write(2, arg, ft_strlen(arg));
 	write(2, ": numeric argument required\n", 28);
-	free(trim);
 	clean_shell(shell);
 	close_fd_bin(shell->in, shell->out);
+	exit(2);
 }
 
 int	ft_exit(t_shell *shell, char **args)
@@ -75,17 +67,20 @@ int	ft_exit(t_shell *shell, char **args)
 
 	if (args[1])
 	{
-		trimmed = ft_strtrim(args[1], " ");
-		if (!trimmed || !is_numeric(trimmed) || ft_strlen(trimmed) > 19)
-			return (affiche_err(args[1], trimmed, shell), exit(2), 0);
 		if (args[2])
-			return (handle_exit_error(shell, args, trimmed));
+			return print_too_many_args(shell);
+		trimmed = ft_strtrim(args[1], " ");
+		if (!trimmed || !is_numeric(trimmed) || is_overflow(trimmed))
+			print_numeric_error(args[1], shell);
 		exit_code = ft_atoll(trimmed);
 		free(trimmed);
-		exit_success(shell, exit_code);
+		write(1, "exit\n", 5);
+		close_fd_bin(shell->in, shell->out);
+		clean_shell(shell);
+		exit((unsigned char)exit_code);
 	}
+	write(1, "exit\n", 5);
 	close_fd_bin(shell->in, shell->out);
-	printf("exit\n");
 	clean_shell(shell);
 	exit(shell->exit_status);
 }

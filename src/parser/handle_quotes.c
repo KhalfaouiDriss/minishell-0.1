@@ -16,7 +16,7 @@ void	handle_invalid_quote(t_shell *shell, t_lexer_state *state)
 {
 	add_token(&state->head, new_token(&(shell->ebag), "Invalid quote", 0,
 			QUETS_INVA));
-	shell->exit_status = 258;
+	shell->exit_status = 2;
 }
 
 static void	handle_empty_quotes(t_shell *shell, t_lexer_state *state)

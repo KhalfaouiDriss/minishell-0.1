@@ -45,7 +45,7 @@ char	*find_command_path(t_shell *shell, char *cmd, t_env *envp)
 	while (paths[i])
 	{
 		full_path = full_paths(paths[i], cmd);
-		if (access(full_path, X_OK) == 0 && stat(full_path, &sb) == 0
+		if (access(full_path, F_OK) == 0 && stat(full_path, &sb) == 0
 			&& !S_ISDIR(sb.st_mode))
 			return (full_path);
 		i++;
