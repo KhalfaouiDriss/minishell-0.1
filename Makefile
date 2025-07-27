@@ -61,13 +61,4 @@ fclean: clean
 
 re: fclean all
 
-push:
-	git add .
-	git status
-	git commit -m "minishell"
-	git push -f
-
-pull:
-	git pull
-
 .PHONY: all clean fclean re

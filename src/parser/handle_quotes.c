@@ -3,21 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   handle_quotes.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dkhalfao <dkhalfao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:18:14 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/20 10:58:05 by dkhalfao         ###   ########.fr       */
+/*   Updated: 2025/07/27 15:17:46 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-void	handle_invalid_quote(t_shell *shell, t_lexer_state *state)
-{
-	add_token(&state->head, new_token(&(shell->ebag), "Invalid quote", 0,
-			QUETS_INVA));
-	shell->exit_status = 2;
-}
 
 static void	handle_empty_quotes(t_shell *shell, t_lexer_state *state)
 {

@@ -6,7 +6,7 @@
 /*   By: sel-bech <sel-bech@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 20:37:04 by dkhalfao          #+#    #+#             */
-/*   Updated: 2025/07/25 17:42:24 by sel-bech         ###   ########.fr       */
+/*   Updated: 2025/07/27 15:17:49 by sel-bech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,32 +27,6 @@ void	init_shell(t_shell *shell)
 	shell->ebag_final = -1;
 	shell->exp = 1;
 	shell->is_dir = 0;
-}
-
-void	gc_remove(void *ptr)
-{
-	t_gc	*gc;
-	t_mlc	*curr;
-	t_mlc	*prev;
-
-	gc = get_gc();
-	curr = gc->head;
-	prev = NULL;
-	while (curr)
-	{
-		if (curr->ptr == ptr)
-		{
-			if (prev)
-				prev->next = curr->next;
-			else
-				gc->head = curr->next;
-			free(curr->ptr);
-			free(curr);
-			return ;
-		}
-		prev = curr;
-		curr = curr->next;
-	}
 }
 
 char	*strjoin_free(char *s1, char *s2)
